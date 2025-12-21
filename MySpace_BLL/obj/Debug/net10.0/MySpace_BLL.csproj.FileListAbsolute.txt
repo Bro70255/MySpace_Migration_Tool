@@ -1,0 +1,17 @@
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_BLL.deps.json
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_BLL.dll
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_BLL.pdb
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_Common.dll
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_DAL.dll
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_Common.pdb
+C:\Users\user\source\repos\MySpace\MySpace_BLL\bin\Debug\net10.0\MySpace_DAL.pdb
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.AssemblyInfo.cs
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_.22742C7A.Up2Date
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.dll
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\refint\MySpace_BLL.dll
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\MySpace_BLL.pdb
+C:\Users\user\source\repos\MySpace\MySpace_BLL\obj\Debug\net10.0\ref\MySpace_BLL.dll

@@ -1,0 +1,392 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Back_UP_Projects\\MySpace\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\blue_print_project.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\blue_print_project.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\wwwroot\\js\\site.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|f:\\back_up_projects\\myspace\\myspace_common\\filenode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|solutionrelative:myspace_common\\filenode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\wwwroot\\testscreenocr\\home\\blue_print_project.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\wwwroot\\testscreenocr\\home\\blue_print_project.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\mysapce_login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\mysapce_login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|f:\\back_up_projects\\myspace\\myspace_dal\\data_layer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|solutionrelative:myspace_dal\\data_layer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|f:\\back_up_projects\\myspace\\myspace_dal\\mydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|solutionrelative:myspace_dal\\mydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|f:\\back_up_projects\\myspace\\myspace_common\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|solutionrelative:myspace_common\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\registration_report.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\registration_report.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\registration.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\registration.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\myspace_dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\myspace_dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|f:\\back_up_projects\\myspace\\myspace_common\\blue_print_01.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|solutionrelative:myspace_common\\blue_print_01.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|f:\\back_up_projects\\myspace\\myspace_common\\registration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|solutionrelative:myspace_common\\registration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|f:\\back_up_projects\\myspace\\myspace_dal\\myspace_dal.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{04A106F9-1E79-1210-0981-0CC8F0E1D26C}|MySpace_DAL\\MySpace_DAL.csproj|solutionrelative:myspace_dal\\myspace_dal.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\myspace.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\myspace.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "MySpace\\Controllers\\HomeController.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "MySpace\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAEwOsAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T11:49:39.625Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Blue_Print_Project.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAUwFgAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T10:57:09.989Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "site.css",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "MySpace\\wwwroot\\css\\site.css",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "MySpace\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAADsBAAAAAAAAAAAAAEkBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-12-21T04:23:34.591Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "site.js",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\js\\site.js",
+              "RelativeDocumentMoniker": "MySpace\\wwwroot\\js\\site.js",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\js\\site.js",
+              "RelativeToolTip": "MySpace\\wwwroot\\js\\site.js",
+              "ViewState": "AgIAAPAAAAAAAAAAAAAAwNMAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-12-02T11:52:33.9Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Program.cs",
+              "RelativeDocumentMoniker": "MySpace\\Program.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Program.cs",
+              "RelativeToolTip": "MySpace\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T11:43:26.849Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\appsettings.json",
+              "RelativeDocumentMoniker": "MySpace\\appsettings.json",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\appsettings.json",
+              "RelativeToolTip": "MySpace\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-02T11:41:35.544Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAADMAAABlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T10:46:34.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FileNode.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\FileNode.cs",
+              "RelativeDocumentMoniker": "MySpace_Common\\FileNode.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\FileNode.cs",
+              "RelativeToolTip": "MySpace_Common\\FileNode.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-21T06:49:35.712Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Blue_Print_Project.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\TestScreenOCR\\Home\\Blue_Print_Project.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\wwwroot\\TestScreenOCR\\Home\\Blue_Print_Project.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\TestScreenOCR\\Home\\Blue_Print_Project.cshtml",
+              "RelativeToolTip": "MySpace\\wwwroot\\TestScreenOCR\\Home\\Blue_Print_Project.cshtml",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAUwF8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-21T06:24:04.447Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MyDbContext.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MyDbContext.cs",
+              "RelativeDocumentMoniker": "MySpace_DAL\\MyDbContext.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MyDbContext.cs",
+              "RelativeToolTip": "MySpace_DAL\\MyDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T11:40:36.636Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Data_Layer.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\Data_Layer.cs",
+              "RelativeDocumentMoniker": "MySpace_DAL\\Data_Layer.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\Data_Layer.cs",
+              "RelativeToolTip": "MySpace_DAL\\Data_Layer.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBUAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T11:40:20.06Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MySapce_Login.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\MySapce_Login.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\MySapce_Login.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\MySapce_Login.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\MySapce_Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-02T11:50:39.888Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Employee.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Employee.cs",
+              "RelativeDocumentMoniker": "MySpace_Common\\Employee.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Employee.cs",
+              "RelativeToolTip": "MySpace_Common\\Employee.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-02T11:58:14.311Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Index.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-20T10:35:37.237Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Registration.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Registration.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Registration.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Registration.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\Registration.cshtml",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-02T11:49:14.529Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "MySpace_Dashboard.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\MySpace_Dashboard.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\MySpace_Dashboard.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\MySpace_Dashboard.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\MySpace_Dashboard.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-14T10:47:52.396Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Blue_Print_01.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Blue_Print_01.cs",
+              "RelativeDocumentMoniker": "MySpace_Common\\Blue_Print_01.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Blue_Print_01.cs",
+              "RelativeToolTip": "MySpace_Common\\Blue_Print_01.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAYAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T15:29:21.517Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Registration_Report.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Registration_Report.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Registration_Report.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Registration_Report.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\Registration_Report.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-02T11:59:22.997Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\_ViewStart.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-15T11:50:16.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Registration.cs",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Registration.cs",
+              "RelativeDocumentMoniker": "MySpace_Common\\Registration.cs",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\Registration.cs",
+              "RelativeToolTip": "MySpace_Common\\Registration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T15:34:52.738Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Privacy.cshtml",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Privacy.cshtml",
+              "RelativeToolTip": "MySpace\\Views\\Home\\Privacy.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-12-02T11:50:40.968Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "MySpace_DAL.csproj",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MySpace_DAL.csproj",
+              "RelativeDocumentMoniker": "MySpace_DAL\\MySpace_DAL.csproj",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MySpace_DAL.csproj",
+              "RelativeToolTip": "MySpace_DAL\\MySpace_DAL.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-02T11:34:51.71Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "MySpace.csproj",
+              "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\MySpace.csproj",
+              "RelativeDocumentMoniker": "MySpace\\MySpace.csproj",
+              "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\MySpace.csproj",
+              "RelativeToolTip": "MySpace\\MySpace.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-02T11:34:29.735Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

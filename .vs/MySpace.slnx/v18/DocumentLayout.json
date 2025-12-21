@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "F:\\Back_UP_Projects\\MySpace\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -25,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|f:\\back_up_projects\\myspace\\myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9AA2EE14-54C1-53D6-6EAA-95ED7CB356A8}|MySpace\\MySpace.csproj|solutionrelative:myspace\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{77A23E0F-48E0-AE24-4244-3EB6CCC812E1}|MySpace_Common\\MySpace_Common.csproj|f:\\back_up_projects\\myspace\\myspace_common\\filenode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -102,24 +102,25 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "HomeController.cs",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "MySpace\\Controllers\\HomeController.cs",
               "ToolTip": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Controllers\\HomeController.cs",
               "RelativeToolTip": "MySpace\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAN0AAAAAAAAAAAAEwOsAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOsAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-02T11:49:39.625Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Blue_Print_Project.cshtml",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
               "RelativeDocumentMoniker": "MySpace\\Views\\Home\\Blue_Print_Project.cshtml",
@@ -132,7 +133,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "site.css",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\css\\site.css",
               "RelativeDocumentMoniker": "MySpace\\wwwroot\\css\\site.css",
@@ -144,7 +145,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "site.js",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\wwwroot\\js\\site.js",
               "RelativeDocumentMoniker": "MySpace\\wwwroot\\js\\site.js",
@@ -156,7 +157,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Program.cs",
               "RelativeDocumentMoniker": "MySpace\\Program.cs",
@@ -168,7 +169,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "appsettings.json",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\appsettings.json",
               "RelativeDocumentMoniker": "MySpace\\appsettings.json",
@@ -181,7 +182,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "F:\\Back_UP_Projects\\MySpace\\MySpace\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "MySpace\\Views\\Shared\\_Layout.cshtml",
@@ -189,8 +190,7 @@
               "RelativeToolTip": "MySpace\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAACoAAAAAAAAAAAAAADMAAABlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-12-14T10:46:34.896Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-14T10:46:34.896Z"
             },
             {
               "$type": "Document",
@@ -370,7 +370,8 @@
               "RelativeToolTip": "MySpace_DAL\\MySpace_DAL.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-12-02T11:34:51.71Z"
+              "WhenOpened": "2025-12-02T11:34:51.71Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -382,7 +383,8 @@
               "RelativeToolTip": "MySpace\\MySpace.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-12-02T11:34:29.735Z"
+              "WhenOpened": "2025-12-02T11:34:29.735Z",
+              "EditorCaption": ""
             }
           ]
         }

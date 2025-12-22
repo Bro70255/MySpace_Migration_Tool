@@ -287,5 +287,5 @@ F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\refint\MySpace.dll
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\MySpace.pdb
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\MySpace.genruntimeconfig.cache
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\ref\MySpace.dll
-F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\1xgm600kog-{0}-hus8ovsmn9-hus8ovsmn9.gz
-F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\dpb1iix4yf-{0}-gcofwgrm0b-gcofwgrm0b.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\1xgm600kog-{0}-d07s0jd5eq-d07s0jd5eq.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\dpb1iix4yf-{0}-3tloby4a6q-3tloby4a6q.gz

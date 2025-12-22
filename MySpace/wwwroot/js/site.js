@@ -145,6 +145,75 @@ function Initialize_Registration_Report_Details() {
     });
 }
 
+function loadOCRTreeView() {
+    fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Failed to load files");
+                return;
+            }
+
+            const treeView = document.getElementById("treeView");
+            treeView.innerHTML = "";
+
+            const ul = document.createElement("ul");
+            renderNode(data.data, ul);
+            treeView.appendChild(ul);
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error loading tree view");
+        });
+}
+
+function renderNode(node, parentUl) {
+    const li = document.createElement("li");
+
+    if (node.isDirectory) {
+        li.innerHTML = `📁 <strong>${node.name}</strong>`;
+        const childUl = document.createElement("ul");
+
+        node.children.forEach(child => {
+            renderNode(child, childUl);
+        });
+
+        li.appendChild(childUl);
+    } else {
+        li.textContent = `📄 ${node.name}`;
+        li.classList.add("tree-file");
+    }
+
+    parentUl.appendChild(li);
+}
+
+function uploadFiles() {
+    if (!selectedFiles || selectedFiles.length === 0) {
+        alert("No files selected");
+        return;
+    }
+
+    const formData = new FormData();
+
+    for (let file of selectedFiles) {
+        formData.append("files", file, file.webkitRelativePath || file.name);
+    }
+
+    fetch("/Home/UploadScreenFolder", {
+        method: "POST",
+        body: formData
+    })
+        .then(r => r.json())
+        .then(res => {
+            uploadInfo.innerHTML += res.success
+                ? `<div style="color:green;margin-top:10px;">✅ Upload successful</div>`
+                : `<div style="color:red;margin-top:10px;">❌ ${res.message || "Upload failed"}</div>`;
+        })
+        .catch(err => {
+            console.error(err);
+            uploadInfo.innerHTML += `<div style="color:red;margin-top:10px;">❌ Upload failed</div>`;
+        });
+}
 function Sent_Data_To_AI() {
 
     const screenName = document.getElementById("ScreenName").value;
@@ -189,6 +258,7 @@ function Sent_Data_To_AI() {
             document.getElementById("AIResponse").value = "Error calling AI";
         });
 }
+
 function Initialize_OCR_From_File() {
 
     fetch('/Home/ReadOCRFile')
@@ -202,80 +272,5 @@ function Initialize_OCR_From_File() {
         })
         .catch(err => {
             console.error(err);
-        });
-}
-
-function loadOCRTreeView() {
-    fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) {
-                alert("Failed to load files");
-                return;
-            }
-
-            const treeView = document.getElementById("treeView");
-            treeView.innerHTML = "";
-
-            const ul = document.createElement("ul");
-            renderNode(data.data, ul);
-            treeView.appendChild(ul);
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error loading tree view");
-        });
-}
-function renderNode(node, parentUl) {
-    const li = document.createElement("li");
-
-    if (node.isDirectory) {
-        li.innerHTML = `📁 <strong>${node.name}</strong>`;
-        const childUl = document.createElement("ul");
-
-        node.children.forEach(child => {
-            renderNode(child, childUl);
-        });
-
-        li.appendChild(childUl);
-    } else {
-        li.textContent = `📄 ${node.name}`;
-        li.classList.add("tree-file");
-    }
-
-    parentUl.appendChild(li);
-}
-
-function uploadScreenFolder(fileInputId, nextStepIndex = 1) {
-    const fileInput = document.getElementById(fileInputId);
-
-    if (!fileInput || !fileInput.files.length) {
-        alert("No files selected");
-        return;
-    }
-
-    const formData = new FormData();
-
-    for (let i = 0; i < fileInput.files.length; i++) {
-        const file = fileInput.files[i];
-        formData.append("files", file, file.webkitRelativePath || file.name);
-    }
-
-    fetch('/Home/UploadScreenFolder', {
-        method: 'POST',
-        body: formData
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert("Folder uploaded successfully");
-                goStep(nextStepIndex);
-            } else {
-                alert(data.message || "Upload failed");
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Upload error");
         });
 }

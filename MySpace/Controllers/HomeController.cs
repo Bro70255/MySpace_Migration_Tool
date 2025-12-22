@@ -37,7 +37,15 @@ namespace MySpace.Controllers
         {
             return View();
         }
-        public IActionResult Blue_Print_Project()
+        public IActionResult Upload()
+        {
+            return View();
+        }
+        public IActionResult Review()
+        {
+            return View();
+        }
+        public IActionResult Blueprint()
         {
             return View();
         }
@@ -260,7 +268,7 @@ Explain what this screen does in simple words.
 
 
         [HttpPost]
-        public IActionResult UploadScreenFolder(List<IFormFile> files)
+        public IActionResult UploadScreenFolder([FromForm] List<IFormFile> files)
         {
             if (files == null || files.Count == 0)
                 return Json(new { success = false, message = "No files received" });
@@ -273,20 +281,43 @@ Explain what this screen does in simple words.
 
             foreach (var file in files)
             {
-                // file.FileName contains relative path (folder/file.png)
-                var fullPath = Path.Combine(rootPath, file.FileName);
+                if (file.Length == 0)
+                    continue;
 
-                var directory = Path.GetDirectoryName(fullPath);
+                // Only allow text-based files
+                var extension = Path.GetExtension(file.FileName).ToLower();
+
+                var textExtensions = new[]
+                {
+            ".txt", ".csv", ".log",
+            ".cshtml", ".html",
+            ".js", ".css",
+            ".json", ".xml"
+        };
+
+                if (!textExtensions.Contains(extension))
+                    continue;
+
+                // Create TXT path (DO NOT save original file)
+                var txtRelativePath = Path.ChangeExtension(file.FileName, ".txt");
+                var txtSavePath = Path.Combine(rootPath, txtRelativePath);
+
+                var directory = Path.GetDirectoryName(txtSavePath);
                 if (!Directory.Exists(directory))
                     Directory.CreateDirectory(directory);
 
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
+                // ✅ Convert directly to TXT
+                using var reader = new StreamReader(file.OpenReadStream());
+                var content = reader.ReadToEnd();
+
+                System.IO.File.WriteAllText(txtSavePath, content);
             }
 
-            return Json(new { success = true });
+            return Json(new
+            {
+                success = true,
+                message = $"✅ {files.Count} file(s) converted to TXT"
+            });
         }
 
     }

@@ -1147,11 +1147,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Back_UP_Projects\\MySpace\\MySpace\\MySpace.csproj",
+      "projectUniqueName": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace\\MySpace.csproj",
       "projectName": "MySpace",
-      "projectPath": "F:\\Back_UP_Projects\\MySpace\\MySpace\\MySpace.csproj",
+      "projectPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace\\MySpace.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "F:\\Back_UP_Projects\\MySpace\\MySpace\\obj\\",
+      "outputPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1171,11 +1171,11 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\MySpace_Common.csproj": {
-              "projectPath": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\MySpace_Common.csproj"
+            "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_Common\\MySpace_Common.csproj": {
+              "projectPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_Common\\MySpace_Common.csproj"
             },
-            "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MySpace_DAL.csproj": {
-              "projectPath": "F:\\Back_UP_Projects\\MySpace\\MySpace_DAL\\MySpace_DAL.csproj"
+            "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_DAL\\MySpace_DAL.csproj": {
+              "projectPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_DAL\\MySpace_DAL.csproj"
             }
           }
         }

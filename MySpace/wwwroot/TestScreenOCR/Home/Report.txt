@@ -1,0 +1,47 @@
+@{ ViewBag.Title = "Report"; }
+<script src="~/Scripts/account.js"></script>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/main.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container_rpt">
+        <h2>Report</h2>
+        <div class="form-group">
+            <label>Select Unit:</label>
+            <select id="unit" onchange="Bind_Bank('ddl_bank','unit'); Unit_Report();">
+            </select>
+            <label for="bank">Select Bank<span class="mandatory-symbol">*</span></label>
+            <select id="ddl_bank" onchange="Bank_Report();">
+                <option value="" disabled>Select Bank</option>
+            </select>
+        </div>
+        <div class="table-container">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Unit</th>
+                        <th>Bank</th>
+                        <th>Account Number</th>
+                        <th>Signature1</th>
+                        <th>Signature2</th>
+                        <th>Signature3</th>
+                        <th>Signature4</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        Bind_Unit('unit');
+        Details();
+    });
+</script>

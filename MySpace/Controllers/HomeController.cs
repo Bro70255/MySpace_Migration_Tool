@@ -14,7 +14,6 @@ namespace MySpace.Controllers
     {
         public IActionResult Index()
         {
-            Split_Table_And_Procedures_Functions_And_Save();
             return View();
         }
 
@@ -200,22 +199,6 @@ Explain what this screen does in simple words.
             }
         }
 
-        [HttpGet]
-        public IActionResult ReadOCRFile()
-        {
-            var path = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot",
-                "TestScreenOCR",
-                "Blue_Print_Project.cshtml" // ✅ corrected filename
-            );
-
-            if (!System.IO.File.Exists(path))
-                return NotFound("File not found");
-
-            var content = System.IO.File.ReadAllText(path);
-            return Json(new { success = true, data = content });
-        }
 
         [HttpGet]
         public IActionResult List_out_the_Files_in_Folder_ReadOCRFile()
@@ -281,13 +264,13 @@ Explain what this screen does in simple words.
             string jsPath = Path.Combine(basePath, "js");
             string cssPath = Path.Combine(basePath, "css");
             string controllerPath = Path.Combine(basePath, "Controller");
-            string databasePath = Path.Combine(basePath, "Database"); // ✅ NEW
+            string databasePath = Path.Combine(basePath, "Database");
 
             Directory.CreateDirectory(viewsPath);
             Directory.CreateDirectory(jsPath);
             Directory.CreateDirectory(cssPath);
             Directory.CreateDirectory(controllerPath);
-            Directory.CreateDirectory(databasePath); // ✅ NEW
+            Directory.CreateDirectory(databasePath);
 
             foreach (var file in files)
             {
@@ -320,7 +303,7 @@ Explain what this screen does in simple words.
                         fileType = "cs";
                         break;
 
-                    case ".sql": // ✅ NEW SQL SUPPORT
+                    case ".sql":
                         savePath = Path.Combine(databasePath, originalName + ".txt");
                         fileType = "sql";
                         break;
@@ -339,7 +322,17 @@ Explain what this screen does in simple words.
 
                 await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
-                // ✅ Save DB entry
+                // ================= AUTO EXTRACTION =================
+                if (fileType == "js")
+                    SplitJSFunctions(savePath);
+
+                else if (fileType == "cs")
+                    SplitCSharpMethods(savePath);
+
+                else if (fileType == "sql")
+                    SplitSqlTablesAndProcedures(savePath);
+
+                // ================= SAVE DB ENTRY ===================
                 await _dal.Save_File_Details(
                     safeFileName,
                     savePath,
@@ -350,173 +343,115 @@ Explain what this screen does in simple words.
             return Json(new
             {
                 success = true,
-                message = "Files converted and saved as .txt successfully"
+                message = "Files uploaded, converted and extracted successfully"
             });
         }
 
-        [HttpGet]
-        public IActionResult Split_JS_Functions_And_Save()
+        // =========================================================
+        // JS FUNCTION SPLITTER
+        // =========================================================
+        private void SplitJSFunctions(string sourcePath)
         {
-            var sourcePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "js", "account.txt"
-            );
-
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot", "TestScreenOCR", "js", "jsfunctions"
             );
 
-            if (!System.IO.File.Exists(sourcePath))
-                return NotFound("Source JS file not found.");
-
             Directory.CreateDirectory(outputDir);
 
             var content = System.IO.File.ReadAllText(sourcePath);
 
-            // Step 1: find function declarations ONLY
-            var functionHeaderRegex = new Regex(
-                @"function\s+([a-zA-Z0-9_]+)\s*\(",
-                RegexOptions.Multiline
-            );
-
-            var matches = functionHeaderRegex.Matches(content);
-
-            int extractedCount = 0;
+            var regex = new Regex(@"function\s+([a-zA-Z0-9_]+)\s*\(", RegexOptions.Multiline);
+            var matches = regex.Matches(content);
 
             foreach (Match match in matches)
             {
-                string functionName = match.Groups[1].Value;
-                int startIndex = match.Index;
+                string name = match.Groups[1].Value;
+                int start = match.Index;
 
-                // Find first opening brace '{'
-                int braceStart = content.IndexOf('{', startIndex);
+                int braceStart = content.IndexOf('{', start);
                 if (braceStart == -1) continue;
 
-                int braceCount = 0;
-                int endIndex = braceStart;
+                int count = 0;
+                int end = braceStart;
 
-                // Step 2: Manual brace matching
                 for (int i = braceStart; i < content.Length; i++)
                 {
-                    if (content[i] == '{') braceCount++;
-                    else if (content[i] == '}') braceCount--;
+                    if (content[i] == '{') count++;
+                    else if (content[i] == '}') count--;
 
-                    if (braceCount == 0)
+                    if (count == 0)
                     {
-                        endIndex = i;
+                        end = i;
                         break;
                     }
                 }
 
-                if (braceCount != 0) continue; // safety
+                if (count != 0) continue;
 
-                string fullFunction = content.Substring(
-                    startIndex,
-                    endIndex - startIndex + 1
-                );
-
-                string filePath = Path.Combine(outputDir, $"{functionName}.txt");
-                System.IO.File.WriteAllText(filePath, fullFunction);
-
-                extractedCount++;
+                string body = content.Substring(start, end - start + 1);
+                System.IO.File.WriteAllText(Path.Combine(outputDir, name + ".txt"), body);
             }
-
-            return Ok(new
-            {
-                success = true,
-                functionsExtracted = extractedCount
-            });
         }
 
-        [HttpGet]
-        public IActionResult Split_CSharp_Functions_And_Save()
+        // =========================================================
+        // C# METHOD SPLITTER
+        // =========================================================
+        private void SplitCSharpMethods(string sourcePath)
         {
-            var sourcePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "Controller", "HomeController.txt"
-            );
-
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot", "TestScreenOCR", "Controller", "Controllerfunctions"
             );
 
-            if (!System.IO.File.Exists(sourcePath))
-                return NotFound("Source C# file not found.");
-
             Directory.CreateDirectory(outputDir);
 
             var content = System.IO.File.ReadAllText(sourcePath);
 
-            // ✅ C# method signature matcher
-            var methodRegex = new Regex(
-                @"(public|private|protected|internal)\s+" +     // access modifier
-                @"[\w\<\>\[\]]+\s+" +                            // return type
-                @"([a-zA-Z0-9_]+)\s*" +                           // method name
-                @"\([^\)]*\)\s*" +                               // parameters
-                @"\{",
+            var regex = new Regex(
+                @"(public|private|protected|internal)\s+" +
+                @"[\w\<\>\[\]]+\s+" +
+                @"([a-zA-Z0-9_]+)\s*\([^\)]*\)\s*\{",
                 RegexOptions.Multiline
             );
 
-            var matches = methodRegex.Matches(content);
-            int extractedCount = 0;
+            var matches = regex.Matches(content);
 
             foreach (Match match in matches)
             {
-                string methodName = match.Groups[2].Value;
-                int startIndex = match.Index;
+                string name = match.Groups[2].Value;
+                int start = match.Index;
 
-                int braceStart = content.IndexOf('{', startIndex);
+                int braceStart = content.IndexOf('{', start);
                 if (braceStart == -1) continue;
 
-                int braceCount = 0;
-                int endIndex = braceStart;
+                int count = 0;
+                int end = braceStart;
 
-                // ✅ Proper brace matching
                 for (int i = braceStart; i < content.Length; i++)
                 {
-                    if (content[i] == '{') braceCount++;
-                    else if (content[i] == '}') braceCount--;
+                    if (content[i] == '{') count++;
+                    else if (content[i] == '}') count--;
 
-                    if (braceCount == 0)
+                    if (count == 0)
                     {
-                        endIndex = i;
+                        end = i;
                         break;
                     }
                 }
 
-                if (braceCount != 0) continue;
+                if (count != 0) continue;
 
-                string fullMethod = content.Substring(
-                    startIndex,
-                    endIndex - startIndex + 1
-                );
-
-                string filePath = Path.Combine(outputDir, $"{methodName}.txt");
-                System.IO.File.WriteAllText(filePath, fullMethod);
-
-                extractedCount++;
+                string body = content.Substring(start, end - start + 1);
+                System.IO.File.WriteAllText(Path.Combine(outputDir, name + ".txt"), body);
             }
-
-            return Ok(new
-            {
-                success = true,
-                methodsExtracted = extractedCount
-            });
         }
 
-        [HttpGet]
-        public IActionResult Split_Table_And_Procedures_Functions_And_Save()
+        // =========================================================
+        // SQL TABLE & PROCEDURE SPLITTER
+        // =========================================================
+        private void SplitSqlTablesAndProcedures(string sourcePath)
         {
-            var sourcePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "Database", "SQLQuery12.txt"
-            );
-
-            if (!System.IO.File.Exists(sourcePath))
-                return NotFound("Source SQL file not found.");
-
             string baseDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot", "TestScreenOCR", "Database"
@@ -530,82 +465,60 @@ Explain what this screen does in simple words.
 
             string sql = System.IO.File.ReadAllText(sourcePath);
 
-            // ✅ Split by GO (SQL Server batches)
             var batches = Regex.Split(
                 sql,
                 @"^\s*GO\s*$",
                 RegexOptions.Multiline | RegexOptions.IgnoreCase
             );
 
-            int tableCount = 0;
-            int procCount = 0;
-
             foreach (var batch in batches)
             {
                 string block = batch.Trim();
                 if (string.IsNullOrWhiteSpace(block)) continue;
 
-                // =========================
-                // TABLE EXTRACTION
-                // =========================
                 if (Regex.IsMatch(block, @"^CREATE\s+TABLE", RegexOptions.IgnoreCase))
                 {
-                    var nameMatch = Regex.Match(
+                    var m = Regex.Match(
                         block,
                         @"CREATE\s+TABLE\s+(\[[^\]]+\]\.\[[^\]]+\])",
                         RegexOptions.IgnoreCase
                     );
 
-                    if (nameMatch.Success)
+                    if (m.Success)
                     {
-                        string tableName = nameMatch.Groups[1].Value
+                        string name = m.Groups[1].Value
                             .Replace("[", "")
                             .Replace("]", "")
                             .Replace(".", "_");
 
                         System.IO.File.WriteAllText(
-                            Path.Combine(tableDir, tableName + ".txt"),
+                            Path.Combine(tableDir, name + ".txt"),
                             block
                         );
-
-                        tableCount++;
                     }
                 }
-
-                // =========================
-                // PROCEDURE EXTRACTION
-                // =========================
                 else if (Regex.IsMatch(block, @"^(CREATE|ALTER)\s+PROC", RegexOptions.IgnoreCase))
                 {
-                    var nameMatch = Regex.Match(
+                    var m = Regex.Match(
                         block,
                         @"(CREATE|ALTER)\s+PROC(?:EDURE)?\s+(\[[^\]]+\]\.\[[^\]]+\])",
                         RegexOptions.IgnoreCase
                     );
 
-                    if (nameMatch.Success)
+                    if (m.Success)
                     {
-                        string procName = nameMatch.Groups[2].Value
+                        string name = m.Groups[2].Value
                             .Replace("[", "")
                             .Replace("]", "")
                             .Replace(".", "_");
 
                         System.IO.File.WriteAllText(
-                            Path.Combine(procDir, procName + ".txt"),
+                            Path.Combine(procDir, name + ".txt"),
                             block
                         );
-
-                        procCount++;
                     }
                 }
             }
-
-            return Ok(new
-            {
-                success = true,
-                tablesExtracted = tableCount,
-                proceduresExtracted = procCount
-            });
         }
     }
 

@@ -166,22 +166,54 @@ function loadOCRTreeView() {
             alert("Error loading tree view");
         });
 }
-
 function renderNode(node, parentUl) {
     const li = document.createElement("li");
+    li.classList.add("tree-item");
 
     if (node.isDirectory) {
-        li.innerHTML = `📁 <strong>${node.name}</strong>`;
-        const childUl = document.createElement("ul");
+        const header = document.createElement("div");
+        header.classList.add("tree-folder");
+
+        const caret = document.createElement("span");
+        caret.classList.add("tree-caret", "closed");
+
+        const icon = document.createElement("span");
+        icon.classList.add("tree-folder-icon");
+        icon.textContent = "📁";
+
+        const name = document.createElement("span");
+        name.classList.add("tree-name");
+        name.textContent = node.name;
+
+        header.appendChild(caret);
+        header.appendChild(icon);
+        header.appendChild(name);
+        li.appendChild(header);
+
+        const childrenUl = document.createElement("ul");
+        childrenUl.classList.add("tree-children");
+        childrenUl.style.display = "none";
 
         node.children.forEach(child => {
-            renderNode(child, childUl);
+            renderNode(child, childrenUl);
         });
 
-        li.appendChild(childUl);
+        header.addEventListener("click", () => {
+            const open = childrenUl.style.display === "block";
+            childrenUl.style.display = open ? "none" : "block";
+
+            caret.classList.toggle("open", !open);
+            caret.classList.toggle("closed", open);
+            icon.textContent = open ? "📁" : "📂";
+        });
+
+        li.appendChild(childrenUl);
     } else {
-        li.textContent = `📄 ${node.name}`;
         li.classList.add("tree-file");
+        li.innerHTML = `
+            <span class="tree-file-icon">📄</span>
+            <span class="tree-name">${node.name}</span>
+        `;
     }
 
     parentUl.appendChild(li);
@@ -215,7 +247,6 @@ function uploadFiles() {
             uploadInfo.innerHTML += `<div style="color:red;margin-top:10px;">❌ Upload failed</div>`;
         });
 }
-
 
 function Sent_Data_To_AI() {
 
@@ -262,169 +293,5 @@ function Sent_Data_To_AI() {
         });
 }
 
-function Initialize_OCR_From_File() {
 
-    fetch('/Home/ReadOCRFile')
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById("ScreenCode").value = data.data;
-            } else {
-                alert("Failed to read file");
-            }
-        })
-        .catch(err => {
-            console.error(err);
-        });
-}
-
-//////////////////////////////////////////////////////////////////
-let __bpLinks = []; // { from: HTMLElement, to: HTMLElement }
-
-function loadBlueprint() {
-    fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
-        .then(r => r.json())
-        .then(res => {
-            if (!res.success) return alert("Failed");
-
-            const project = Array.isArray(res.data) ? res.data[0] : res.data;
-
-            document.getElementById("projectTitle").innerText =
-                project.name || project.fileName || "PROJECT";
-
-            renderTree(project.children || []);
-
-            const stage = document.getElementById("stage");
-            stage.addEventListener("scroll", () => window.__bpDrawWires?.());
-            window.addEventListener("resize", () => window.__bpDrawWires?.());
-        });
-}
-
-function renderTree(groups) {
-    const tree = document.getElementById("tree");
-    tree.innerHTML = "";
-    __bpLinks = [];
-
-    const projectEl = document.getElementById("projectTitle");
-
-    groups.forEach((g, i) => {
-        const row = document.createElement("div");
-        row.className = "bp-row";
-
-        // GROUP BOX
-        const groupEl = document.createElement("div");
-        groupEl.className = "bp-group";
-        groupEl.innerHTML = `<span>SL.${i + 1}</span> ${g.name || g.fileName}`;
-
-        // SUB TREE CONTAINER
-        const subTree = document.createElement("div");
-        subTree.className = "bp-sub-tree";
-
-        row.appendChild(groupEl);
-        row.appendChild(subTree);
-        tree.appendChild(row);
-
-        // Link: PROJECT -> GROUP
-        __bpLinks.push({ from: projectEl, to: groupEl });
-
-        // Render subnodes recursively and link GROUP -> first-level nodes
-        renderSubNodes(g.children || [], subTree, 0, groupEl);
-    });
-
-    requestAnimationFrame(drawWires);
-}
-
-/**
- * nodes: current node list
- * container: where to render
- * level: depth
- * parentEl: element to connect FROM (group or sub item)
- */
-function renderSubNodes(nodes, container, level, parentEl) {
-    nodes.forEach((n, idx) => {
-        const item = document.createElement("div");
-        item.className = "bp-sub-item";
-        item.style.marginLeft = (level * 20) + "px";
-        item.innerText = `${idx + 1}. ${n.name || n.fileName}`;
-
-        container.appendChild(item);
-
-        // Link: parent -> this item
-        __bpLinks.push({ from: parentEl, to: item });
-
-        // If children exist, render and link this item -> children
-        if (n.children && n.children.length > 0) {
-            renderSubNodes(n.children, container, level + 1, item);
-        }
-    });
-}
-
-/* =========================
-   WIRES (PROJECT→GROUP→SUB→SUBSUB)
-========================= */
-
-function drawWires() {
-    const svg = document.getElementById("bpWires");
-    const stage = document.getElementById("stage");
-
-    svg.innerHTML = "";
-
-    svg.setAttribute("width", stage.scrollWidth);
-    svg.setAttribute("height", stage.scrollHeight);
-    svg.style.width = stage.scrollWidth + "px";
-    svg.style.height = stage.scrollHeight + "px";
-
-    __bpLinks.forEach(link => {
-        if (!link.from || !link.to) return;
-
-        const from = anchorRight(link.from, stage);
-        const to = anchorLeft(link.to, stage);
-
-        // Mid X (signal elbow)
-        const midX = from.x + Math.max(40, (to.x - from.x) / 2);
-
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-
-        /* STRAIGHT SIGNAL PATH */
-        path.setAttribute(
-            "d",
-            `M ${from.x} ${from.y}
-             L ${midX} ${from.y}
-             L ${midX} ${to.y}
-             L ${to.x} ${to.y}`
-        );
-
-        path.setAttribute("stroke", "#38bdf8");
-        path.setAttribute("stroke-width", "2");
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke-linejoin", "round");
-        path.setAttribute("stroke-linecap", "round");
-
-        svg.appendChild(path);
-    });
-}
-
-
-function anchorRight(el, stage) {
-    const r = el.getBoundingClientRect();
-    const s = stage.getBoundingClientRect();
-
-    return {
-        x: r.left - s.left + stage.scrollLeft + r.width,
-        y: r.top - s.top + stage.scrollTop + r.height / 2
-    };
-}
-
-function anchorLeft(el, stage) {
-    const r = el.getBoundingClientRect();
-    const s = stage.getBoundingClientRect();
-
-    return {
-        x: r.left - s.left + stage.scrollLeft,
-        y: r.top - s.top + r.height / 2 + stage.scrollTop
-    };
-}
-
-
-window.__bpDrawWires = drawWires;
 

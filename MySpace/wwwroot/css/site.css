@@ -120,166 +120,96 @@ html, body {
         box-shadow: 0 8px 20px rgba(79,140,255,0.25);
     }
 
+/* =========================================================
+   TREE VIEW (MODERN IDE STYLE)
+========================================================= */
 
-
-
-/* ===============================
-   GLOBAL
-=============================== */
-
-* {
-    box-sizing: border-box;
+.tree-view {
+    font-size: 14.5px;
+    line-height: 1.6;
 }
 
-body {
-    margin: 0;
-    background: #020617;
-    font-family: Inter, Arial, sans-serif;
-    color: #e5e7eb;
-}
-
-/* ===============================
-   CANVAS
-=============================== */
-
-.bp-wrap {
-    height: 100vh;
-    padding: 16px;
-}
-
-.bp-canvas {
-    height: 100%;
-    border-radius: 16px;
-    background: #020617;
-    border: 1px solid rgba(255,255,255,0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* ===============================
-   PROJECT
-=============================== */
-
-.bp-project {
-    padding: 16px 22px;
-    font-size: 22px;
-    font-weight: 800;
-    color: #7dd3fc;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    white-space: nowrap;
-}
-
-/* ===============================
-   STAGE
-=============================== */
-
-.bp-stage {
-    position: relative;
-    flex: 1;
-    overflow: auto;
-    padding: 30px 40px;
-}
-
-/* SVG WIRES */
-.bp-wires {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* ===============================
-   TREE STRUCTURE
-=============================== */
-
-.bp-tree {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    z-index: 2;
-}
-
-/* EACH GROUP ROW */
-.bp-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 70px;
-}
-
-/* ===============================
-   GROUP NODE
-=============================== */
-
-.bp-group {
-    display: inline-block; /* anchor stability */
-    min-width: 240px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    background: rgba(8,24,44,0.95);
-    border: 1px solid rgba(56,189,248,0.6);
-    color: #f1f5f9;
-    font-weight: 700;
-    line-height: 1.4;
-    white-space: nowrap;
-}
-
-/* ===============================
-   SUB TREE
-=============================== */
-
-.bp-sub-tree {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-width: 280px;
-}
-
-/* SUB NODE */
-.bp-sub-item {
-    display: inline-block; /* anchor stability */
-    padding: 7px 12px;
-    border-radius: 10px;
-    background: rgba(2,6,23,0.95);
-    border: 1px solid rgba(148,163,184,0.35);
-    color: #e5e7eb;
-    font-size: 13px;
-    white-space: nowrap;
-}
-
-/* ===============================
-   DEPTH VISUAL CLARITY
-=============================== */
-
-.bp-sub-item {
-    position: relative;
-}
-
-    .bp-sub-item::before {
-        content: "";
-        position: absolute;
-        left: -10px;
-        top: 50%;
-        width: 6px;
-        height: 1px;
-        background: rgba(148,163,184,0.5);
+    .tree-view ul {
+        list-style: none;
+        padding-left: 20px;
+        margin: 4px 0;
+        position: relative;
     }
 
-/* ===============================
-   SCROLLBAR (OPTIONAL NICE)
-=============================== */
+        /* vertical guide line */
+        .tree-view ul::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 8px;
+            bottom: 0;
+            border-left: 1px dashed rgba(255,255,255,0.08);
+        }
 
-.bp-stage::-webkit-scrollbar {
+.tree-item {
+    margin: 2px 0;
+}
+
+/* Folder / File row */
+.tree-folder,
+.tree-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+    .tree-folder:hover,
+    .tree-file:hover {
+        background: rgba(79,140,255,0.12);
+    }
+
+/* Caret */
+.tree-caret {
     width: 10px;
     height: 10px;
+    display: inline-block;
+    border-right: 2px solid var(--primary);
+    border-bottom: 2px solid var(--primary);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+    margin-right: 4px;
 }
 
-.bp-stage::-webkit-scrollbar-thumb {
-    background: rgba(56,189,248,0.3);
-    border-radius: 10px;
+    .tree-caret.open {
+        transform: rotate(45deg);
+    }
+
+    .tree-caret.closed {
+        transform: rotate(-45deg);
+    }
+
+/* Icons */
+.tree-folder-icon {
+    font-size: 16px;
 }
 
-.bp-stage::-webkit-scrollbar-track {
-    background: rgba(2,6,23,0.6);
+.tree-file-icon {
+    opacity: 0.7;
 }
+
+/* Name */
+.tree-name {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+/* Files */
+.tree-file {
+    padding-left: 30px;
+    color: var(--text-muted);
+    cursor: default;
+}
+
+    .tree-file:hover {
+        background: rgba(255,255,255,0.04);
+    }
+

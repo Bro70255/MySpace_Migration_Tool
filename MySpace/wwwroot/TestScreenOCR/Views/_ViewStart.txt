@@ -1,0 +1,6 @@
+// ORIGINAL FILE: _ViewStart.cshtml
+// CONVERTED ON: 25-12-2025 19:10:52
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}

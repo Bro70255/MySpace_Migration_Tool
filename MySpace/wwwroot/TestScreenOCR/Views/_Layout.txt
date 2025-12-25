@@ -1,0 +1,154 @@
+// ORIGINAL FILE: _Layout.cshtml
+// CONVERTED ON: 25-12-2025 19:10:53
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="~/Scripts/account.js"></script>
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>*@
+
+    <div>
+
+        @*<nav>
+                @if (Convert.ToInt32(Session["UserType"]) == 0)
+                {
+                    <a href="Report">Report</a>
+
+                }
+                @if (Convert.ToInt32(Session["UserType"]) == 1)
+                {
+                    <a href="Bank_Account_Management">Bank Account Management</a>
+                    <a href="Report">Report</a>
+                }
+            </nav>*@
+
+        <section class="navigation">
+            <div class="nav-container">
+                <div class="brand">
+                    @*<a href="#!">LOGO</a>*@
+                </div>
+                <nav>
+                    <div class="nav-mobile">
+                        <a id="nav-toggle" href="#!"><span></span></a>
+                    </div>
+                    <ul class="nav-list">
+                        <li><a href="Dashboard">Home</a></li>
+                        @if (Convert.ToInt32(Session["UserType"]) == 1)
+                        {
+                            <li><a href="Bank_Account_Management">Bank Account Management</a></li>
+                            <li>
+                                <a href="#!">Services</a>
+                                <ul class="nav-dropdown">
+                                    <li><a href="Report">Report</a></li>
+
+                                </ul>
+                            </li>
+                        }
+                        @if (Convert.ToInt32(Session["UserType"]) == 0)
+                        {
+                            <li>
+                                <a href="#!">Services</a>
+                                <ul class="nav-dropdown">
+                                    <li><a href="Report">Report</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (Convert.ToInt32(Session["UserType"]) == 2)
+                        {
+                            <li>
+                                <a href="#!">Services</a>
+                                <ul class="nav-dropdown">
+
+                                    <li><a href="Bank_Account_Management">Bank Account Management</a></li>
+                                    <li><a href="Bank_Account_Approval">Bank Account Approval</a></li>
+                                    <li><a href="Report">Report</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (Convert.ToInt32(Session["UserType"]) == 3)
+                        {
+                            <li>
+                                <a href="#!">Services</a>
+                                <ul class="nav-dropdown">
+                                    <li><a href="Bank_Account_Approval">Bank Account Approval</a></li>
+                                    <li><a href="Report">Report</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <div class="image_container">
+                        <a href="/Home/Index">
+                            <img src="~/Image/logout (1).png" class="logout_image">
+                        </a>
+                    </div>
+                </nav>
+               
+            </div>
+        </section>
+
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+
+        @*<footer>
+                 <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>*@
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+<script>
+    (function ($) {
+        $(function () {
+           
+            $('nav ul li a:not(:only-child)').click(function (e) {
+                $(this).siblings('.nav-dropdown').toggle();             
+                $('.nav-dropdown').not($(this).siblings()).hide();
+                e.stopPropagation();
+            });     
+            $('html').click(function () {
+                $('.nav-dropdown').hide();
+            });         
+            $('#nav-toggle').click(function () {
+                $('nav ul').slideToggle();
+            });         
+            $('#nav-toggle').on('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+    })(jQuery);
+</script>

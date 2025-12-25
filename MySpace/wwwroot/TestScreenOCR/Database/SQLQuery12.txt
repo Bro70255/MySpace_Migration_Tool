@@ -1,5 +1,5 @@
 // ORIGINAL FILE: SQLQuery12.sql
-// CONVERTED ON: 25-12-2025 17:09:38
+// CONVERTED ON: 25-12-2025 19:15:45
 
 USE [Authorizedsignatory_Live]
 GO

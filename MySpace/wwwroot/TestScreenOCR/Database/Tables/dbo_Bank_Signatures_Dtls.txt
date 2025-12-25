@@ -1,0 +1,16 @@
+CREATE TABLE [dbo].[Bank_Signatures_Dtls](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UNIT] [varchar](200) NULL,
+	[BANK] [varchar](100) NULL,
+	[ACCOUNT_NUMBER] [numeric](18, 0) NULL,
+	[SIGNATURE1] [varchar](200) NULL,
+	[SIGNATURE2] [varchar](200) NULL,
+	[SIGNATURE3] [varchar](200) NULL,
+	[SIGNATURE4] [varchar](200) NULL,
+	[Edited_by] [int] NULL,
+	[Status] [int] NULL,
+	[Approved_by] [int] NULL,
+	[Approved_datetime] [datetime] NULL,
+	[Created_by] [int] NULL,
+	[Created_datetime] [datetime] NULL
+) ON [PRIMARY]

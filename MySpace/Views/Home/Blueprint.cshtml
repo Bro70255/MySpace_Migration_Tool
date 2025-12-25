@@ -2,11 +2,36 @@
     ViewData["Title"] = "Blueprint";
 }
 
-<link href="~/css/site.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Blueprint</title>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js/site.js?v=@DateTime.Now.Ticks"></script>
-<h3>Blueprint Workspace</h3>
-<div class="blueprint-canvas">
-    Blueprint output appears here
-</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="~/css/blueprint.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+</head>
+
+<body>
+
+    <div class="bp-wrap">
+        <div class="bp-canvas">
+
+            <div class="bp-project" id="projectTitle">PROJECT</div>
+
+            <div class="bp-stage" id="stage">
+                <svg class="bp-wires" id="bpWires"></svg>
+                <div class="bp-tree" id="tree"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/js/blueprint.js?v=@DateTime.Now.Ticks"></script>
+
+    <script>
+        $(document).ready(loadBlueprint);
+    </script>
+
+</body>
+</html>

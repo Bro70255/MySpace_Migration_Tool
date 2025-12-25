@@ -1,0 +1,63 @@
+CREATE PROCEDURE [dbo].[Insert_Bank_Correction_dtls]
+(
+    @correction_id int,
+    @acc_number varchar(100),
+    @Signature1 varchar(100),
+    @Signature2 varchar(100),
+    @Signature3 varchar(100),
+    @Signature4 varchar(100),
+    @Emp_Code int,
+	@Crrction_edit int
+)
+AS
+-----------------------------------------------------------------------------
+-- created by Aparna for Insert the Bank Correction Dtls on 8-10-2024
+-----------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+    -- First insert into Bank_Correction_dtls table
+    INSERT INTO [dbo].[Bank_Correction_dtls]
+    (
+        [Correction_Id],
+        [ACCOUNT_NUMBER],
+        [SIGNATURE1],
+        [SIGNATURE2],
+        [SIGNATURE3],
+        [SIGNATURE4],
+        [Edited_by],
+        [Created_datetime],
+        [Status]
+    )
+    VALUES
+    (
+       @correction_id,
+       @acc_number,
+       @Signature1,
+       @Signature2,
+       @Signature3,
+       @Signature4,
+       @Emp_Code,
+       CONVERT(DATE, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')),
+	   @Crrction_edit
+    );
+
+    -- Second insert into Approval_Flow_Table
+    INSERT INTO [dbo].[Approval_Flow_Table]
+    (
+        [ID],
+        [Emp_code],
+        [Created_datetime],
+        [Status]
+    )
+    VALUES
+    (
+        @correction_id, 
+        @Emp_Code, 
+        CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')), 
+        2
+    );
+update [dbo].[Bank_Signatures_Dtls]
+set [Status]=@Crrction_edit
+where [ID] = @correction_id
+END

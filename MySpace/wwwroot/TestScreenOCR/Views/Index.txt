@@ -1,0 +1,28 @@
+// ORIGINAL FILE: Index.cshtml
+// CONVERTED ON: 24-12-2025 16:12:37
+
+@{
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+<link href="~/Content/main.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="~/Scripts/account.js"></script>
+
+<div class="container1">
+    <div class="login-section">
+        <h2>Login</h2>
+        <div class="form">
+            <input type="text" id="usrname" placeholder="Username">
+            <input type="password" id="paswrd" placeholder="Password">
+            <div class="log_btn">
+                <button id="submit" class="login_button" onclick="Login();">LOGIN</button>
+            </div>
+        </div>
+    </div>
+    <div class="welcome-section">
+        <h1>Welcome Back.</h1>
+        @*<p>Lorem factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium.</p>*@
+    </div>
+</div>

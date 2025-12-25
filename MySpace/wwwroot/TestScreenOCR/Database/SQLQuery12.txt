@@ -1,0 +1,712 @@
+// ORIGINAL FILE: SQLQuery12.sql
+// CONVERTED ON: 25-12-2025 17:09:38
+
+USE [Authorizedsignatory_Live]
+GO
+/****** Object:  Table [dbo].[Approval_Flow_Table]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Approval_Flow_Table](
+	[Approval_id] [int] IDENTITY(1,1) NOT NULL,
+	[ID] [int] NULL,
+	[Emp_code] [int] NULL,
+	[Created_datetime] [datetime] NULL,
+	[Status] [int] NULL,
+ CONSTRAINT [PK_Approval_Flow_Table] PRIMARY KEY CLUSTERED 
+(
+	[Approval_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Bank_Correction_dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Bank_Correction_dtls](
+	[Correction_Id] [int] NULL,
+	[ACCOUNT_NUMBER] [numeric](18, 0) NULL,
+	[SIGNATURE1] [varchar](200) NULL,
+	[SIGNATURE2] [varchar](200) NULL,
+	[SIGNATURE3] [varchar](200) NULL,
+	[SIGNATURE4] [varchar](200) NULL,
+	[Edited_by] [int] NULL,
+	[Created_datetime] [datetime] NULL,
+	[Status] [int] NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Bank_Signatures_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Bank_Signatures_Dtls](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UNIT] [varchar](200) NULL,
+	[BANK] [varchar](100) NULL,
+	[ACCOUNT_NUMBER] [numeric](18, 0) NULL,
+	[SIGNATURE1] [varchar](200) NULL,
+	[SIGNATURE2] [varchar](200) NULL,
+	[SIGNATURE3] [varchar](200) NULL,
+	[SIGNATURE4] [varchar](200) NULL,
+	[Edited_by] [int] NULL,
+	[Status] [int] NULL,
+	[Approved_by] [int] NULL,
+	[Approved_datetime] [datetime] NULL,
+	[Created_by] [int] NULL,
+	[Created_datetime] [datetime] NULL
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Login_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Login_Dtls](
+	[Login_id] [int] IDENTITY(1,1) NOT NULL,
+	[Employee_Code] [int] NULL,
+	[Name] [varchar](100) NULL,
+	[User_type] [int] NULL,
+	[Password] [varchar](50) NULL,
+ CONSTRAINT [PK_Login_Dtls] PRIMARY KEY CLUSTERED 
+(
+	[Login_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[mfBranchMaster]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[mfBranchMaster](
+	[Branch_ID] [int] IDENTITY(1,1) NOT NULL,
+	[BranchName] [varchar](max) NULL,
+ CONSTRAINT [PK_mfBranchMaster] PRIMARY KEY CLUSTERED 
+(
+	[Branch_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User_Type_Indication]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User_Type_Indication](
+	[User_Type_Id] [int] NULL,
+	[User_Type] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Bank_Signatures_Dtls] ADD  CONSTRAINT [DF_Bank_Signatures_Dtls_Status]  DEFAULT ((0)) FOR [Status]
+GO
+/****** Object:  StoredProcedure [dbo].[Add_New_Bank]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Add_New_Bank](
+@unit int,
+@bank varchar(100) 
+
+)
+as 
+begin 
+set nocount on
+-------------------------------------------------------------------
+
+-- created by APARNA on 20-09-2024 for Add new Unit-------------
+
+--------------------------------------------------------------------
+insert into [dbo].[Bank_Signatures_Dtls]
+(
+[UNIT],
+[BANK]
+)
+values
+(
+@unit,
+@bank
+)
+end;
+GO
+/****** Object:  StoredProcedure [dbo].[Add_New_Signature]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Add_New_Signature]
+(
+    @created_by int,
+    @signature varchar(100),
+    @signatureName varchar(100),
+    @unitName int,  -- Assuming UNIT is of type int
+    @bankName varchar(100),
+    @accountnum varchar(100)
+)
+AS 
+BEGIN 
+    SET NOCOUNT ON;
+
+    -- Check if the record for the specific unit and bank exists
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM [dbo].[Bank_Signatures_Dtls]
+        WHERE [UNIT] = @unitName AND [BANK] = @bankName
+    )
+    BEGIN
+        -- Insert a new record with the provided details, including Created_by and Created_datetime
+        INSERT INTO [dbo].[Bank_Signatures_Dtls] 
+        (
+            [UNIT], 
+            [BANK], 
+            [ACCOUNT_NUMBER], 
+            [SIGNATURE1], 
+            [SIGNATURE2], 
+            [SIGNATURE3], 
+            [SIGNATURE4], 
+            [Created_by],  -- Insert Created_by
+            [Created_datetime]  -- Insert Created_datetime
+        )
+        VALUES 
+        (
+            @unitName, 
+            @bankName, 
+            @accountnum, 
+            CASE WHEN @signature = 'Signature1' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature2' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature3' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature4' THEN @signatureName ELSE NULL END,
+            @created_by,  -- Insert the created_by value
+            CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')) -- Insert current timestamp
+        );
+    END
+    ELSE
+    BEGIN
+        -- Update the corresponding signature, account number, and created_by, created_datetime if the record exists
+        UPDATE [dbo].[Bank_Signatures_Dtls]
+        SET 
+            [ACCOUNT_NUMBER] = @accountnum,
+            [SIGNATURE1] = CASE WHEN @signature = 'Signature1' THEN @signatureName ELSE [SIGNATURE1] END,
+            [SIGNATURE2] = CASE WHEN @signature = 'Signature2' THEN @signatureName ELSE [SIGNATURE2] END,
+            [SIGNATURE3] = CASE WHEN @signature = 'Signature3' THEN @signatureName ELSE [SIGNATURE3] END,
+            [SIGNATURE4] = CASE WHEN @signature = 'Signature4' THEN @signatureName ELSE [SIGNATURE4] END,
+            [Created_by] = @created_by,  -- Always update the created_by field
+            [Created_datetime] = CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30'))  -- Always update the created_datetime field
+        WHERE [UNIT] = @unitName AND [BANK] = @bankName;
+    END
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[Add_New_Unit]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Add_New_Unit](
+
+@unit varchar(100) 
+
+)
+as 
+begin 
+set nocount on
+-------------------------------------------------------------------
+
+-- created by APARNA on 20-09-2024 for Add new Unit-------------
+
+--------------------------------------------------------------------
+insert into [dbo].[mfBranchMaster]
+(
+[BranchName]
+)
+values
+(
+@unit
+)
+end;
+GO
+/****** Object:  StoredProcedure [dbo].[Check_Login]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Check_Login]
+    @employeeCode INT,
+    @password VARCHAR(50)
+AS
+------------------------------------------------------
+--CREATED BY APARNA ON 23.09.2024--For login process
+------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT *
+        FROM [dbo].[Login_dtls]
+        WHERE[Employee_Code] = @employeeCode
+         
+    )
+    BEGIN
+        SELECT  [login_id]
+		,1 AS RESULT,Employee_Code,[User_type]
+		  FROM [dbo].[Login_dtls]
+        WHERE  [Employee_Code]= @employeeCode
+          
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS RESULT
+		       
+    END
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[Checking_Duplicate_Bank]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Checking_Duplicate_Bank]
+(     
+	@bank varchar(100)
+)
+AS
+--------------------------------------------------------------------------
+--Created by APARNA on 20.09.2024  -To Check DUPLICATE IN  Unit
+--------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT [BANK] 
+		FROM [dbo].[Bank_Signatures_Dtls]
+        WHERE [BANK] = @bank
+    )
+    BEGIN
+        SELECT 1 AS RESULT
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS RESULT
+    END
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Checking_Duplicate_Unit]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Checking_Duplicate_Unit]
+(     
+	@unit varchar(100)
+)
+AS
+--------------------------------------------------------------------------
+--Created by APARNA on 20.09.2024  -To Check DUPLICATE IN  Unit
+--------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT  [UNIT]
+		FROM [dbo].[Bank_Signatures_Dtls]
+        WHERE  [UNIT]= @unit
+    )
+    BEGIN
+        SELECT 1 AS RESULT
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS RESULT
+    END
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Approved_dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Approved_dtls](
+@usertype int
+)
+-----------------------------------------------------------------------------------------------------
+-- Created by Aparna on 24.09.2024 for get approved details --
+-----------------------------------------------------------------------------------------------------
+AS
+BEGIN
+    SET NOCOUNT ON;
+	if(@usertype=2)
+	BEGIN
+    SELECT 
+	    BSD.ID,
+        BM.[BranchName] AS UNIT,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BCD.SIGNATURE1, '') AS [SIGNATURE1],
+        ISNULL(BCD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BCD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BCD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls] BSD
+	LEFT JOIN [dbo].[Bank_Correction_dtls] BCD ON BCD.[Correction_Id]=BSD.ID
+	LEFT JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE (BSD.[Status] = 0 AND BSD.[Created_by]in(151410,151460)) OR (BSD.Status=0 AND BCD.Edited_by IN (151410,151460))
+
+	UNION
+
+    SELECT 
+	    BSD.ID,
+        BM.[BranchName] AS UNIT,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BSD.SIGNATURE1, '') AS [SIGNATURE1],
+        ISNULL(BSD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BSD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BSD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls] BSD
+	LEFT JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE (BSD.[Status] = 0 AND BSD.[Created_by]in(151410,151460)) OR (BSD.Status=0)
+
+
+     END
+	 ELSE IF(@usertype=3)
+	 BEGIN
+	 SELECT 
+	    BSD.ID,
+        BM.[BranchName] AS UNIT,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BCD.SIGNATURE1, '') AS [SIGNATURE1],
+        ISNULL(BCD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BCD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BCD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM  [dbo].[Bank_Signatures_Dtls] BSD 
+	LEFT JOIN [dbo].[Bank_Correction_dtls] BCD  ON BCD.[Correction_Id]=BSD.ID
+	LEFT JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE (BSD.[Status] = 2 AND BSD.[Created_by] =25912) OR (BSD.Status=2 AND BCD.Edited_by =25912)
+
+	UNION
+
+	    SELECT 
+	    BSD.ID,
+        BM.[BranchName] AS UNIT,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BSD.SIGNATURE1, '') AS [SIGNATURE1],
+        ISNULL(BSD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BSD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BSD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls] BSD
+	LEFT JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+     WHERE (BSD.[Status] = 2 AND BSD.[Created_by] =25912) OR (BSD.Status=2)
+
+     END;
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Bank_Correction_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[Get_Bank_Correction_Dtls]
+@ID INT
+AS
+------------------------------------------------------------------------------------------
+--Created by Aparna on 23.09.2024 - To get Bank Details
+-----------------------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+	SELECT
+   BM.[BranchName] AS UNIT,
+   BSD.[BANK],
+  BSD.[ACCOUNT_NUMBER],
+  BSD.[SIGNATURE1],
+  BSD.[SIGNATURE2],
+  BSD.[SIGNATURE3],
+  BSD.[SIGNATURE4]
+From [dbo].[Bank_Signatures_Dtls] BSD
+INNER JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+ WHERE [ID]=@ID
+    
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Bind_Bank]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Bind_Bank]
+(
+    @unitId INT
+)
+AS
+BEGIN
+    SELECT DISTINCT
+        [BANK]
+    FROM
+        [dbo].[Bank_Signatures_Dtls]
+    WHERE
+        [UNIT] = @unitId
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Bind_Unit]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Bind_Unit]
+AS
+----------------------------------------------------------------
+-- CREATED  BY APARNA, TO BIND UNIT ON 19-09-2024
+-----------------------------------------------------------------
+BEGIN
+	SELECT 
+
+		Branch_ID,
+      [BranchName]
+	FROM
+	   [dbo].[mfBranchMaster]
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Get_details]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_details]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+	    BSD.[ID],
+        BM.BranchName AS Unit,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BSD.[SIGNATURE1], '') AS [SIGNATURE1],
+        ISNULL(BSD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BSD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BSD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls]BSD
+	INNER JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+	where BSD.Status=1 
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Report]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Report]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+	    BSD.[ID],
+        BM.BranchName AS Unit,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BSD.[SIGNATURE1], '') AS [SIGNATURE1],
+        ISNULL(BSD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BSD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BSD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls]BSD
+	INNER JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Report_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Report_Dtls]
+    @bankName VARCHAR(100),
+    @unitName int -- Change to VARCHAR if unit names are strings
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        BM.[BranchName] AS UNIT,
+        BSD.BANK,
+        BSD.ACCOUNT_NUMBER,
+        ISNULL(BSD.SIGNATURE1, '') AS SIGNATURE1,
+        ISNULL(BSD.SIGNATURE2, '') AS SIGNATURE2,
+        ISNULL(BSD.SIGNATURE3, '') AS SIGNATURE3,
+        ISNULL(BSD.SIGNATURE4, '') AS SIGNATURE4
+    FROM Bank_Signatures_Dtls BSD
+	Inner join [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE BSD.UNIT = @unitName AND BSD.BANK = @bankName AND BSD.Status=1 ;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[Get_Unit_Report_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Get_Unit_Report_Dtls]
+   @unitName int -- Change to VARCHAR if unit names are strings
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        BM.[BranchName] AS UNIT,
+        BSD.BANK,
+        BSD.ACCOUNT_NUMBER,
+        ISNULL(BSD.SIGNATURE1, '') AS SIGNATURE1,
+        ISNULL(BSD.SIGNATURE2, '') AS SIGNATURE2,
+        ISNULL(BSD.SIGNATURE3, '') AS SIGNATURE3,
+        ISNULL(BSD.SIGNATURE4, '') AS SIGNATURE4
+    FROM Bank_Signatures_Dtls BSD
+	Inner join [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE BSD.UNIT = @unitName AND  BSD.Status=1 ;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[Insert_Bank_Correction_dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Insert_Bank_Correction_dtls]
+(
+    @correction_id int,
+    @acc_number varchar(100),
+    @Signature1 varchar(100),
+    @Signature2 varchar(100),
+    @Signature3 varchar(100),
+    @Signature4 varchar(100),
+    @Emp_Code int,
+	@Crrction_edit int
+)
+AS
+-----------------------------------------------------------------------------
+-- created by Aparna for Insert the Bank Correction Dtls on 8-10-2024
+-----------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+    -- First insert into Bank_Correction_dtls table
+    INSERT INTO [dbo].[Bank_Correction_dtls]
+    (
+        [Correction_Id],
+        [ACCOUNT_NUMBER],
+        [SIGNATURE1],
+        [SIGNATURE2],
+        [SIGNATURE3],
+        [SIGNATURE4],
+        [Edited_by],
+        [Created_datetime],
+        [Status]
+    )
+    VALUES
+    (
+       @correction_id,
+       @acc_number,
+       @Signature1,
+       @Signature2,
+       @Signature3,
+       @Signature4,
+       @Emp_Code,
+       CONVERT(DATE, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')),
+	   @Crrction_edit
+    );
+
+    -- Second insert into Approval_Flow_Table
+    INSERT INTO [dbo].[Approval_Flow_Table]
+    (
+        [ID],
+        [Emp_code],
+        [Created_datetime],
+        [Status]
+    )
+    VALUES
+    (
+        @correction_id, 
+        @Emp_Code, 
+        CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')), 
+        2
+    );
+update [dbo].[Bank_Signatures_Dtls]
+set [Status]=@Crrction_edit
+where [ID] = @correction_id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[Save_Approved_Dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Save_Approved_Dtls]
+(
+@ID int,
+@Account_num varchar(100),
+@sign1 varchar(100),
+@sign2 varchar(100),
+@sign3 varchar(100),
+@sign4 varchar(100),
+@EMP_CODE int,
+@Apprve_sts int
+)
+as
+begin
+set nocount on
+---------------------------------------------------------------------------
+
+--created by Aparna on 24.09.2024 to Save Approved Details
+
+----------------------------------------------------------------------------
+update [dbo].[Bank_Signatures_Dtls]
+set [Status]=@Apprve_sts,[ACCOUNT_NUMBER]=@Account_num,[SIGNATURE1]=@sign1,[SIGNATURE2]=@sign2,[SIGNATURE3]=@sign3,[SIGNATURE4]=@sign4,[Approved_by]=@EMP_CODE,[Approved_datetime]=CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30'))
+where [ID] = @ID
+INSERT INTO [dbo].[Approval_Flow_Table]([ID],[Emp_code],[Created_datetime],[Status])
+        VALUES(@ID, @Emp_Code, CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')),1);
+end;
+GO
+/****** Object:  StoredProcedure [dbo].[Update_Bank_Correction_dtls]    Script Date: 25-12-2025 17:05:16 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Update_Bank_Correction_dtls]
+(
+    @correction_id int,
+	@acc_number varchar(100),
+    @Signature1 varchar(100),
+    @Signature2 varchar(100),
+	@Signature3 varchar(100),
+	@Signature4 varchar(100),
+	@Emp_Code int 
+)
+AS
+-----------------------------------------------------------------------------
+-- created by Aparna  for Update the Bank Correction Dtls on 23-09-2024
+------------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+    
+    UPDATE [dbo].[Bank_Signatures_Dtls]
+	SET 
+    [ACCOUNT_NUMBER]=@acc_number,
+	[SIGNATURE1]=@Signature1,
+[SIGNATURE2]=@Signature2,
+[SIGNATURE3]=@Signature3,
+[SIGNATURE4]=@Signature4,
+[Edited_by]=@Emp_Code
+WHERE
+      [ID]=@correction_id
+Update [dbo].[Bank_Signatures_Dtls]
+SET [Status]=0
+    WHERE
+      [ID]=@correction_id
+	  INSERT INTO [dbo].[Approval_Flow_Table]([ID],[Emp_code],[Created_datetime],[Status])
+        VALUES(@correction_id, @Emp_Code, CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')),0);
+END
+GO

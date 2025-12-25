@@ -1,0 +1,8 @@
+// ORIGINAL FILE: Dashboard.cshtml
+// CONVERTED ON: 24-12-2025 16:12:37
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+<h2>Dashboard</h2>
+

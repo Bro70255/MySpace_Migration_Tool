@@ -1,0 +1,607 @@
+// ORIGINAL FILE: account.js
+// CONVERTED ON: 25-12-2025 14:24:46
+
+function Report() {
+    try {
+        $.ajax({
+            type: "GET",
+            url: "/Home/Get_Report",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var html = '';
+
+                // No need to parse the response if dataType is set to 'json'
+                var data = JSON.parse(response);
+
+                // Check if data exists and has content
+                if (!data || data.length === 0) {
+                    alert('Data not found.');
+                    location.reload();
+                    return;
+                }
+
+                // Loop through data and construct table rows
+                $.each(data, function (i, value) {
+                    var Edit = '';
+                    // Conditionally display the Edit link if userType == 1
+                    if (userType == "1" || userType == "2") {
+                        Edit = '<a style="color:Red !important;" title="View" data-ajax-method="GET" data-ajax-mode="replace" data-ajax-update="#contentpanel" href="Bank_Account_crrction?Id=' + data[i].ID + '&Screen=Bank_Account_crrction">Edit</a>';
+                    }
+
+
+                    html += '<tr><td>' + (i + 1) + '</td>' +
+                        '<td style="display:none;">' + (value.ID || '') + '</td>' + // Hides the ID column
+                        '<td>' + (value.Unit || '') + '</td>' +
+                        '<td>' + (value.BANK || '') + '</td>' +
+                        '<td>' + (value.ACCOUNT_NUMBER || '') + '</td>' +
+                        '<td>' + (value.SIGNATURE1 || '') + '</td>' +
+                        '<td>' + (value.SIGNATURE2 || '') + '</td>' +
+                        '<td>' + (value.SIGNATURE3 || '') + '</td>' +
+                        '<td>' + (value.SIGNATURE4 || '') + '</td>' +
+                        '<td>' + Edit + '</td></tr>';
+                });
+
+                // Update the table content
+                $("#tbtable").empty().append(html);
+            },
+            error: function (xhr, status, error) {
+                //console.error("Error occurred: " + xhr.responseText);
+            }
+        });
+    } catch (e) {
+        console.log("Exception: " + e.message);
+    }
+}
+
+function Bind_Unit(dropdownId) {
+    try {
+        $.ajax({
+            url: "/Home/Get_Bind_Unit",
+            type: "GET",
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            async: false,
+            success: function (response) {
+                if (response != "[]") {
+                    var data = JSON.parse(response);
+                    var dropdown = document.getElementById(dropdownId);
+                    dropdown.length = 0;
+                    var opt;
+                    opt = document.createElement('option');
+                    dropdown.options.add(opt);
+                    opt.text = '';
+                    opt.value = 0;
+                    $.each(data, function (i, value) {
+                        opt = document.createElement('option');
+                        dropdown.options.add(opt);
+                        opt.text = data[i].BranchName;
+                        opt.value = data[i].Branch_ID;
+                    });
+                    dropdown.selectedIndex = 0;
+                }
+                else {
+                    $('#' + dropdownId).empty();
+                }
+            },
+            error: function () {
+                // Handle error if needed
+            }
+        });
+    } catch (e) {
+        // Handle exception if needed
+    }
+}
+
+function Bind_Bank(dropdownId, UnitDropdownId) {
+    var selectElement = document.getElementById(UnitDropdownId);
+    var unit = selectElement.options[selectElement.selectedIndex].value;
+
+    if (unit) { // Proceed only if a unit is selected
+        $.ajax({
+            url: "/Home/Get_Bind_Bank",
+            type: "GET",
+            data: { unit: unit }, // Pass the unit in query string or as data
+            dataType: 'json',
+            success: function (response) {
+                var dropdown = document.getElementById(dropdownId);
+                dropdown.length = 0; // Clear the dropdown
+
+                if (response.length > 0) {
+                    var opt = document.createElement('option');
+                    opt.text = 'Select Bank';
+                    opt.value = ''; // Set the default option
+                    dropdown.options.add(opt);
+
+                    // Populate the dropdown with bank details
+                    response.forEach(function (bank) {
+                        opt = document.createElement('option');
+                        opt.text = bank.BANK;  // Assuming 'BANK' is the key in the returned data
+                        opt.value = bank.BANK;
+                        dropdown.options.add(opt);
+                    });
+                } else {
+                    var opt = document.createElement('option');
+                    opt.text = 'No Banks Available';
+                    opt.value = '';
+                    dropdown.options.add(opt);
+                }
+            },
+            error: function () {
+                alert('Error while fetching bank details.');
+            }
+        });
+    } else {
+        alert('Please select a unit.');
+    }
+}
+
+function Add_Bank() {
+    var unit = document.getElementById("ddl_unit").value;
+    var bank = document.getElementById("bank").value;
+    if (unit.trim() === "") {
+        alert("Select Unit");
+        return false;
+    }
+    if (bank.trim() === "") {
+        alert("Please enter a valid bank");
+        return false;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/Home/Add_Newbank",
+        data: JSON.stringify({ unit: unit, bank: bank }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            var data = JSON.parse(response);
+            if (data == 1) {
+                alert("Bank added Successfully.");
+                location.reload();
+            }
+        }
+    });
+
+}
+
+function Add_Signature() {
+    var unitName = parseInt(document.getElementById("ddl_unitt").value);  // Convert to integer
+    var bankName = document.getElementById("ddl_bank").value;
+    var accountnum = document.getElementById("acc_num").value;
+    var signature = document.getElementById("ddl_sign").value;
+    var signatureName = document.getElementById("signature_input").value.trim();
+
+    if (signature.trim() === "" || signatureName === "") {
+        alert("Select Signature and enter the name.");
+        return false;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/Home/Add_Newsignature",
+        data: JSON.stringify({
+            unitName: unitName,
+            bankName: bankName,
+            accountnum: accountnum,
+            signature: signature,
+            signatureName: signatureName
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            var data = JSON.parse(response);
+            if (data == 1) {
+                alert("Signature added Successfully.");
+                location.reload();
+            }
+        }
+    });
+}
+
+
+//function Login() {
+//    var empcode = document.getElementById("usrname").value;
+//    var password = document.getElementById("paswrd").value;
+
+//    // Basic validation
+//    if (!empcode || empcode.trim() === "") {
+//        alert("Please enter your Employee code.");
+//        return false;
+//    }
+
+//    if (!password || password.trim() === "") {
+//        alert("Please enter your Password.");
+//        return false;
+//    }
+
+//    var Login_Details = {
+//        Empcode: empcode,
+//        Login_password: password
+//    };
+
+//    $.ajax({
+//        url: "/Home/Login",
+//        type: "GET",
+//        data: {
+//            employeeCode: Login_Details.Empcode,
+//            loginPassword: Login_Details.Login_password
+//        },
+//        dataType: 'json',
+//        contentType: 'application/json; charset=utf-8',
+//        async: false,
+//        success: function (Response) {
+//            var data = JSON.parse(Response);
+//            if (data[0].FINALRESULT == "1") {
+//                window.location.href = "/Home/Dashboard";
+//            } else {
+//                alert("Invalid username/password");
+//            }
+//        },
+//        error: function () {
+//            alert("An error occurred. Please try again.");
+//        }
+//    });
+//}
+
+function Login() {
+    var empcode = document.getElementById("usrname").value.trim();
+    var password = document.getElementById("paswrd").value.trim();
+
+    // Basic validation
+    if (!empcode) {
+        alert("Please enter your Employee code.");
+        return false;
+    }
+
+    if (!password) {
+        alert("Please enter your Password.");
+        return false;
+    }
+
+    // AJAX call to send login details
+    $.ajax({
+        type: "POST",
+        url: "/Home/Login",
+        data: { employeeCode: empcode, loginPassword: password },
+        success: function (response) {
+            if (response && response.success) {
+                window.location.href = response.redirectUrl; // Redirect to the Dashboard
+            } else {
+                alert(response.message || "Invalid login credentials.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX error:", {
+                status: status,
+                error: error,
+                response: xhr.responseText
+            });
+            alert("An error occurred while logging in. Please try again later.");
+        }
+    });
+
+    return false; // Prevent default form submission
+}
+
+
+function Initialize_Get_Bank_Information() {
+    // Get the 'Id' parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('Id'); // This will return the integer Id directly
+    $.ajax({
+        type: "GET",
+        url: "/Home/Get_bankaccount_crrection_dtls", // Pass the id as a parameter
+        contentType: "application/json; charset=utf-8",
+        data: { id: id },
+        dataType: "json",
+        success: function (response) {
+            var data = JSON.parse(response);
+            $("#unit").val(data[0].UNIT || "");
+            $("#bank").val(data[0].BANK || "");
+            $("#num").val(data[0].ACCOUNT_NUMBER || "");
+            $("#sign1").val(data[0].SIGNATURE1 || "");
+            $("#sign2").val(data[0].SIGNATURE2 || "");
+            $("#sign3").val(data[0].SIGNATURE3 || "");
+            $("#sign4").val(data[0].SIGNATURE4 || "");
+        },
+        error: function (error) {
+            console.log("Error fetching bank details:", error);
+        }
+    });
+}
+
+function Insert_bank_account_correction_dtls() {
+    var correction_id = document.getElementById("id").value;// Ensure this is the correct ID for your input
+    var acc_number = document.getElementById("num").value;
+    var Signature1 = document.getElementById("sign1").value;
+    var Signature2 = document.getElementById("sign2").value; // Ensure this is the correct type
+    var Signature3 = document.getElementById("sign3").value;
+    var Signature4 = document.getElementById("sign4").value;
+
+    $.ajax({
+        type: "POST",
+        url: "/Home/Insert_bank_account_correction_dtls",
+        data: JSON.stringify({
+            correction_id: correction_id,
+            acc_number: acc_number,
+            Signature1: Signature1,
+            Signature2: Signature2,
+            Signature3: Signature3,
+            Signature4: Signature4
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            if (response.success) {
+                alert("Edited successfull");
+                window.location.href = "/Home/Bank_Account_Management"; // Fixed URL path
+            } else {
+                alert(response.message || "Update failed. Please try again.");
+            }
+        },
+        error: function (xhr, status, error) {
+            alert("Error occurred while updating. Please try again.");
+        }
+    });
+}
+
+function Details() {
+    $.ajax({
+        type: "GET",
+        url: "/Home/Get_Details",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            var html = '';
+            var counter = 1; // Initialize counter correctly
+            var data = JSON.parse(response);
+
+            if (data.length > 0) {
+                $.each(data, function (i, value) {
+                    html += `<tr>
+                                    <td>${counter++}</td> <!-- Increment counter -->
+                                    <td style="display:none;">${value.ID}</td>
+                                    <td>${value.Unit}</td>
+                                    <td>${value.BANK}</td>
+                                    <td>${value.ACCOUNT_NUMBER}</td>
+                                    <td>${value.SIGNATURE1}</td>
+                                    <td>${value.SIGNATURE2}</td>
+                                    <td>${value.SIGNATURE3}</td>
+                                    <td>${value.SIGNATURE4}</td>
+                              </tr>`;
+                });
+            } else {
+                html = '<tr><td colspan="9">No data found</td></tr>'; // Adjust colspan to cover all columns
+            }
+
+            $("#tbtable").empty().append(html);
+        },
+        error: function (xhr, status, error) {
+            console.log("Error: " + error);
+        }
+    });
+}
+
+function Bank_Report() {
+    var unit = document.getElementById('unit').value; // Get the selected unit value
+    var bank = document.getElementById("ddl_bank").value; // Correctly get the selected bank value
+    var html = '';
+    var counter = 1; // Initialize counter for Sl No
+
+    // Log unit and bank for debugging
+    ////console.log("Unit:", unit);
+    ////console.log("Bank:", bank);
+    // Check if Unit is 0 and Bank is "Select Bank"
+    if (unit === "0" && bank === "0") {
+        location.reload(); // Refresh the page if both conditions are met
+        return; // Stop the function to prevent unnecessary AJAX call
+    }
+    $.ajax({
+        type: "GET",
+        url: "/Home/Get_Report_dtls",
+        data: { bank: bank, unit: unit },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            // Assuming the response is already a JSON object
+            var data = JSON.parse(response);
+            $.each(data, function (i, value) {
+                html += '<tr><td>' + counter++ + // Increment counter for each row
+                    '</td><td>' + value.UNIT +
+                    '</td><td>' + value.BANK +
+                    '</td><td>' + value.ACCOUNT_NUMBER +
+                    '</td><td>' + value.SIGNATURE1 +
+                    '</td><td>' + value.SIGNATURE2 +
+                    '</td><td>' + value.SIGNATURE3 +
+                    '</td><td>' + value.SIGNATURE4 +
+                    '</td></tr>';
+            });
+
+            $("#tbtable").empty().append(html); // Clear existing table and append new rows
+        },
+        error: function (xhr, status, error) {
+            console.error(error); // Log any errors
+        }
+    });
+}
+
+function Bank_approved_dtls() {
+    $.ajax({
+        type: "GET",
+        url: "/Home/Get_Bank_approved_dtls",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            var html = '';
+            var counter = 1; // Initialize counter correctly
+            var data = JSON.parse(response);
+
+            if (data.length > 0) {
+                $.each(data, function (i, value) {
+                    var Apprve_Id = value.ID;
+                    var Account_num = value.ACCOUNT_NUMBER;
+                    var sign1 = value.SIGNATURE1;
+                    var sign2 = value.SIGNATURE2;
+                    var sign3 = value.SIGNATURE3;
+                    var sign4 = value.SIGNATURE4;
+                    var APPROVE = `<button class="button10" 
+                        data-apprv_id="${Apprve_Id}" 
+                        data-account_num="${Account_num}" 
+                        data-sign1="${sign1}" 
+                        data-sign2="${sign2}" 
+                        data-sign3="${sign3}" 
+                        data-sign4="${sign4}" 
+                        style="background-color: #0db50d; color: white;" 
+                        onclick="Save_Approve_Details(this); return false;">
+                        Approve
+                    </button>`;
+
+                    html += `<tr>
+                        <td>${counter++}</td> <!-- Increment counter -->
+                        <td style="display:none;">${value.ID}</td>
+                        <td>${value.UNIT}</td>
+                        <td>${value.BANK}</td>
+                        <td>${value.ACCOUNT_NUMBER}</td>
+                        <td>${value.SIGNATURE1}</td>
+                        <td>${value.SIGNATURE2}</td>
+                        <td>${value.SIGNATURE3}</td>
+                        <td>${value.SIGNATURE4}</td>
+                        <td>${APPROVE}</td>
+                    </tr>`;
+                });
+            }
+            // No else statement to display "No data found"
+
+            $("#tbtable1").empty().append(html); // Empty the table and append new HTML
+        },
+        error: function (xhr, status, error) {
+            console.log("Error: " + error);
+        }
+    });
+}
+
+
+function Save_Approve_Details(button) {
+    $("#loading").show();
+
+    var ID = $(button).data('apprv_id');
+    var Account_num = $(button).data('account_num');
+    var sign1 = $(button).data('sign1') || null; // Handle null
+    var sign2 = $(button).data('sign2') || null;
+    var sign3 = $(button).data('sign3') || null;
+    var sign4 = $(button).data('sign4') || null;
+
+    // Check if ID and Account_num are present
+    if (!ID || !Account_num) {
+        alert("ID or Account number is missing.");
+        $("#loading").hide();
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/Home/Save_Approve_Dtls",
+        data: JSON.stringify({ ID: ID, Account_num: Account_num, sign1: sign1, sign2: sign2, sign3: sign3, sign4: sign4 }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            $("#loading").hide();
+            if (data.success) {
+                alert("Approved Successfully.");
+                location.reload(); // Refresh the page
+            } else {
+                alert("Error: " + data.message);
+            }
+        },
+        error: function (xhr, status, error) {
+           // console.error("Status: " + status + " | Error: " + error + " | Response: " + xhr.responseText);
+            $("#loading").hide();
+            alert("There was an error processing the request. Check console for details.");
+        }
+    });
+
+}
+
+function Unit_Report() {
+    var unit = document.getElementById('unit').value; // Get the selected unit value
+    var html = '';
+    var counter = 1; // Initialize counter for Sl No
+
+    // Log unit and bank for debugging
+   /* console.log("Unit:", unit);*/
+   if (unit === "0") {
+        location.reload(); // Refresh the page if both conditions are met
+        return; // Stop the function to prevent unnecessary AJAX call
+    }
+    $.ajax({
+        type: "GET",
+        url: "/Home/Get_Unit_Report_dtls",
+        data: { unit: unit },
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            // Assuming the response is already a JSON object
+            var data = JSON.parse(response);
+            $.each(data, function (i, value) {
+                html += '<tr><td>' + counter++ + // Increment counter for each row
+                    '</td><td>' + value.UNIT +
+                    '</td><td>' + value.BANK +
+                    '</td><td>' + value.ACCOUNT_NUMBER +
+                    '</td><td>' + value.SIGNATURE1 +
+                    '</td><td>' + value.SIGNATURE2 +
+                    '</td><td>' + value.SIGNATURE3 +
+                    '</td><td>' + value.SIGNATURE4 +
+                    '</td></tr>';
+            });
+
+            $("#tbtable").empty().append(html); // Clear existing table and append new rows
+        },
+        error: function (xhr, status, error) {
+            console.error(error); // Log any errors
+        }
+    });
+}
+function Add_unit() {
+    var unit = document.getElementById("addunit").value;
+
+    if (unit.trim() === "") {
+        alert("Please enter Unit");
+        return false;
+    }
+    var isDuplicate = false;
+    $.ajax({
+        url: "/Home/Duplicate_unit?unit=" + unit,
+        type: "GET",
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        async: false,
+        success: function (response) {
+            var data = JSON.parse(response);
+            if (data[0].RESULT == 1) {
+                alert("Already saved this Unit.");
+                location.reload();
+                isDuplicate = true;
+            }
+        }
+    });
+    if (!isDuplicate) {
+        $.ajax({
+            type: "POST",
+            url: "/Home/Add_Newunit",
+            data: JSON.stringify({ unit: unit }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                var data = JSON.parse(response);
+                if (data == 1) {
+                    alert("Unit Added Successfully.");
+                    location.reload();
+                }
+            }
+        });
+    }
+}

@@ -1,0 +1,19 @@
+CREATE PROCEDURE [dbo].[Get_Report_Dtls]
+    @bankName VARCHAR(100),
+    @unitName int -- Change to VARCHAR if unit names are strings
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        BM.[BranchName] AS UNIT,
+        BSD.BANK,
+        BSD.ACCOUNT_NUMBER,
+        ISNULL(BSD.SIGNATURE1, '') AS SIGNATURE1,
+        ISNULL(BSD.SIGNATURE2, '') AS SIGNATURE2,
+        ISNULL(BSD.SIGNATURE3, '') AS SIGNATURE3,
+        ISNULL(BSD.SIGNATURE4, '') AS SIGNATURE4
+    FROM Bank_Signatures_Dtls BSD
+	Inner join [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+    WHERE BSD.UNIT = @unitName AND BSD.BANK = @bankName AND BSD.Status=1 ;
+END;

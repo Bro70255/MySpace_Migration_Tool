@@ -1,0 +1,14 @@
+public JsonResult Get_Report_dtls(string bank, int unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Report_dtls(bank, unit);
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

@@ -1,0 +1,13 @@
+CREATE PROCEDURE [dbo].[Get_Bind_Bank]
+(
+    @unitId INT
+)
+AS
+BEGIN
+    SELECT DISTINCT
+        [BANK]
+    FROM
+        [dbo].[Bank_Signatures_Dtls]
+    WHERE
+        [UNIT] = @unitId
+END

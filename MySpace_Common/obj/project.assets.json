@@ -160,11 +160,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_Common\\MySpace_Common.csproj",
+      "projectUniqueName": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\MySpace_Common.csproj",
       "projectName": "MySpace_Common",
-      "projectPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_Common\\MySpace_Common.csproj",
+      "projectPath": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\MySpace_Common.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "G:\\MySpace_Migration_Tool-main\\MySpace_Migration_Tool-main\\MySpace_Common\\obj\\",
+      "outputPath": "F:\\Back_UP_Projects\\MySpace\\MySpace_Common\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

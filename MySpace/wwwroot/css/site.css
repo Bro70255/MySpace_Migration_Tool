@@ -120,124 +120,166 @@ html, body {
         box-shadow: 0 8px 20px rgba(79,140,255,0.25);
     }
 
-/* =========================================================
-   BLUEPRINT FLOW
-========================================================= */
-.blueprint-flow {
-    height: calc(100vh - 90px);
+
+
+
+/* ===============================
+   GLOBAL
+=============================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #020617;
+    font-family: Inter, Arial, sans-serif;
+    color: #e5e7eb;
+}
+
+/* ===============================
+   CANVAS
+=============================== */
+
+.bp-wrap {
+    height: 100vh;
+    padding: 16px;
+}
+
+.bp-canvas {
+    height: 100%;
+    border-radius: 16px;
+    background: #020617;
+    border: 1px solid rgba(255,255,255,0.1);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    overflow: hidden;
 }
 
-/* Steps */
-.flow-steps {
-    display: flex;
-    gap: 12px;
+/* ===============================
+   PROJECT
+=============================== */
+
+.bp-project {
+    padding: 16px 22px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #7dd3fc;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    white-space: nowrap;
 }
 
-.step {
+/* ===============================
+   STAGE
+=============================== */
+
+.bp-stage {
+    position: relative;
     flex: 1;
-    padding: 12px;
-    text-align: center;
-    border-radius: 10px;
-    background: var(--bg-panel-soft);
-    color: var(--text-muted);
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.25s;
-}
-
-    .step.active {
-        background: var(--primary);
-        color: white;
-    }
-
-    .step:hover {
-        color: var(--primary);
-    }
-
-/* Body */
-.flow-body {
-    flex: 1;
-    background: var(--bg-panel);
-    border-radius: var(--radius);
-    padding: 24px;
-    border: 1px solid var(--border-soft);
-}
-
-/* =========================================================
-   UPLOAD ZONE
-========================================================= */
-.upload-zone {
-    height: 260px;
-    border: 2px dashed var(--primary-soft);
-    border-radius: var(--radius);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    background: #0f172a;
-    text-align: center;
-}
-
-    .upload-zone p {
-        font-size: 17px;
-        font-weight: 600;
-    }
-
-    .upload-zone span {
-        color: var(--text-muted);
-    }
-
-/* =========================================================
-   TREE VIEW
-========================================================= */
-.tree-view {
-    background: var(--bg-panel-soft);
-    border-radius: var(--radius);
-    padding: 18px;
-    max-height: 350px;
-    overflow-y: auto;
-    font-family: ui-monospace, Consolas, monospace;
-    border: 1px solid var(--border-soft);
-}
-
-    .tree-view ul {
-        list-style: none;
-        padding-left: 16px;
-    }
-
-    .tree-view li {
-        margin: 5px 0;
-        color: #c7d2fe;
-    }
-
-.tree-file {
-    color: white;
-}
-
-/* =========================================================
-   BLUEPRINT CANVAS
-========================================================= */
-.blueprint-canvas {
-    flex: 1;
-    background: #0a1020;
-    border-radius: var(--radius);
-    padding: 20px;
-    color: #93c5fd;
     overflow: auto;
-    border: 1px solid var(--border-soft);
+    padding: 30px 40px;
 }
 
-/* =========================================================
-   FOOTER
-========================================================= */
-footer.footer-modern {
-    margin-top: 30px;
-    padding: 14px;
+/* SVG WIRES */
+.bp-wires {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ===============================
+   TREE STRUCTURE
+=============================== */
+
+.bp-tree {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    z-index: 2;
+}
+
+/* EACH GROUP ROW */
+.bp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 70px;
+}
+
+/* ===============================
+   GROUP NODE
+=============================== */
+
+.bp-group {
+    display: inline-block; /* anchor stability */
+    min-width: 240px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(8,24,44,0.95);
+    border: 1px solid rgba(56,189,248,0.6);
+    color: #f1f5f9;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* ===============================
+   SUB TREE
+=============================== */
+
+.bp-sub-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 280px;
+}
+
+/* SUB NODE */
+.bp-sub-item {
+    display: inline-block; /* anchor stability */
+    padding: 7px 12px;
+    border-radius: 10px;
+    background: rgba(2,6,23,0.95);
+    border: 1px solid rgba(148,163,184,0.35);
+    color: #e5e7eb;
     font-size: 13px;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border-soft);
+    white-space: nowrap;
+}
+
+/* ===============================
+   DEPTH VISUAL CLARITY
+=============================== */
+
+.bp-sub-item {
+    position: relative;
+}
+
+    .bp-sub-item::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        width: 6px;
+        height: 1px;
+        background: rgba(148,163,184,0.5);
+    }
+
+/* ===============================
+   SCROLLBAR (OPTIONAL NICE)
+=============================== */
+
+.bp-stage::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.bp-stage::-webkit-scrollbar-thumb {
+    background: rgba(56,189,248,0.3);
+    border-radius: 10px;
+}
+
+.bp-stage::-webkit-scrollbar-track {
+    background: rgba(2,6,23,0.6);
 }

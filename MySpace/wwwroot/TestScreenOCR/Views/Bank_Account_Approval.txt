@@ -1,0 +1,31 @@
+// ORIGINAL FILE: Bank_Account_Approval.cshtml
+// CONVERTED ON: 24-12-2025 16:12:36
+
+@{ ViewBag.Title = "Bank_Account_Approval"; }
+<h2>Bank Account Approval</h2>
+<div class="table-container">
+    <table class="table" id="tbltable">
+        <thead>
+            <tr>
+                <th>Sl No</th>
+                <th style="display:none;">ID</th>
+                <th>Unit</th>
+                <th>Bank</th>
+                <th>Account Number</th>
+                <th>Signature1</th>
+                <th>Signature2</th>
+                <th>Signature3</th>
+                <th>Signature4</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tbtable1">
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        Bank_approved_dtls(); 
+    });
+</script>
+

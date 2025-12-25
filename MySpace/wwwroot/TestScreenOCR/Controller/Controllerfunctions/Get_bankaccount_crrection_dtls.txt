@@ -1,0 +1,18 @@
+public JsonResult Get_bankaccount_crrection_dtls(int id)
+        {
+            DataTable dtDetails = new DataTable();
+
+            try
+            {
+                // No need for the cookie check, use the Id parameter
+                dtDetails = BLL.Get_bankaccount_crrection_dtls(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+
+        }

@@ -1,0 +1,87 @@
+public JsonResult Login(int employeeCode, string loginPassword)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Login(employeeCode, loginPassword);
+
+
+                // Check if the result from the stored procedure is 1 (i.e., valid login from the database)
+                string result = dtDetails.Rows[0]["RESULT"].ToString(); // Assuming RESULT is a string
+                                                                        // Generate a secure unique code
+                string uniqueCode = GenerateUniqueCode(result, employeeCode);
+
+                // Variable to hold the final result to be returned
+                int finalResult = 0;
+
+                if (result == "BAFKSIE@8640")
+                {
+                    //JsonResult apiResult = API_Check(employeeCode, loginPassword);
+                    //string apiResponse = apiResult.Data.ToString();
+                    //dynamic jsonResponse = JsonConvert.DeserializeObject(apiResponse);
+                    //int Flag = jsonResponse.status.flag;
+                    int Flag = 1;
+                   if (Flag == 1)
+                    {
+                      
+
+                        Session["EMP_CODE"] = dtDetails.Rows[0]["Employee_Code"];
+                        Session["UserType"] = dtDetails.Rows[0]["User_type"].ToString();
+
+                        // Set final result to 1 for successful login
+                        finalResult = 1;
+                        return Json(new
+                        {
+                            success = true,
+                            redirectUrl = Url.Action("Dashboard", "Home"),
+                            uniqueCode = uniqueCode // Returning unique code
+                        });
+                    }  
+                    else
+                    {
+                        finalResult = 0;
+                    }
+                }
+                else
+                {
+                    //JsonResult APIResult = API_Check(employeeCode, loginPassword);
+                    //string APIResponse = APIResult.Data.ToString();
+                    //dynamic JSONResponse = JsonConvert.DeserializeObject(APIResponse);
+                    //int FLAG = JSONResponse.status.flag;
+                    int FLAG = 1;
+
+                    if (FLAG == 1)
+                    {
+
+                       
+                        // API login successful, setting session variables
+                        Session["EMP_CODE"] = employeeCode;
+                        Session["UserType"] = 0;
+                        
+                        finalResult = 1;
+
+                        return Json(new
+                        {
+                            success = true,
+                            redirectUrl = Url.Action("Dashboard", "Home"),
+                            uniqueCode = uniqueCode // Returning unique code
+                        });
+                    }
+                    else
+                    {
+                        finalResult = 0;
+                    }
+                }
+
+                // Add final result to the DataTable to be returned
+                dtDetails.Columns.Add("FINALRESULT", typeof(int));
+                dtDetails.Rows[0]["FINALRESULT"] = finalResult;
+            }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
+
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

@@ -1,0 +1,24 @@
+CREATE PROCEDURE [dbo].[Add_New_Bank](
+@unit int,
+@bank varchar(100) 
+
+)
+as 
+begin 
+set nocount on
+-------------------------------------------------------------------
+
+-- created by APARNA on 20-09-2024 for Add new Unit-------------
+
+--------------------------------------------------------------------
+insert into [dbo].[Bank_Signatures_Dtls]
+(
+[UNIT],
+[BANK]
+)
+values
+(
+@unit,
+@bank
+)
+end;

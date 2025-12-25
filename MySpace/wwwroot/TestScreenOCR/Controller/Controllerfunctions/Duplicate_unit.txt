@@ -1,0 +1,15 @@
+public JsonResult Duplicate_unit(string unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Duplicate_unit(unit);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

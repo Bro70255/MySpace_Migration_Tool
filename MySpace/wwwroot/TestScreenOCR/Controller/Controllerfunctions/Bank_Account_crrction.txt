@@ -1,0 +1,12 @@
+public ActionResult Bank_Account_crrction(int Id)
+        {
+
+
+            // Now, Id is passed as an integer directly, no need for decoding
+            ViewBag.DecodedId = Id;
+
+            // Fetch the details using the Id from the database
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }

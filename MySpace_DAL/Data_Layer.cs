@@ -39,6 +39,29 @@ namespace MySpace_DAL
                 return false;
             }
         }
+
+        public async Task<bool> Save_File_Details(string fileName, string filePath, string fileType)
+        {
+            try
+            {
+                var entity = new FileDetails
+                {
+                    FileName = fileName,
+                    FilePath = filePath,
+                    FileType = fileType,
+                    UploadedOn = DateTime.Now
+                };
+
+                await _context.FileDetails.AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // log ex if needed
+                return false;
+            }
+        }
         public async Task<List<Registration>> Get_Registration_Report_Details(string search)
         {
             var query = _context.Registrations.AsQueryable();

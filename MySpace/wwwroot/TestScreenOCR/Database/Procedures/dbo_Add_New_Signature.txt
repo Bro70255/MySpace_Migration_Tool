@@ -1,0 +1,61 @@
+CREATE PROCEDURE [dbo].[Add_New_Signature]
+(
+    @created_by int,
+    @signature varchar(100),
+    @signatureName varchar(100),
+    @unitName int,  -- Assuming UNIT is of type int
+    @bankName varchar(100),
+    @accountnum varchar(100)
+)
+AS 
+BEGIN 
+    SET NOCOUNT ON;
+
+    -- Check if the record for the specific unit and bank exists
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM [dbo].[Bank_Signatures_Dtls]
+        WHERE [UNIT] = @unitName AND [BANK] = @bankName
+    )
+    BEGIN
+        -- Insert a new record with the provided details, including Created_by and Created_datetime
+        INSERT INTO [dbo].[Bank_Signatures_Dtls] 
+        (
+            [UNIT], 
+            [BANK], 
+            [ACCOUNT_NUMBER], 
+            [SIGNATURE1], 
+            [SIGNATURE2], 
+            [SIGNATURE3], 
+            [SIGNATURE4], 
+            [Created_by],  -- Insert Created_by
+            [Created_datetime]  -- Insert Created_datetime
+        )
+        VALUES 
+        (
+            @unitName, 
+            @bankName, 
+            @accountnum, 
+            CASE WHEN @signature = 'Signature1' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature2' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature3' THEN @signatureName ELSE NULL END, 
+            CASE WHEN @signature = 'Signature4' THEN @signatureName ELSE NULL END,
+            @created_by,  -- Insert the created_by value
+            CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')) -- Insert current timestamp
+        );
+    END
+    ELSE
+    BEGIN
+        -- Update the corresponding signature, account number, and created_by, created_datetime if the record exists
+        UPDATE [dbo].[Bank_Signatures_Dtls]
+        SET 
+            [ACCOUNT_NUMBER] = @accountnum,
+            [SIGNATURE1] = CASE WHEN @signature = 'Signature1' THEN @signatureName ELSE [SIGNATURE1] END,
+            [SIGNATURE2] = CASE WHEN @signature = 'Signature2' THEN @signatureName ELSE [SIGNATURE2] END,
+            [SIGNATURE3] = CASE WHEN @signature = 'Signature3' THEN @signatureName ELSE [SIGNATURE3] END,
+            [SIGNATURE4] = CASE WHEN @signature = 'Signature4' THEN @signatureName ELSE [SIGNATURE4] END,
+            [Created_by] = @created_by,  -- Always update the created_by field
+            [Created_datetime] = CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30'))  -- Always update the created_datetime field
+        WHERE [UNIT] = @unitName AND [BANK] = @bankName;
+    END
+END;

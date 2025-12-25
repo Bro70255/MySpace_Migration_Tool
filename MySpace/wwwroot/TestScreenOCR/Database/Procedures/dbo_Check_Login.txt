@@ -1,0 +1,28 @@
+CREATE PROCEDURE [dbo].[Check_Login]
+    @employeeCode INT,
+    @password VARCHAR(50)
+AS
+------------------------------------------------------
+--CREATED BY APARNA ON 23.09.2024--For login process
+------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT *
+        FROM [dbo].[Login_dtls]
+        WHERE[Employee_Code] = @employeeCode
+         
+    )
+    BEGIN
+        SELECT  [login_id]
+		,1 AS RESULT,Employee_Code,[User_type]
+		  FROM [dbo].[Login_dtls]
+        WHERE  [Employee_Code]= @employeeCode
+          
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS RESULT
+		       
+    END
+END

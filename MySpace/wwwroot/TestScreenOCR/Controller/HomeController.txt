@@ -1,0 +1,482 @@
+// ORIGINAL FILE: HomeController.cs
+// CONVERTED ON: 25-12-2025 16:42:36
+
+using Business;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Accounts.Controllers
+{
+    public class HomeController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        public ActionResult Report()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        public ActionResult Bank_Account_Management()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        public ActionResult Dashboard()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+        public ActionResult Bank_Account_crrction(int Id)
+        {
+
+
+            // Now, Id is passed as an integer directly, no need for decoding
+            ViewBag.DecodedId = Id;
+
+            // Fetch the details using the Id from the database
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        public ActionResult Bank_Account_Approval()
+        {
+
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        public JsonResult Get_Report()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Report();
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Get_Bind_Unit()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Get_Bind_Unit();
+
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Get_Bind_Bank(int unit)
+        {
+            try
+            {
+                var dtDetails = BLL.Get_Bind_Bank(unit);
+                var bankList = dtDetails.AsEnumerable().Select(row => new
+                {
+                    BANK = row.Field<string>("BANK") // Assuming "BANK" is the column name
+                }).ToList();
+
+                return Json(bankList, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public JsonResult Duplicate_unit(string unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Duplicate_unit(unit);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Add_Newunit(string unit)
+        {
+            try
+            {
+                BLL.Add_Newunit(unit);
+                return Json(1);
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public JsonResult Duplicate_bank(string bank)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Duplicate_bank(bank);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Add_Newbank(int unit, string bank)
+        {
+            try
+            {
+                BLL.Add_Newbank(unit, bank);
+                return Json(1);
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public JsonResult Add_Newsignature(int unitName, string bankName, decimal accountnum, string signature, string signatureName)
+        {
+            try
+            {
+                var created_by = Convert.ToInt32(Session["Emp_code"]); // Assuming Emp_code is an integer
+                BLL.Add_Newsignature(created_by, unitName, bankName, accountnum, signature, signatureName);
+                return Json(1); // Indicate success
+            }
+            catch (Exception ex)
+            {
+                return Json(0); // Indicate failure
+            }
+        }
+
+
+        public JsonResult API_Check(int employeeCode, string loginPassword)
+        {
+            try
+            {
+                string apiUrl = "https://gen.mactech.net.in/api_mafound_gen/api/v1/StaffWel/staffdetails";
+
+                // Create a WebClient to make the API request
+                using (WebClient client = new WebClient())
+                {
+                    // Set the content type to JSON
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    // Create a JSON string for your credentials
+                    string credentialsJson = JsonConvert.SerializeObject(new { userID = employeeCode, password = loginPassword });
+
+                    // Convert the credentials to a byte array
+                    byte[] credentialsData = Encoding.UTF8.GetBytes(credentialsJson);
+
+                    // Make the API request and get the response as a string
+                    string response = client.UploadString(apiUrl, "POST", credentialsJson);
+
+                    // You can now parse or use the 'response' variable as needed
+
+                    // Return the API response as a JsonResult
+                    return Json(response, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that might occur during the request
+                return Json("An error occurred in API: " + ex.Message, JsonRequestBehavior.AllowGet);
+            }
+        }
+        //public JsonResult Login(int employeeCode, string loginPassword)
+        //{
+        //    DataTable dtDetails = new DataTable();
+        //    try
+        //    {
+        //        //Check details with the API
+        //        //JsonResult apiResult = API_Check(employeeCode, loginPassword);
+        //        //string apiResponse = apiResult.Data.ToString();
+        //        //dynamic jsonResponse = JsonConvert.DeserializeObject(apiResponse);
+        //        //int flag = jsonResponse.status.flag;
+
+        //        int flag = 1;
+
+        //        if (flag == 1)
+        //        {
+        //            dtDetails = BLL.Login(employeeCode, loginPassword);
+        //            Session["EMP_CODE"] = dtDetails.Rows[0]["Employee_Code"];
+        //            Session["UserType"] = dtDetails.Rows[0]["User_type"].ToString();
+        //        }
+        //        else
+        //        {
+        //            dtDetails.Columns.Add("RESULT", typeof(int));
+        //            dtDetails.Rows.Add(0);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    string JsResult = JsonConvert.SerializeObject(dtDetails);
+        //    return Json(JsResult, JsonRequestBehavior.AllowGet);
+
+        //}
+
+        public JsonResult Login(int employeeCode, string loginPassword)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Login(employeeCode, loginPassword);
+
+
+                // Check if the result from the stored procedure is 1 (i.e., valid login from the database)
+                string result = dtDetails.Rows[0]["RESULT"].ToString(); // Assuming RESULT is a string
+                                                                        // Generate a secure unique code
+                string uniqueCode = GenerateUniqueCode(result, employeeCode);
+
+                // Variable to hold the final result to be returned
+                int finalResult = 0;
+
+                if (result == "BAFKSIE@8640")
+                {
+                    //JsonResult apiResult = API_Check(employeeCode, loginPassword);
+                    //string apiResponse = apiResult.Data.ToString();
+                    //dynamic jsonResponse = JsonConvert.DeserializeObject(apiResponse);
+                    //int Flag = jsonResponse.status.flag;
+                    int Flag = 1;
+                   if (Flag == 1)
+                    {
+                      
+
+                        Session["EMP_CODE"] = dtDetails.Rows[0]["Employee_Code"];
+                        Session["UserType"] = dtDetails.Rows[0]["User_type"].ToString();
+
+                        // Set final result to 1 for successful login
+                        finalResult = 1;
+                        return Json(new
+                        {
+                            success = true,
+                            redirectUrl = Url.Action("Dashboard", "Home"),
+                            uniqueCode = uniqueCode // Returning unique code
+                        });
+                    }  
+                    else
+                    {
+                        finalResult = 0;
+                    }
+                }
+                else
+                {
+                    //JsonResult APIResult = API_Check(employeeCode, loginPassword);
+                    //string APIResponse = APIResult.Data.ToString();
+                    //dynamic JSONResponse = JsonConvert.DeserializeObject(APIResponse);
+                    //int FLAG = JSONResponse.status.flag;
+                    int FLAG = 1;
+
+                    if (FLAG == 1)
+                    {
+
+                       
+                        // API login successful, setting session variables
+                        Session["EMP_CODE"] = employeeCode;
+                        Session["UserType"] = 0;
+                        
+                        finalResult = 1;
+
+                        return Json(new
+                        {
+                            success = true,
+                            redirectUrl = Url.Action("Dashboard", "Home"),
+                            uniqueCode = uniqueCode // Returning unique code
+                        });
+                    }
+                    else
+                    {
+                        finalResult = 0;
+                    }
+                }
+
+                // Add final result to the DataTable to be returned
+                dtDetails.Columns.Add("FINALRESULT", typeof(int));
+                dtDetails.Rows[0]["FINALRESULT"] = finalResult;
+            }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
+
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+
+        // Method to generate a secure unique code
+        private string GenerateUniqueCode(string result, int employeeCode)
+        {
+            // Use HMACSHA256 for hashing
+            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes("YourSecretKey")))
+            {
+                var inputString = $"{employeeCode}-{result}-{DateTime.UtcNow.Ticks}";
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+                return Convert.ToBase64String(hash);
+            }
+        }
+
+        public JsonResult Get_bankaccount_crrection_dtls(int id)
+        {
+            DataTable dtDetails = new DataTable();
+
+            try
+            {
+                // No need for the cookie check, use the Id parameter
+                dtDetails = BLL.Get_bankaccount_crrection_dtls(id);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+
+        }
+        public JsonResult Insert_bank_account_correction_dtls(int correction_id, string acc_number, string Signature1, string Signature2, string Signature3, string Signature4)
+        {
+            try
+            {
+                int Emp_Code = Convert.ToInt32(Session["Emp_code"]);
+                int Crrction_edit = 2;
+                BLL.Insert_bank_account_correction_dtls(correction_id, acc_number, Signature1, Signature2, Signature3, Signature4, Emp_Code, Crrction_edit);
+                return Json(new { success = true, message = "Update successful." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging library)
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        public JsonResult Get_Details()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Details();
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Get_Report_dtls(string bank, int unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Report_dtls(bank, unit);
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult Get_Bank_approved_dtls()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                var usertype = Convert.ToInt32(Session["UserType"]);
+                dtDetails = BLL.Get_Bank_approved_dtls(usertype);
+                
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult Save_Approve_Dtls(int ID, string Account_num, string sign1, string sign2, string sign3, string sign4)
+        {
+            try
+            {
+                // Debugging information
+                System.Diagnostics.Debug.WriteLine("Save_Approve_Dtls called.");
+
+                if (Session["EMP_CODE"] == null)
+                {
+                    throw new Exception("Session EMP_CODE is null.");
+                }
+
+                int EMP_CODE = Convert.ToInt32(Session["EMP_CODE"]);
+                int Apprve_sts = 1;
+
+                // Debugging log for values
+                System.Diagnostics.Debug.WriteLine($"ID: {ID}, Account_num: {Account_num}, Sign1: {sign1}, Sign2: {sign2}, Sign3: {sign3}, Sign4: {sign4}, EMP_CODE: {EMP_CODE}");
+
+                // Call the BLL to save the details
+                BLL.Save_Approve_Dtls(ID, Account_num, sign1, sign2, sign3, sign4, EMP_CODE, Apprve_sts);
+
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Log the error message for debugging
+                System.Diagnostics.Debug.WriteLine($"Controller Error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult Get_Unit_Report_dtls(int unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Unit_Report_dtls(unit);
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }
+
+       
+
+    }
+}

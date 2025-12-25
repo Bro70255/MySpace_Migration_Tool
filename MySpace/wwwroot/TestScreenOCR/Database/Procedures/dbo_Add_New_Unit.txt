@@ -1,0 +1,22 @@
+CREATE PROCEDURE [dbo].[Add_New_Unit](
+
+@unit varchar(100) 
+
+)
+as 
+begin 
+set nocount on
+-------------------------------------------------------------------
+
+-- created by APARNA on 20-09-2024 for Add new Unit-------------
+
+--------------------------------------------------------------------
+insert into [dbo].[mfBranchMaster]
+(
+[BranchName]
+)
+values
+(
+@unit
+)
+end;

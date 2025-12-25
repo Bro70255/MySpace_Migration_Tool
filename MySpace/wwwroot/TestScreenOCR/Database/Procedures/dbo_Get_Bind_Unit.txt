@@ -1,0 +1,13 @@
+CREATE PROCEDURE [dbo].[Get_Bind_Unit]
+AS
+----------------------------------------------------------------
+-- CREATED  BY APARNA, TO BIND UNIT ON 19-09-2024
+-----------------------------------------------------------------
+BEGIN
+	SELECT 
+
+		Branch_ID,
+      [BranchName]
+	FROM
+	   [dbo].[mfBranchMaster]
+END

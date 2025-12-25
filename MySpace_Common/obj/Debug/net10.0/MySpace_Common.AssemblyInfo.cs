@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MySpace_Common")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32ef98f859a5abe89ccfac4896ed92413936b485")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff5edb73274ea25cc6e924ac6e99a380453fe317")]
 [assembly: System.Reflection.AssemblyProductAttribute("MySpace_Common")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MySpace_Common")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -322,22 +322,22 @@ Explain what this screen does in simple words.
 
                 await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
-                // ================= AUTO EXTRACTION =================
-                if (fileType == "js")
-                    SplitJSFunctions(savePath);
-
-                else if (fileType == "cs")
-                    SplitCSharpMethods(savePath);
-
-                else if (fileType == "sql")
-                    SplitSqlTablesAndProcedures(savePath);
-
-                // ================= SAVE DB ENTRY ===================
-                await _dal.Save_File_Details(
+                // 1. Save original file
+                int parentFileId = await _dal.Save_File_Details(
                     safeFileName,
                     savePath,
                     fileType
                 );
+
+                // 2. Extract & save children
+                if (fileType == "js")
+                    await SplitJSFunctions(savePath, parentFileId);
+                else if (fileType == "cs")
+                    await SplitCSharpMethods(savePath, parentFileId);
+                else if (fileType == "sql")
+                    await SplitSqlTablesAndProcedures(savePath, parentFileId);
+
+
             }
 
             return Json(new
@@ -350,7 +350,7 @@ Explain what this screen does in simple words.
         // =========================================================
         // JS FUNCTION SPLITTER
         // =========================================================
-        private void SplitJSFunctions(string sourcePath)
+        private async Task SplitJSFunctions(string sourcePath, int parentFileId)
         {
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -360,11 +360,9 @@ Explain what this screen does in simple words.
             Directory.CreateDirectory(outputDir);
 
             var content = System.IO.File.ReadAllText(sourcePath);
-
             var regex = new Regex(@"function\s+([a-zA-Z0-9_]+)\s*\(", RegexOptions.Multiline);
-            var matches = regex.Matches(content);
 
-            foreach (Match match in matches)
+            foreach (Match match in regex.Matches(content))
             {
                 string name = match.Groups[1].Value;
                 int start = match.Index;
@@ -372,32 +370,37 @@ Explain what this screen does in simple words.
                 int braceStart = content.IndexOf('{', start);
                 if (braceStart == -1) continue;
 
-                int count = 0;
-                int end = braceStart;
+                int count = 0, end = braceStart;
 
                 for (int i = braceStart; i < content.Length; i++)
                 {
                     if (content[i] == '{') count++;
                     else if (content[i] == '}') count--;
 
-                    if (count == 0)
-                    {
-                        end = i;
-                        break;
-                    }
+                    if (count == 0) { end = i; break; }
                 }
 
                 if (count != 0) continue;
 
                 string body = content.Substring(start, end - start + 1);
-                System.IO.File.WriteAllText(Path.Combine(outputDir, name + ".txt"), body);
+                string filePath = Path.Combine(outputDir, name + ".txt");
+
+                System.IO.File.WriteAllText(filePath, body);
+
+                await _dal.Save_Extracted_File(
+                    parentFileId,
+                    name,
+                    filePath,
+                    "js-function"
+                );
             }
         }
+
 
         // =========================================================
         // C# METHOD SPLITTER
         // =========================================================
-        private void SplitCSharpMethods(string sourcePath)
+        private async Task SplitCSharpMethods(string sourcePath, int parentFileId)
         {
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -407,17 +410,12 @@ Explain what this screen does in simple words.
             Directory.CreateDirectory(outputDir);
 
             var content = System.IO.File.ReadAllText(sourcePath);
-
             var regex = new Regex(
-                @"(public|private|protected|internal)\s+" +
-                @"[\w\<\>\[\]]+\s+" +
-                @"([a-zA-Z0-9_]+)\s*\([^\)]*\)\s*\{",
+                @"(public|private|protected|internal)\s+[\w\<\>\[\]]+\s+([a-zA-Z0-9_]+)\s*\(",
                 RegexOptions.Multiline
             );
 
-            var matches = regex.Matches(content);
-
-            foreach (Match match in matches)
+            foreach (Match match in regex.Matches(content))
             {
                 string name = match.Groups[2].Value;
                 int start = match.Index;
@@ -425,32 +423,37 @@ Explain what this screen does in simple words.
                 int braceStart = content.IndexOf('{', start);
                 if (braceStart == -1) continue;
 
-                int count = 0;
-                int end = braceStart;
+                int count = 0, end = braceStart;
 
                 for (int i = braceStart; i < content.Length; i++)
                 {
                     if (content[i] == '{') count++;
                     else if (content[i] == '}') count--;
 
-                    if (count == 0)
-                    {
-                        end = i;
-                        break;
-                    }
+                    if (count == 0) { end = i; break; }
                 }
 
                 if (count != 0) continue;
 
                 string body = content.Substring(start, end - start + 1);
-                System.IO.File.WriteAllText(Path.Combine(outputDir, name + ".txt"), body);
+                string filePath = Path.Combine(outputDir, name + ".txt");
+
+                System.IO.File.WriteAllText(filePath, body);
+
+                await _dal.Save_Extracted_File(
+                    parentFileId,
+                    name,
+                    filePath,
+                    "cs-method"
+                );
             }
         }
+
 
         // =========================================================
         // SQL TABLE & PROCEDURE SPLITTER
         // =========================================================
-        private void SplitSqlTablesAndProcedures(string sourcePath)
+        private async Task SplitSqlTablesAndProcedures(string sourcePath, int parentFileId)
         {
             string baseDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -465,11 +468,8 @@ Explain what this screen does in simple words.
 
             string sql = System.IO.File.ReadAllText(sourcePath);
 
-            var batches = Regex.Split(
-                sql,
-                @"^\s*GO\s*$",
-                RegexOptions.Multiline | RegexOptions.IgnoreCase
-            );
+            var batches = Regex.Split(sql, @"^\s*GO\s*$",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
             foreach (var batch in batches)
             {
@@ -478,48 +478,49 @@ Explain what this screen does in simple words.
 
                 if (Regex.IsMatch(block, @"^CREATE\s+TABLE", RegexOptions.IgnoreCase))
                 {
-                    var m = Regex.Match(
-                        block,
+                    var m = Regex.Match(block,
                         @"CREATE\s+TABLE\s+(\[[^\]]+\]\.\[[^\]]+\])",
-                        RegexOptions.IgnoreCase
-                    );
+                        RegexOptions.IgnoreCase);
 
                     if (m.Success)
                     {
-                        string name = m.Groups[1].Value
-                            .Replace("[", "")
-                            .Replace("]", "")
-                            .Replace(".", "_");
+                        string name = m.Groups[1].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
+                        string path = Path.Combine(tableDir, name + ".txt");
 
-                        System.IO.File.WriteAllText(
-                            Path.Combine(tableDir, name + ".txt"),
-                            block
+                        System.IO.File.WriteAllText(path, block);
+
+                        await _dal.Save_Extracted_File(
+                            parentFileId,
+                            name,
+                            path,
+                            "sql-table"
                         );
                     }
                 }
                 else if (Regex.IsMatch(block, @"^(CREATE|ALTER)\s+PROC", RegexOptions.IgnoreCase))
                 {
-                    var m = Regex.Match(
-                        block,
+                    var m = Regex.Match(block,
                         @"(CREATE|ALTER)\s+PROC(?:EDURE)?\s+(\[[^\]]+\]\.\[[^\]]+\])",
-                        RegexOptions.IgnoreCase
-                    );
+                        RegexOptions.IgnoreCase);
 
                     if (m.Success)
                     {
-                        string name = m.Groups[2].Value
-                            .Replace("[", "")
-                            .Replace("]", "")
-                            .Replace(".", "_");
+                        string name = m.Groups[2].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
+                        string path = Path.Combine(procDir, name + ".txt");
 
-                        System.IO.File.WriteAllText(
-                            Path.Combine(procDir, name + ".txt"),
-                            block
+                        System.IO.File.WriteAllText(path, block);
+
+                        await _dal.Save_Extracted_File(
+                            parentFileId,
+                            name,
+                            path,
+                            "sql-procedure"
                         );
                     }
                 }
             }
         }
+
     }
 
 }

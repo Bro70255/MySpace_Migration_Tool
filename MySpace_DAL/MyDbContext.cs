@@ -11,6 +11,7 @@ namespace MySpace_DAL
         public DbSet<Registration> Registrations { get; set; }
         public DbSet<FileDetails> FileDetails { get; set; }
         public DbSet<ExtractedFileDetails> ExtractedFileDetails { get; set; }
+        public DbSet<FileChildDetail> FileChildDetails { get; set; }
 
     }
 }

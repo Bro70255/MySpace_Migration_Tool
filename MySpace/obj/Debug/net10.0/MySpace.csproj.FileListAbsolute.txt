@@ -433,4 +433,15 @@ F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\wr922lpk6c-{0}-
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\kkcnlju8ss-{0}-xzw0cte36n-xzw0cte36n.gz
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\syjavtgzqa-{0}-jfsiqqwiad-jfsiqqwiad.gz
 F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\1xgm600kog-{0}-hr0zp54nq4-hr0zp54nq4.gz
-F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\dpb1iix4yf-{0}-xp5cpnqbd8-xp5cpnqbd8.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\dpb1iix4yf-{0}-ucdgqnt7wy-ucdgqnt7wy.gz
+F:\Back_UP_Projects\MySpace\MySpace\bin\Debug\net10.0\Newtonsoft.Json.dll
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\hkpn4sv4zn-{0}-30w240nqx1-30w240nqx1.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\kg0vtynuvu-{0}-apfqwuoq4u-apfqwuoq4u.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\oiqbp1k1rc-{0}-aj2ep9f0t4-aj2ep9f0t4.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\j46vplnvm8-{0}-uujpmitbzd-uujpmitbzd.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\9ztmbwlshi-{0}-ivx9nh0ba1-ivx9nh0ba1.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\togb1rh36h-{0}-7zdfv7d5zq-7zdfv7d5zq.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\kgimt91dru-{0}-m591ql9m32-m591ql9m32.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\d8rseohinc-{0}-4ils3ziyqm-4ils3ziyqm.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\jlrf2mitm7-{0}-rdco82ilql-rdco82ilql.gz
+F:\Back_UP_Projects\MySpace\MySpace\obj\Debug\net10.0\compressed\zy3s8uyvj3-{0}-2amyhiavy0-2amyhiavy0.gz

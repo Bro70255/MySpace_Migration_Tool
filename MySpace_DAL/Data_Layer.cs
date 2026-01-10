@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MySpace_Common;
+using System.Data;
 
 
 namespace MySpace_DAL
@@ -40,13 +41,14 @@ namespace MySpace_DAL
             }
         }
 
-        public async Task<int> Save_File_Details(string fileName, string filePath, string fileType)
+        public async Task<int> Save_File_Details(string fileName, string filePath, string fileType,string textContent)
         {
             var entity = new FileDetails
             {
                 FileName = fileName,
                 FilePath = filePath,
                 FileType = fileType,
+                TextContent = textContent,
                 UploadedOn = DateTime.Now
             };
 
@@ -56,12 +58,12 @@ namespace MySpace_DAL
             return entity.FileId;
         }
 
-        public async Task Save_Extracted_File(
-            int parentFileId,
-            string extractedName,
-            string extractedPath,
-            string extractedType
-        )
+        public async Task<int> Save_Extracted_File(
+    int parentFileId,
+    string extractedName,
+    string extractedPath,
+    string extractedType
+)
         {
             var entity = new ExtractedFileDetails
             {
@@ -74,6 +76,8 @@ namespace MySpace_DAL
 
             await _context.ExtractedFileDetails.AddAsync(entity);
             await _context.SaveChangesAsync();
+
+            return entity.ExtractedId;   // ✅ FIXED
         }
 
 
@@ -96,6 +100,100 @@ namespace MySpace_DAL
             }
 
             return await query.ToListAsync();
+        }
+
+
+        public async Task Save_Child_File_Details(
+     int parentFileId,
+     string name,
+     string type)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            name = name.Trim();
+
+            bool exists = await _context.FileChildDetails
+                .AsNoTracking()
+                .AnyAsync(x =>
+                    x.ParentFileId == parentFileId &&
+                    x.Name == name &&
+                    x.Type == type);
+
+            if (exists)
+                return;
+
+            var entity = new FileChildDetail
+            {
+                ParentFileId = parentFileId,
+                Name = name,
+                Type = type,
+                CreatedOn = DateTime.Now
+            };
+
+            _context.FileChildDetails.Add(entity);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<List<BlueprintScreenDto>> GetBlueprintData()
+        {
+            var result = new List<dynamic>();
+
+            using (var conn = _context.Database.GetDbConnection())
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "sp_GetBlueprintData";
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            result.Add(new
+                            {
+                                ScreenId = reader.GetInt32(0),
+                                ScreenName = reader.GetString(1),
+
+                                JsFunctionId = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2),
+                                JsFunctionName = reader.IsDBNull(3) ? null : reader.GetString(3),
+
+                                ControllerAction = reader.IsDBNull(4) ? null : reader.GetString(4),
+                                HttpType = reader.IsDBNull(5) ? null : reader.GetString(5)
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 🔄 Transform flat result → hierarchy
+            return result
+                .GroupBy(x => new { x.ScreenId, x.ScreenName })
+                .Select(screen => new BlueprintScreenDto
+                {
+                    ScreenId = screen.Key.ScreenId,
+                    ScreenName = screen.Key.ScreenName,
+
+                    JsFunctions = screen
+                        .Where(x => x.JsFunctionId != null)
+                        .GroupBy(x => new { x.JsFunctionId, x.JsFunctionName })
+                        .Select(js => new BlueprintJsDto
+                        {
+                            JsFunctionId = js.Key.JsFunctionId,   // ✅ FIXED
+                            JsFunctionName = js.Key.JsFunctionName,
+
+                            Controllers = js
+                                .Where(x => x.ControllerAction != null)
+                                .Select(c => new BlueprintControllerDto
+                                {
+                                    ControllerAction = c.ControllerAction,
+                                    HttpType = c.HttpType
+                                }).ToList()
+                        }).ToList()
+                }).ToList();
         }
 
     }

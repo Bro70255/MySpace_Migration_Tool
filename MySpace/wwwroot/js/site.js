@@ -292,6 +292,57 @@ function Sent_Data_To_AI() {
             document.getElementById("AIResponse").value = "Error calling AI";
         });
 }
+function loadBlueprint() {
+    fetch('/Home/GetBlueprint')
+        .then(res => res.json())
+        .then(data => {
+            console.log("DB DATA:", data);   // 🔴 CHECK THIS
+            renderBlueprint(data);
+        })
+        .catch(err => console.error(err));
+}
+
+function renderBlueprint(data) {
+    const tree = document.getElementById("tree");
+    tree.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        tree.innerHTML = "<p>No blueprint data from DB</p>";
+        return;
+    }
+
+    const ul = document.createElement("ul");
+
+    data.forEach(screen => {
+        const screenLi = document.createElement("li");
+        screenLi.innerHTML = `📄 <b>${screen.screenName}</b>`;
+
+        const jsUl = document.createElement("ul");
+
+        screen.jsFunctions.forEach(js => {
+            const jsLi = document.createElement("li");
+            jsLi.innerHTML = `📜 ${js.jsFunctionName}`;
+
+            const ctrlUl = document.createElement("ul");
+
+            js.controllers.forEach(ctrl => {
+                const ctrlLi = document.createElement("li");
+                ctrlLi.innerHTML =
+                    `⚙️ ${ctrl.controllerAction} (${ctrl.httpType})`;
+                ctrlUl.appendChild(ctrlLi);
+            });
+
+            jsLi.appendChild(ctrlUl);
+            jsUl.appendChild(jsLi);
+        });
+
+        screenLi.appendChild(jsUl);
+        ul.appendChild(screenLi);
+    });
+
+    tree.appendChild(ul);
+}
+
 
 
 

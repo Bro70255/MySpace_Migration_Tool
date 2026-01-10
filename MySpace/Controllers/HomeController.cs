@@ -199,7 +199,6 @@ Explain what this screen does in simple words.
             }
         }
 
-
         [HttpGet]
         public IActionResult List_out_the_Files_in_Folder_ReadOCRFile()
         {
@@ -326,7 +325,8 @@ Explain what this screen does in simple words.
                 int parentFileId = await _dal.Save_File_Details(
                     safeFileName,
                     savePath,
-                    fileType
+                    fileType,
+                    textContent
                 );
 
                 // 2. Extract & save children
@@ -336,7 +336,8 @@ Explain what this screen does in simple words.
                     await SplitCSharpMethods(savePath, parentFileId);
                 else if (fileType == "sql")
                     await SplitSqlTablesAndProcedures(savePath, parentFileId);
-
+                else if (fileType == "cshtml")
+                    await ExtractAllCshtmlFunctions(savePath, parentFileId);
 
             }
 
@@ -359,12 +360,15 @@ Explain what this screen does in simple words.
 
             Directory.CreateDirectory(outputDir);
 
-            var content = System.IO.File.ReadAllText(sourcePath);
-            var regex = new Regex(@"function\s+([a-zA-Z0-9_]+)\s*\(", RegexOptions.Multiline);
+            string content = await System.IO.File.ReadAllTextAsync(sourcePath);
 
-            foreach (Match match in regex.Matches(content))
+            var functionRegex = new Regex(
+                @"function\s+([a-zA-Z0-9_]+)\s*\(",
+                RegexOptions.Multiline);
+
+            foreach (Match match in functionRegex.Matches(content))
             {
-                string name = match.Groups[1].Value;
+                string functionName = match.Groups[1].Value;
                 int start = match.Index;
 
                 int braceStart = content.IndexOf('{', start);
@@ -383,16 +387,20 @@ Explain what this screen does in simple words.
                 if (count != 0) continue;
 
                 string body = content.Substring(start, end - start + 1);
-                string filePath = Path.Combine(outputDir, name + ".txt");
 
-                System.IO.File.WriteAllText(filePath, body);
+                string filePath = Path.Combine(outputDir, functionName + ".txt");
+                await System.IO.File.WriteAllTextAsync(filePath, body);
 
-                await _dal.Save_Extracted_File(
+                // Save JS Function
+                int jsFunctionId = await _dal.Save_Extracted_File(
                     parentFileId,
-                    name,
+                    functionName,
                     filePath,
                     "js-function"
                 );
+
+                // 🔥 Extract API Calls
+                await ExtractControllerCalls(body, jsFunctionId);
             }
         }
 
@@ -448,7 +456,6 @@ Explain what this screen does in simple words.
                 );
             }
         }
-
 
         // =========================================================
         // SQL TABLE & PROCEDURE SPLITTER
@@ -519,6 +526,157 @@ Explain what this screen does in simple words.
                     }
                 }
             }
+        }
+
+        private async Task ExtractAllCshtmlFunctions(string filePath, int parentFileId)
+        {
+            string content = await System.IO.File.ReadAllTextAsync(filePath);
+
+            HashSet<string> functions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            // JS keywords + jQuery boilerplate (IGNORED)
+            HashSet<string> jsKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "if","else","for","while","switch","return",
+        "function","var","let","const","new",
+        "document","window","console","log",
+        "settimeout","setinterval","parseint","parsefloat",
+        "alert","this","true","false","null","undefined",
+        "ready","$"
+    };
+
+            /* =============================
+               1. JS function declarations
+               function myFunc() {}
+            ============================== */
+            foreach (Match match in Regex.Matches(content,
+                @"function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
+            {
+                functions.Add(match.Groups[1].Value);
+            }
+
+            /* =============================
+               2. Arrow functions
+               const myFunc = () => {}
+            ============================== */
+            foreach (Match match in Regex.Matches(content,
+                @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\("))
+            {
+                functions.Add(match.Groups[2].Value);
+            }
+
+            /* =============================
+               3. Anonymous functions
+               var myFunc = function() {}
+            ============================== */
+            foreach (Match match in Regex.Matches(content,
+                @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*function\s*\("))
+            {
+                functions.Add(match.Groups[2].Value);
+            }
+
+            /* =============================
+               4. HTML event handlers
+               onclick="myFunc()"
+            ============================== */
+            foreach (Match match in Regex.Matches(content,
+                @"on\w+\s*=\s*[""']\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\(",
+                RegexOptions.IgnoreCase))
+            {
+                functions.Add(match.Groups[1].Value);
+            }
+
+            /* =============================
+               5. Function calls
+               myFunc();
+               (filter keywords & jQuery)
+            ============================== */
+            foreach (Match match in Regex.Matches(content,
+                @"\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
+            {
+                string funcName = match.Groups[1].Value;
+
+                if (jsKeywords.Contains(funcName))
+                    continue;
+
+                if (funcName.StartsWith("$"))
+                    continue;
+
+                functions.Add(funcName);
+            }
+
+            /* =============================
+               Save extracted functions
+            ============================== */
+            foreach (string func in functions)
+            {
+                await _dal.Save_Child_File_Details(
+                    parentFileId,
+                    func,
+                    "cshtml-function"
+                );
+            }
+        }
+
+        private async Task ExtractControllerCalls(string jsBody, int parentFunctionId)
+        {
+            var apiRegex = new Regex(
+                @"(?:(?:\$\.ajax\s*\(\s*\{[\s\S]*?type\s*:\s*['""]?(GET|POST)['""]?[\s\S]*?url\s*:\s*['""]([^'""]+)['""])|" +
+                @"(?:\$\.(get|post)\s*\(\s*['""]([^'""]+)['""])|" +
+                @"(?:fetch\s*\(\s*['""]([^'""]+)['""]\s*,\s*\{[\s\S]*?method\s*:\s*['""]?(GET|POST)['""]?)|" +
+                @"(?:axios\.(get|post)\s*\(\s*['""]([^'""]+)['""]))",
+                RegexOptions.IgnoreCase);
+
+            foreach (Match match in apiRegex.Matches(jsBody))
+            {
+                string httpMethod = "GET";
+                string url = null;
+
+                if (!string.IsNullOrEmpty(match.Groups[1].Value))
+                {
+                    httpMethod = match.Groups[1].Value;
+                    url = match.Groups[2].Value;
+                }
+                else if (!string.IsNullOrEmpty(match.Groups[3].Value))
+                {
+                    httpMethod = match.Groups[3].Value.ToUpper();
+                    url = match.Groups[4].Value;
+                }
+                else if (!string.IsNullOrEmpty(match.Groups[5].Value))
+                {
+                    url = match.Groups[5].Value;
+                    httpMethod = match.Groups[6].Value;
+                }
+                else if (!string.IsNullOrEmpty(match.Groups[7].Value))
+                {
+                    httpMethod = match.Groups[7].Value.ToUpper();
+                    url = match.Groups[8].Value;
+                }
+
+                if (string.IsNullOrEmpty(url)) continue;
+
+                // Parse /Controller/Action
+                var parts = url.Trim('/').Split('/');
+                if (parts.Length < 2) continue;
+
+                string controller = parts[0];
+                string action = parts[1];
+
+                await _dal.Save_Child_File_Details(
+                    parentFunctionId,
+                    $"{controller}/{action}",
+                    $"{httpMethod}-controller"
+                );
+            }
+        }
+
+
+        // API – used by JS
+        [HttpGet]
+        public async Task<IActionResult> GetBlueprint()
+        {
+            var data = await _dal.GetBlueprintData();
+            return Json(data);
         }
 
     }

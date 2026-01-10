@@ -7,31 +7,28 @@
 <head>
     <meta charset="utf-8" />
     <title>Blueprint</title>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="~/css/blueprint.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
 </head>
 
 <body>
-
     <div class="bp-wrap">
         <div class="bp-canvas">
 
-            <div class="bp-project" id="projectTitle">PROJECT</div>
+            <div class="bp-project" id="projectTitle">
+                PROJECT BLUEPRINT
+            </div>
 
-            <div class="bp-stage" id="stage">
-                <svg class="bp-wires" id="bpWires"></svg>
+            <div class="bp-stage">
                 <div class="bp-tree" id="tree"></div>
             </div>
 
         </div>
     </div>
 
-    <script src="~/js/blueprint.js?v=@DateTime.Now.Ticks"></script>
-
+    <!-- Initialize function -->
     <script>
-       // $(document).ready(loadBlueprint);
+        document.addEventListener("DOMContentLoaded", function () {
+            loadBlueprint();   // ✅ initialize here
+        });
     </script>
-
 </body>
 </html>

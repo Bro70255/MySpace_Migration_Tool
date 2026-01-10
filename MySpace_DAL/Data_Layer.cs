@@ -41,10 +41,11 @@ namespace MySpace_DAL
             }
         }
 
-        public async Task<int> Save_File_Details(string fileName, string filePath, string fileType,string textContent)
+        public async Task<int> Save_File_Details(int parentFileId,string fileName, string filePath, string fileType,string textContent)
         {
             var entity = new FileDetails
             {
+                ParentFileId = parentFileId,
                 FileName = fileName,
                 FilePath = filePath,
                 FileType = fileType,
@@ -80,7 +81,6 @@ namespace MySpace_DAL
             return entity.ExtractedId;   // ✅ FIXED
         }
 
-
         public async Task<List<Registration>> Get_Registration_Report_Details(string search)
         {
             var query = _context.Registrations.AsQueryable();
@@ -101,7 +101,6 @@ namespace MySpace_DAL
 
             return await query.ToListAsync();
         }
-
 
         public async Task Save_Child_File_Details(
      int parentFileId,
@@ -134,7 +133,6 @@ namespace MySpace_DAL
             _context.FileChildDetails.Add(entity);
             await _context.SaveChangesAsync();
         }
-
 
         public async Task<List<BlueprintScreenDto>> GetBlueprintData()
         {

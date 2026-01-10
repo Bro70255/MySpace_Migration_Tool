@@ -1,0 +1,15 @@
+public JsonResult Get_Bank_approved_dtls()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                var usertype = Convert.ToInt32(Session["UserType"]);
+                dtDetails = BLL.Get_Bank_approved_dtls(usertype);
+                
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

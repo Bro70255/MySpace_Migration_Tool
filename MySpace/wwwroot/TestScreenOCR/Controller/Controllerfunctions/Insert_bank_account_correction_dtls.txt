@@ -1,0 +1,15 @@
+public JsonResult Insert_bank_account_correction_dtls(int correction_id, string acc_number, string Signature1, string Signature2, string Signature3, string Signature4)
+        {
+            try
+            {
+                int Emp_Code = Convert.ToInt32(Session["Emp_code"]);
+                int Crrction_edit = 2;
+                BLL.Insert_bank_account_correction_dtls(correction_id, acc_number, Signature1, Signature2, Signature3, Signature4, Emp_Code, Crrction_edit);
+                return Json(new { success = true, message = "Update successful." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (consider using a logging library)
+                return Json(new { success = false, message = ex.Message });
+            }
+        }

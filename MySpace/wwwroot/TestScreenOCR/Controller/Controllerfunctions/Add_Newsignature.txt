@@ -1,0 +1,13 @@
+public JsonResult Add_Newsignature(int unitName, string bankName, decimal accountnum, string signature, string signatureName)
+        {
+            try
+            {
+                var created_by = Convert.ToInt32(Session["Emp_code"]); // Assuming Emp_code is an integer
+                BLL.Add_Newsignature(created_by, unitName, bankName, accountnum, signature, signatureName);
+                return Json(1); // Indicate success
+            }
+            catch (Exception ex)
+            {
+                return Json(0); // Indicate failure
+            }
+        }

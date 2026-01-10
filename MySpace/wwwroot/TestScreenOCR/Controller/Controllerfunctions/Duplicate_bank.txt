@@ -1,0 +1,15 @@
+public JsonResult Duplicate_bank(string bank)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Duplicate_bank(bank);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            string JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

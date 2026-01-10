@@ -8,6 +8,9 @@ public class FileDetails
     public int FileId { get; set; }
 
     [Required]
+    public int ParentFileId { get; set; }
+
+    [Required]
     public string FileName { get; set; }
 
     public string FilePath { get; set; }

@@ -1,6 +1,3 @@
-// ORIGINAL FILE: account.js
-// CONVERTED ON: 09-01-2026 22:08:50
-
 function Report() {
     try {
         $.ajax({

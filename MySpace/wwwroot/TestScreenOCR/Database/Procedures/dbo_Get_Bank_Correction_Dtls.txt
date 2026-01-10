@@ -1,0 +1,22 @@
+CREATE procedure [dbo].[Get_Bank_Correction_Dtls]
+@ID INT
+AS
+------------------------------------------------------------------------------------------
+--Created by Aparna on 23.09.2024 - To get Bank Details
+-----------------------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+	SELECT
+   BM.[BranchName] AS UNIT,
+   BSD.[BANK],
+  BSD.[ACCOUNT_NUMBER],
+  BSD.[SIGNATURE1],
+  BSD.[SIGNATURE2],
+  BSD.[SIGNATURE3],
+  BSD.[SIGNATURE4]
+From [dbo].[Bank_Signatures_Dtls] BSD
+INNER JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+ WHERE [ID]=@ID
+    
+END;

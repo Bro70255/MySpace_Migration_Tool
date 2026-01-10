@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic.FileIO;
 using MySpace.Models;
 using MySpace_Common;
 using MySpace_DAL;
@@ -314,15 +315,13 @@ Explain what this screen does in simple words.
                 using var reader = new StreamReader(file.OpenReadStream());
                 string content = await reader.ReadToEndAsync();
 
-                string textContent =
-                    $"// ORIGINAL FILE: {safeFileName}{Environment.NewLine}" +
-                    $"// CONVERTED ON: {DateTime.Now}{Environment.NewLine}{Environment.NewLine}" +
-                    content;
+                string textContent = content;
 
                 await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
                 // 1. Save original file
                 int parentFileId = await _dal.Save_File_Details(
+                    0,
                     safeFileName,
                     savePath,
                     fileType,
@@ -391,16 +390,18 @@ Explain what this screen does in simple words.
                 string filePath = Path.Combine(outputDir, functionName + ".txt");
                 await System.IO.File.WriteAllTextAsync(filePath, body);
 
-                // Save JS Function
-                int jsFunctionId = await _dal.Save_Extracted_File(
+
+                // 1. Save Js file
+                int FileId = await _dal.Save_File_Details(
                     parentFileId,
                     functionName,
                     filePath,
-                    "js-function"
+                    "js-function",
+                    body
                 );
 
                 // 🔥 Extract API Calls
-                await ExtractControllerCalls(body, jsFunctionId);
+                await ExtractControllerCalls(body, FileId);
             }
         }
 
@@ -448,11 +449,13 @@ Explain what this screen does in simple words.
 
                 System.IO.File.WriteAllText(filePath, body);
 
-                await _dal.Save_Extracted_File(
+                // 1. Save Controller file
+                int FileId = await _dal.Save_File_Details(
                     parentFileId,
                     name,
                     filePath,
-                    "cs-method"
+                    "Controller-function",
+                    body
                 );
             }
         }
@@ -496,11 +499,14 @@ Explain what this screen does in simple words.
 
                         System.IO.File.WriteAllText(path, block);
 
-                        await _dal.Save_Extracted_File(
+
+                        // 1. Save Controller file
+                        int FileId = await _dal.Save_File_Details(
                             parentFileId,
                             name,
                             path,
-                            "sql-table"
+                            "sql-table",
+                            block
                         );
                     }
                 }
@@ -517,11 +523,14 @@ Explain what this screen does in simple words.
 
                         System.IO.File.WriteAllText(path, block);
 
-                        await _dal.Save_Extracted_File(
+
+                        // 1. Save Controller file
+                        int FileId = await _dal.Save_File_Details(
                             parentFileId,
                             name,
                             path,
-                            "sql-procedure"
+                            "sql-procedure",
+                            block
                         );
                     }
                 }

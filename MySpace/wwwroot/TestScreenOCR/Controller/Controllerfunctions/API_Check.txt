@@ -1,0 +1,33 @@
+public JsonResult API_Check(int employeeCode, string loginPassword)
+        {
+            try
+            {
+                string apiUrl = "https://gen.mactech.net.in/api_mafound_gen/api/v1/StaffWel/staffdetails";
+
+                // Create a WebClient to make the API request
+                using (WebClient client = new WebClient())
+                {
+                    // Set the content type to JSON
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    // Create a JSON string for your credentials
+                    string credentialsJson = JsonConvert.SerializeObject(new { userID = employeeCode, password = loginPassword });
+
+                    // Convert the credentials to a byte array
+                    byte[] credentialsData = Encoding.UTF8.GetBytes(credentialsJson);
+
+                    // Make the API request and get the response as a string
+                    string response = client.UploadString(apiUrl, "POST", credentialsJson);
+
+                    // You can now parse or use the 'response' variable as needed
+
+                    // Return the API response as a JsonResult
+                    return Json(response, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions that might occur during the request
+                return Json("An error occurred in API: " + ex.Message, JsonRequestBehavior.AllowGet);
+            }
+        }

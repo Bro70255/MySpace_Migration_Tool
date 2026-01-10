@@ -303,45 +303,45 @@ function loadBlueprint() {
 }
 
 function renderBlueprint(data) {
-    const tree = document.getElementById("tree");
-    tree.innerHTML = "";
-
-    if (!data || data.length === 0) {
-        tree.innerHTML = "<p>No blueprint data from DB</p>";
-        return;
-    }
-
-    const ul = document.createElement("ul");
+    const root = document.getElementById('blueprintTree');
+    root.innerHTML = '';
 
     data.forEach(screen => {
-        const screenLi = document.createElement("li");
-        screenLi.innerHTML = `📄 <b>${screen.screenName}</b>`;
+        const view = document.createElement('div');
+        view.className = 'view-node';
 
-        const jsUl = document.createElement("ul");
+        view.innerHTML = `
+            <div class="view-title">${screen.screenName}</div>
+            <div class="js-container"></div>
+        `;
+
+        const jsContainer = view.querySelector('.js-container');
 
         screen.jsFunctions.forEach(js => {
-            const jsLi = document.createElement("li");
-            jsLi.innerHTML = `📜 ${js.jsFunctionName}`;
+            const jsNode = document.createElement('div');
+            jsNode.className = 'js-node';
+            jsNode.textContent = js.jsFunctionName;
 
-            const ctrlUl = document.createElement("ul");
+            const ctrlList = document.createElement('div');
+            ctrlList.className = 'controller-list';
 
-            js.controllers.forEach(ctrl => {
-                const ctrlLi = document.createElement("li");
-                ctrlLi.innerHTML =
-                    `⚙️ ${ctrl.controllerAction} (${ctrl.httpType})`;
-                ctrlUl.appendChild(ctrlLi);
+            js.controllers.forEach(c => {
+                const ctrl = document.createElement('div');
+                ctrl.className = `controller ${c.httpType.includes('GET') ? 'get' : 'post'}`;
+                ctrl.textContent = `${c.controllerAction} (${c.httpType})`;
+                ctrlList.appendChild(ctrl);
             });
 
-            jsLi.appendChild(ctrlUl);
-            jsUl.appendChild(jsLi);
+            jsNode.onclick = () => jsNode.classList.toggle('active');
+
+            jsContainer.appendChild(jsNode);
+            jsContainer.appendChild(ctrlList);
         });
 
-        screenLi.appendChild(jsUl);
-        ul.appendChild(screenLi);
+        root.appendChild(view);
     });
-
-    tree.appendChild(ul);
 }
+
 
 
 

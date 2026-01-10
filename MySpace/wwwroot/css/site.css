@@ -124,92 +124,111 @@ html, body {
    TREE VIEW (MODERN IDE STYLE)
 ========================================================= */
 
-.tree-view {
-    font-size: 14.5px;
-    line-height: 1.6;
+:root {
+    --bg: #0b1220;
+    --card: #111a2e;
+    --line: #2a3a5f;
+    --accent: #4da3ff;
+    --js: #22c55e;
+    --get: #38bdf8;
+    --post: #f97316;
+    --text: #e5e7eb;
 }
 
-    .tree-view ul {
-        list-style: none;
-        padding-left: 20px;
-        margin: 4px 0;
-        position: relative;
-    }
-
-        /* vertical guide line */
-        .tree-view ul::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 8px;
-            bottom: 0;
-            border-left: 1px dashed rgba(255,255,255,0.08);
-        }
-
-.tree-item {
-    margin: 2px 0;
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Folder / File row */
-.tree-folder,
-.tree-file {
+.blueprint {
+    padding: 2rem;
+    overflow-x: auto;
+}
+
+.tree-root {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* View Card */
+.view-node {
+    border-left: 4px solid var(--accent);
+    background: var(--card);
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.view-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* JS container */
+.js-container {
+    margin-top: 1rem;
+    margin-left: 1.25rem;
+    display: grid;
+    gap: .75rem;
+}
+
+/* JS Card */
+.js-node {
+    background: rgba(34,197,94,.1);
+    border-left: 3px solid var(--js);
+    padding: .75rem 1rem;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: transform .2s ease;
 }
 
-    .tree-folder:hover,
-    .tree-file:hover {
-        background: rgba(79,140,255,0.12);
+    .js-node:hover {
+        transform: translateX(4px);
     }
 
-/* Caret */
-.tree-caret {
-    width: 10px;
-    height: 10px;
-    display: inline-block;
-    border-right: 2px solid var(--primary);
-    border-bottom: 2px solid var(--primary);
-    transform: rotate(-45deg);
-    transition: transform 0.2s ease;
-    margin-right: 4px;
+/* Controller list */
+.controller-list {
+    margin-top: .5rem;
+    margin-left: 1rem;
+    display: none;
+    gap: .4rem;
+    flex-direction: column;
 }
 
-    .tree-caret.open {
-        transform: rotate(45deg);
+.controller {
+    padding: .4rem .75rem;
+    border-radius: 6px;
+    font-size: .85rem;
+    width: fit-content;
+}
+
+    .controller.get {
+        background: rgba(56,189,248,.15);
+        color: var(--get);
     }
 
-    .tree-caret.closed {
-        transform: rotate(-45deg);
+    .controller.post {
+        background: rgba(249,115,22,.15);
+        color: var(--post);
     }
 
-/* Icons */
-.tree-folder-icon {
-    font-size: 16px;
+/* Expand animation */
+.js-node.active + .controller-list {
+    display: flex;
+    animation: fadeIn .25s ease;
 }
 
-.tree-file-icon {
-    opacity: 0.7;
-}
-
-/* Name */
-.tree-name {
-    font-weight: 500;
-    color: var(--text-main);
-}
-
-/* Files */
-.tree-file {
-    padding-left: 30px;
-    color: var(--text-muted);
-    cursor: default;
-}
-
-    .tree-file:hover {
-        background: rgba(255,255,255,0.04);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
     }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -134,6 +134,7 @@ function renderBlueprint(data) {
     });
 }
 
+
 function loadOCRTreeView() {
     fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
         .then(res => res.json())
@@ -160,6 +161,7 @@ function renderNode(node, parentUl) {
     const li = document.createElement("li");
 
     if (node.isDirectory) {
+
         const header = document.createElement("div");
         header.className = "tree-folder";
 
@@ -184,11 +186,11 @@ function renderNode(node, parentUl) {
         node.children.forEach(child => renderNode(child, childrenUl));
 
         header.addEventListener("click", () => {
-            const isOpen = childrenUl.classList.contains("open");
+            const open = childrenUl.classList.contains("open");
 
-            childrenUl.classList.toggle("open", !isOpen);
-            caret.classList.toggle("open", !isOpen);
-            icon.textContent = !isOpen ? "📂" : "📁";
+            childrenUl.classList.toggle("open", !open);
+            caret.classList.toggle("open", !open);
+            icon.textContent = !open ? "📂" : "📁";
         });
 
         li.appendChild(childrenUl);
@@ -196,9 +198,9 @@ function renderNode(node, parentUl) {
     else {
         li.className = "tree-file";
         li.innerHTML = `
-            <span class="tree-file-icon">📄</span>
-            <span class="tree-name">${node.name}</span>
-        `;
+                <span class="tree-file-icon">📄</span>
+                <span class="tree-name">${node.name}</span>
+            `;
     }
 
     parentUl.appendChild(li);

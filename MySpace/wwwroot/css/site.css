@@ -120,10 +120,9 @@ html, body {
         box-shadow: 0 8px 20px rgba(79,140,255,0.25);
     }
 
-
-/* ================================
-   MODULE CONTAINER
-================================ */
+/* =========================================================
+   MODULE (DARK)
+========================================================= */
 .module-wrapper {
     background: #0f172a;
     border-radius: 14px;
@@ -148,45 +147,45 @@ html, body {
 .module-title {
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: .3px;
-    color: #e5e7eb;
+    color: var(--text-main);
 }
 
-/* ================================
-   MODERN MODULE CONTAINER
-================================ */
-.module-modern {
-    background: #0f172a;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: 0 20px 45px rgba(0,0,0,.45);
-    overflow: hidden;
+.module-body {
+    padding: 16px 18px;
 }
 
-/* Header */
-.module-modern-header {
+/* =========================================================
+   TREE CONTROLS (EXPAND ALL)
+========================================================= */
+.tree-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.tree-toggle {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
-    background: linear-gradient(180deg, #111a2e, #0b1220);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
 }
 
-.module-modern-icon {
-    font-size: 18px;
-}
+    .tree-toggle:hover {
+        color: var(--text-main);
+    }
 
-.module-modern-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #e5e7eb;
-}
+    .tree-toggle input {
+        width: 14px;
+        height: 14px;
+        accent-color: var(--primary);
+    }
 
-/* ================================
-   CLASSIC FILE TREE (MODULE STYLE)
-================================ */
-
+/* =========================================================
+   CLASSIC FILE TREE (DARK)
+========================================================= */
 .classic-tree {
     background: #0f172a;
     border: 1px solid rgba(255,255,255,0.08);
@@ -195,7 +194,7 @@ html, body {
     font-size: 14px;
 }
 
-    /* Remove default bullets */
+    /* Tree structure */
     .classic-tree ul {
         list-style: none;
         margin: 0;
@@ -203,7 +202,6 @@ html, body {
         position: relative;
     }
 
-        /* Vertical line */
         .classic-tree ul::before {
             content: "";
             position: absolute;
@@ -213,13 +211,11 @@ html, body {
             border-left: 1px dashed rgba(255,255,255,0.15);
         }
 
-    /* Tree item */
     .classic-tree li {
         margin: 4px 0;
         position: relative;
     }
 
-        /* Horizontal connector */
         .classic-tree li::before {
             content: "";
             position: absolute;
@@ -229,8 +225,7 @@ html, body {
             border-top: 1px dashed rgba(255,255,255,0.15);
         }
 
-/* ================= FOLDER ================= */
-
+/* Folder */
 .tree-folder {
     display: flex;
     align-items: center;
@@ -248,7 +243,7 @@ html, body {
 .tree-caret {
     font-size: 11px;
     width: 12px;
-    color: #9ca3af;
+    color: var(--text-muted);
     transition: transform 0.2s ease;
 }
 
@@ -261,11 +256,11 @@ html, body {
 }
 
 .tree-name {
-    color: #e5e7eb;
+    color: var(--text-main);
+    white-space: nowrap;
 }
 
-/* ================= CHILDREN ================= */
-
+/* Children */
 .tree-children {
     display: none;
     margin-left: 12px;
@@ -275,8 +270,7 @@ html, body {
         display: block;
     }
 
-/* ================= FILE ================= */
-
+/* File */
 .tree-file {
     display: flex;
     align-items: center;
@@ -285,47 +279,28 @@ html, body {
     color: #cbd5f5;
 }
 
+    .tree-file:hover {
+        background: rgba(255,255,255,0.04);
+    }
+
 .tree-file-icon {
     font-size: 13px;
     opacity: 0.85;
 }
 
-
-
-
-/* ================================
+/* =========================================================
    MODERN BLUEPRINT TREE (IDE STYLE)
-================================ */
-:root {
-    --bg: #0b1220;
-    --card: #111a2e;
-    --border: #22325a;
-    --accent: #4da3ff;
-    --js: #22c55e;
-    --get: #38bdf8;
-    --post: #fb923c;
-    --text: #e5e7eb;
-    --muted: #94a3b8;
-}
-
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: Inter, system-ui, sans-serif;
-}
-
-/* Tree layout */
+========================================================= */
 .tree-root {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-/* ================= SCREEN ================= */
 .view-node {
     background: linear-gradient(180deg, #111a2e, #0f172a);
-    border: 1px solid var(--border);
-    border-left: 5px solid var(--accent);
+    border: 1px solid #22325a;
+    border-left: 5px solid #4da3ff;
     border-radius: 12px;
     padding: 14px 18px;
     box-shadow: 0 15px 40px rgba(0,0,0,.35);
@@ -342,7 +317,7 @@ body {
 
     .view-title::before {
         content: "▸";
-        color: var(--accent);
+        color: #4da3ff;
         transition: transform .25s ease;
     }
 
@@ -350,7 +325,7 @@ body {
     transform: rotate(90deg);
 }
 
-/* ================= JS ================= */
+/* JS functions */
 .js-container {
     margin-left: 28px;
     margin-top: 14px;
@@ -369,7 +344,6 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    transition: background .25s ease;
 }
 
     .js-node:hover {
@@ -378,14 +352,14 @@ body {
 
     .js-node::before {
         content: "⚙";
-        color: var(--js);
+        color: #22c55e;
         font-size: 13px;
     }
 
     .js-node::after {
         content: "▸";
         margin-left: auto;
-        color: var(--muted);
+        color: #94a3b8;
         transition: transform .25s ease;
     }
 
@@ -393,12 +367,12 @@ body {
         transform: rotate(90deg);
     }
 
-/* ================= CONTROLLER ================= */
+/* Controllers */
 .controller-list {
     margin-left: 30px;
     margin-top: 6px;
     padding-left: 12px;
-    border-left: 1px dashed var(--border);
+    border-left: 1px dashed #22325a;
     display: none;
 }
 
@@ -417,9 +391,8 @@ body {
     background: #0b1220;
 }
 
-    /* HTTP colors */
     .controller.get {
-        color: var(--get);
+        color: #38bdf8;
         border: 1px solid rgba(56,189,248,.35);
     }
 
@@ -430,7 +403,7 @@ body {
         }
 
     .controller.post {
-        color: var(--post);
+        color: #fb923c;
         border: 1px solid rgba(251,146,60,.35);
     }
 

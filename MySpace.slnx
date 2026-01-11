@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="MySpace/MySpace.csproj">
+    <BuildDependency Project="MySpace_Common/MySpace_Common.csproj" />
+    <BuildDependency Project="MySpace_DAL/MySpace_DAL.csproj" />
+  </Project>
+  <Project Path="MySpace_Common/MySpace_Common.csproj" />
+  <Project Path="MySpace_DAL/MySpace_DAL.csproj">
+    <BuildDependency Project="MySpace_Common/MySpace_Common.csproj" />
+  </Project>
+</Solution>

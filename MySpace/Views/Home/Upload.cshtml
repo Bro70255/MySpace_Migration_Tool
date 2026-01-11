@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Upload";
+}
+
+<h3>Upload Screens</h3>
+
+<div class="upload-zone" id="dropZone"
+     style="border:2px dashed #93c5fd; padding:30px; border-radius:10px; text-align:center;">
+
+    <p>Drag & drop folders or files here</p>
+    <span>or</span>
+
+    <!-- Folder Upload -->
+    <input type="file" id="folderInput" multiple webkitdirectory hidden />
+
+    <!-- File Upload -->
+    <input type="file" id="fileInput" multiple hidden />
+
+    <div class="upload-actions" style="margin-top:15px;">
+        <button class="modern-btn" type="button" id="btnFolder">
+            Browse Folder
+        </button>
+
+        <button class="modern-btn" type="button" id="btnFiles">
+            Browse Files
+        </button>
+    </div>
+
+    <div class="upload-info" id="uploadInfo" style="margin-top:15px;"></div>
+</div>
+
+<script>
+    /* ================= GLOBALS ================= */
+    let selectedFiles = [];
+    let uploadInfo;
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const dropZone = document.getElementById("dropZone");
+        const folderInput = document.getElementById("folderInput");
+        const fileInput = document.getElementById("fileInput");
+        const btnFolder = document.getElementById("btnFolder");
+        const btnFiles = document.getElementById("btnFiles");
+        uploadInfo = document.getElementById("uploadInfo");
+
+        /* ---------- BUTTONS ---------- */
+        btnFolder.addEventListener("click", () => folderInput.click());
+        btnFiles.addEventListener("click", () => fileInput.click());
+
+        /* ---------- FILE SELECT ---------- */
+        folderInput.addEventListener("change", e => handleFiles(e.target.files));
+        fileInput.addEventListener("change", e => handleFiles(e.target.files));
+
+        /* ---------- DRAG & DROP ---------- */
+        dropZone.addEventListener("dragover", e => {
+            e.preventDefault();
+            dropZone.style.borderColor = "#3b82f6";
+        });
+
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.style.borderColor = "#93c5fd";
+        });
+
+        dropZone.addEventListener("drop", e => {
+            e.preventDefault();
+            dropZone.style.borderColor = "#93c5fd";
+            handleFiles(e.dataTransfer.files);
+        });
+    });
+
+    function handleFiles(files) {
+        if (!files || files.length === 0) return;
+
+        selectedFiles = files;
+
+        uploadInfo.innerHTML = `<strong>${files.length} file(s) selected</strong><ul></ul>`;
+        const ul = uploadInfo.querySelector("ul");
+
+        Array.from(files).forEach(f => {
+            const li = document.createElement("li");
+            li.textContent = f.webkitRelativePath || f.name;
+            ul.appendChild(li);
+        });
+
+        uploadFiles();
+    }
+
+   
+</script>

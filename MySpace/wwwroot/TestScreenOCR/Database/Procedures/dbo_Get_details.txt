@@ -1,0 +1,18 @@
+CREATE PROCEDURE [dbo].[Get_details]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+	    BSD.[ID],
+        BM.BranchName AS Unit,
+        BSD.[BANK],
+        BSD.[ACCOUNT_NUMBER],
+        ISNULL(BSD.[SIGNATURE1], '') AS [SIGNATURE1],
+        ISNULL(BSD.[SIGNATURE2], '') AS [SIGNATURE2],
+        ISNULL(BSD.[SIGNATURE3], '') AS [SIGNATURE3],
+        ISNULL(BSD.[SIGNATURE4], '') AS [SIGNATURE4]
+    FROM [dbo].[Bank_Signatures_Dtls]BSD
+	INNER JOIN [dbo].[mfBranchMaster] BM ON BM.[Branch_ID]=BSD.UNIT
+	where BSD.Status=1 
+END;

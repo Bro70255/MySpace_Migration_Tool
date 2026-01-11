@@ -1,0 +1,14 @@
+public JsonResult Get_Details()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                dtDetails = BLL.Get_Details();
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

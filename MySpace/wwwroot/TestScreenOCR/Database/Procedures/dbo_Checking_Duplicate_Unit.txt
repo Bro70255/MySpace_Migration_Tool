@@ -1,0 +1,24 @@
+CREATE PROCEDURE [dbo].[Checking_Duplicate_Unit]
+(     
+	@unit varchar(100)
+)
+AS
+--------------------------------------------------------------------------
+--Created by APARNA on 20.09.2024  -To Check DUPLICATE IN  Unit
+--------------------------------------------------------------------------
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (
+        SELECT  [UNIT]
+		FROM [dbo].[Bank_Signatures_Dtls]
+        WHERE  [UNIT]= @unit
+    )
+    BEGIN
+        SELECT 1 AS RESULT
+    END
+    ELSE
+    BEGIN
+        SELECT 0 AS RESULT
+    END
+END

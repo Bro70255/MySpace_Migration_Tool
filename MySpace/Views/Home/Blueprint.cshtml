@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Blueprint";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Blueprint</title>
+</head>
+
+<body>
+    <div class="bp-wrap">
+        <div class="bp-canvas">
+
+            <div class="bp-project" id="projectTitle">
+                PROJECT BLUEPRINT
+            </div>
+
+            <div class="blueprint">
+                <div id="blueprintTree" class="tree-root"></div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Initialize function -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            loadBlueprint();   // ✅ initialize here
+        });
+    </script>
+</body>
+</html>

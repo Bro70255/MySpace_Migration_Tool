@@ -1,0 +1,25 @@
+CREATE PROCEDURE [dbo].[Save_Approved_Dtls]
+(
+@ID int,
+@Account_num varchar(100),
+@sign1 varchar(100),
+@sign2 varchar(100),
+@sign3 varchar(100),
+@sign4 varchar(100),
+@EMP_CODE int,
+@Apprve_sts int
+)
+as
+begin
+set nocount on
+---------------------------------------------------------------------------
+
+--created by Aparna on 24.09.2024 to Save Approved Details
+
+----------------------------------------------------------------------------
+update [dbo].[Bank_Signatures_Dtls]
+set [Status]=@Apprve_sts,[ACCOUNT_NUMBER]=@Account_num,[SIGNATURE1]=@sign1,[SIGNATURE2]=@sign2,[SIGNATURE3]=@sign3,[SIGNATURE4]=@sign4,[Approved_by]=@EMP_CODE,[Approved_datetime]=CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30'))
+where [ID] = @ID
+INSERT INTO [dbo].[Approval_Flow_Table]([ID],[Emp_code],[Created_datetime],[Status])
+        VALUES(@ID, @Emp_Code, CONVERT(DATETIME, SWITCHOFFSET(SYSDATETIMEOFFSET(), '+05:30')),1);
+end;

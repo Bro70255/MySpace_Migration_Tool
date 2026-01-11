@@ -1,0 +1,30 @@
+public JsonResult Save_Approve_Dtls(int ID, string Account_num, string sign1, string sign2, string sign3, string sign4)
+        {
+            try
+            {
+                // Debugging information
+                System.Diagnostics.Debug.WriteLine("Save_Approve_Dtls called.");
+
+                if (Session["EMP_CODE"] == null)
+                {
+                    throw new Exception("Session EMP_CODE is null.");
+                }
+
+                int EMP_CODE = Convert.ToInt32(Session["EMP_CODE"]);
+                int Apprve_sts = 1;
+
+                // Debugging log for values
+                System.Diagnostics.Debug.WriteLine($"ID: {ID}, Account_num: {Account_num}, Sign1: {sign1}, Sign2: {sign2}, Sign3: {sign3}, Sign4: {sign4}, EMP_CODE: {EMP_CODE}");
+
+                // Call the BLL to save the details
+                BLL.Save_Approve_Dtls(ID, Account_num, sign1, sign2, sign3, sign4, EMP_CODE, Apprve_sts);
+
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Log the error message for debugging
+                System.Diagnostics.Debug.WriteLine($"Controller Error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }

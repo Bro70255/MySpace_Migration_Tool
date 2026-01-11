@@ -134,6 +134,19 @@
             color: #9ca3af;
             text-align: center;
         }
+
+        .create-link {
+            color: #4f8cff;
+            font-weight: 600;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: 0.25s;
+        }
+
+            .create-link:hover {
+                color: #93c5fd;
+                text-decoration: underline;
+            }
     </style>
 
     <!-- jQuery -->
@@ -190,6 +203,11 @@
                         class="login-btn">
                     Sign In
                 </button>
+
+                <div class="login-footer mt-3">
+                    Don’t have an account?
+                    <a href="/Home/CreateAccount" class="create-link">Create one</a>
+                </div>
 
             </form>
 

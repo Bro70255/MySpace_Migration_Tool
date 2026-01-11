@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic.FileIO;
 using MySpace.Models;
 using MySpace_Common;
 using MySpace_DAL;
@@ -24,6 +23,11 @@ namespace MySpace.Controllers
         }
 
         public IActionResult MySpace_Login()
+        {
+            return View();
+        }
+
+        public IActionResult CreateAccount()
         {
             return View();
         }
@@ -74,28 +78,63 @@ namespace MySpace.Controllers
 
 
         [HttpPost]
-        public async Task<JsonResult> Sign_In(int employeeCode, string password)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterVM model)
         {
-            var result = await _dal.Sign_InAsync(employeeCode, password);
+            // -------- Model Validation --------
+            if (!ModelState.IsValid)
+                return Json(new { success = false, message = "Invalid input data" });
 
-            if (result == null)
+            // -------- Password Match Validation --------
+            if (model.Password != model.ConfirmPassword)
+                return Json(new { success = false, message = "Passwords do not match" });
+
+            // -------- Call DAL to Register User --------
+            bool result = await _dal.RegisterUserAsync(
+                model.FirstName,
+                model.LastName,
+                model.Email,
+                model.Username,
+                model.Password
+            );
+
+            // -------- User Already Exists --------
+            if (!result)
+                return Json(new { success = false, message = "User already exists" });
+
+            // -------- Registration Success --------
+            return Json(new
             {
-                return Json(new { success = false, message = "Invalid Employee Code or Password" });
+                success = true,
+                message = "Account created successfully"
+            });
+        }
+
+
+        [HttpPost]
+        public async Task<JsonResult> Sign_In(string username, string password)
+        {
+            var user = await _dal.Sign_InAsync(username, password);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "Invalid username or password" });
             }
 
-            // Set cookies
-            Response.Cookies.Append("EMP_CODE", result.Emp_Code.ToString());
-            Response.Cookies.Append("EMP_NAME", result.Emp_Name);
-            Response.Cookies.Append("BRANCH_ID", result.Branch_ID.ToString());
+            // Cookies / Session
+            Response.Cookies.Append("USER_ID", user.UserId.ToString());
+            Response.Cookies.Append("USERNAME", user.Username);
 
             return Json(new
             {
                 success = true,
-                empName = result.Emp_Name,
-                empCode = result.Emp_Code,
-                branchId = result.Branch_ID
+                username = user.Username
             });
         }
+
+
+
+
+
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] Registration model)
         {
@@ -687,6 +726,8 @@ Explain what this screen does in simple words.
             var data = await _dal.GetBlueprintData();
             return Json(data);
         }
+
+       
 
     }
 

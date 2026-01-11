@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    GLOBAL RESET & VARIABLES
 ========================================================= */
 :root {
@@ -120,115 +120,322 @@ html, body {
         box-shadow: 0 8px 20px rgba(79,140,255,0.25);
     }
 
-/* =========================================================
-   TREE VIEW (MODERN IDE STYLE)
-========================================================= */
 
+/* ================================
+   MODULE CONTAINER
+================================ */
+.module-wrapper {
+    background: #0f172a;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    overflow: hidden;
+}
+
+.module-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, #111a2e, #0b1220);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.module-icon {
+    font-size: 18px;
+}
+
+.module-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    color: #e5e7eb;
+}
+
+/* ================================
+   MODERN MODULE CONTAINER
+================================ */
+.module-modern {
+    background: #0f172a;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 20px 45px rgba(0,0,0,.45);
+    overflow: hidden;
+}
+
+/* Header */
+.module-modern-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, #111a2e, #0b1220);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.module-modern-icon {
+    font-size: 18px;
+}
+
+.module-modern-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+/* ================================
+   CLASSIC FILE TREE (MODULE STYLE)
+================================ */
+
+.classic-tree {
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 14px;
+}
+
+    /* Remove default bullets */
+    .classic-tree ul {
+        list-style: none;
+        margin: 0;
+        padding-left: 18px;
+        position: relative;
+    }
+
+        /* Vertical line */
+        .classic-tree ul::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 6px;
+            bottom: 0;
+            border-left: 1px dashed rgba(255,255,255,0.15);
+        }
+
+    /* Tree item */
+    .classic-tree li {
+        margin: 4px 0;
+        position: relative;
+    }
+
+        /* Horizontal connector */
+        .classic-tree li::before {
+            content: "";
+            position: absolute;
+            top: 14px;
+            left: -12px;
+            width: 12px;
+            border-top: 1px dashed rgba(255,255,255,0.15);
+        }
+
+/* ================= FOLDER ================= */
+
+.tree-folder {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+    .tree-folder:hover {
+        background: rgba(255,255,255,0.05);
+    }
+
+.tree-caret {
+    font-size: 11px;
+    width: 12px;
+    color: #9ca3af;
+    transition: transform 0.2s ease;
+}
+
+    .tree-caret.open {
+        transform: rotate(90deg);
+    }
+
+.tree-folder-icon {
+    font-size: 14px;
+}
+
+.tree-name {
+    color: #e5e7eb;
+}
+
+/* ================= CHILDREN ================= */
+
+.tree-children {
+    display: none;
+    margin-left: 12px;
+}
+
+    .tree-children.open {
+        display: block;
+    }
+
+/* ================= FILE ================= */
+
+.tree-file {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    color: #cbd5f5;
+}
+
+.tree-file-icon {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+
+
+
+/* ================================
+   MODERN BLUEPRINT TREE (IDE STYLE)
+================================ */
 :root {
     --bg: #0b1220;
     --card: #111a2e;
-    --line: #2a3a5f;
+    --border: #22325a;
     --accent: #4da3ff;
     --js: #22c55e;
     --get: #38bdf8;
-    --post: #f97316;
+    --post: #fb923c;
     --text: #e5e7eb;
+    --muted: #94a3b8;
 }
 
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
 }
 
-.blueprint {
-    padding: 2rem;
-    overflow-x: auto;
-}
-
+/* Tree layout */
 .tree-root {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 18px;
 }
 
-/* View Card */
+/* ================= SCREEN ================= */
 .view-node {
-    border-left: 4px solid var(--accent);
-    background: var(--card);
-    padding: 1rem 1.25rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    background: linear-gradient(180deg, #111a2e, #0f172a);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--accent);
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
 }
 
 .view-title {
-    font-size: 1.1rem;
+    font-size: 15px;
     font-weight: 600;
-    color: var(--accent);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* JS container */
+    .view-title::before {
+        content: "▸";
+        color: var(--accent);
+        transition: transform .25s ease;
+    }
+
+.view-node.active .view-title::before {
+    transform: rotate(90deg);
+}
+
+/* ================= JS ================= */
 .js-container {
-    margin-top: 1rem;
-    margin-left: 1.25rem;
-    display: grid;
-    gap: .75rem;
+    margin-left: 28px;
+    margin-top: 14px;
+    display: none;
 }
 
-/* JS Card */
+.view-node.active .js-container {
+    display: block;
+}
+
 .js-node {
-    background: rgba(34,197,94,.1);
-    border-left: 3px solid var(--js);
-    padding: .75rem 1rem;
+    margin-top: 10px;
+    padding: 6px 10px;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform .2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background .25s ease;
 }
 
     .js-node:hover {
-        transform: translateX(4px);
+        background: rgba(34,197,94,.12);
     }
 
-/* Controller list */
+    .js-node::before {
+        content: "⚙";
+        color: var(--js);
+        font-size: 13px;
+    }
+
+    .js-node::after {
+        content: "▸";
+        margin-left: auto;
+        color: var(--muted);
+        transition: transform .25s ease;
+    }
+
+    .js-node.active::after {
+        transform: rotate(90deg);
+    }
+
+/* ================= CONTROLLER ================= */
 .controller-list {
-    margin-top: .5rem;
-    margin-left: 1rem;
+    margin-left: 30px;
+    margin-top: 6px;
+    padding-left: 12px;
+    border-left: 1px dashed var(--border);
     display: none;
-    gap: .4rem;
-    flex-direction: column;
+}
+
+.js-node.active + .controller-list {
+    display: block;
 }
 
 .controller {
-    padding: .4rem .75rem;
+    font-size: 13px;
+    padding: 4px 8px;
+    margin: 4px 0;
     border-radius: 6px;
-    font-size: .85rem;
-    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0b1220;
 }
 
+    /* HTTP colors */
     .controller.get {
-        background: rgba(56,189,248,.15);
         color: var(--get);
+        border: 1px solid rgba(56,189,248,.35);
     }
+
+        .controller.get::before {
+            content: "GET";
+            font-size: 11px;
+            font-weight: 700;
+        }
 
     .controller.post {
-        background: rgba(249,115,22,.15);
         color: var(--post);
+        border: 1px solid rgba(251,146,60,.35);
     }
 
-/* Expand animation */
-.js-node.active + .controller-list {
-    display: flex;
-    animation: fadeIn .25s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .controller.post::before {
+            content: "POST";
+            font-size: 11px;
+            font-weight: 700;
+        }

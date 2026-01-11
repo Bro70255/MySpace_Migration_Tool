@@ -1,18 +1,61 @@
-﻿function togglePassword() {
-    const input = $("#password");
-    input.attr("type", input.attr("type") === "password" ? "text" : "password");
-}
+﻿
+function registerUser() {
 
-function showError(msg) {
-    $("#errorBox").text(msg).fadeIn();
+    // -------- Collect Form Data --------
+    const data = {
+        FirstName: $("input[placeholder='John']").val().trim(),
+        LastName: $("input[placeholder='Doe']").val().trim(),
+        Email: $("input[type='email']").val().trim(),
+        Username: $("input[placeholder='username']").val().trim(),
+        Password: $("#pwd").val(),
+        ConfirmPassword: $("#cpwd").val()
+    };
+
+    // -------- Basic Required Field Validation --------
+    if (!data.FirstName || !data.LastName || !data.Email ||
+        !data.Username || !data.Password) {
+        alert("All fields are required");
+        return;
+    }
+
+    // -------- Password Length Validation --------
+    if (data.Password.length < 8) {
+        alert("Password must be at least 8 characters");
+        return;
+    }
+
+    // -------- Password Match Validation --------
+    if (data.Password !== data.ConfirmPassword) {
+        alert("Passwords do not match");
+        return;
+    }
+
+    // -------- AJAX Call : Register User --------
+    $.ajax({
+        url: "/Home/RegisterUser",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (res) {
+            if (res.success) {
+                alert(res.message);
+                window.location.href = "/Home/MySpace_Login";
+            } else {
+                alert(res.message);
+            }
+        },
+        error: function () {
+            alert("Server error. Please try again.");
+        }
+    });
 }
 
 function btnLogin() {
 
-    let employeeCode = $("#username").val().trim();
+    let username = $("#username").val().trim();
     let password = $("#password").val().trim();
 
-    if (employeeCode === "" || password === "") {
+    if (!username || !password) {
         showError("Please enter username and password.");
         return;
     }
@@ -21,20 +64,157 @@ function btnLogin() {
         url: "/Home/Sign_In",
         type: "POST",
         data: {
-            employeeCode: employeeCode,
+            username: username,
             password: password
         },
         success: function (res) {
             if (res.success) {
                 window.location.href = "/Home/MySpace_Dashboard";
             } else {
-                showError(res.message || "Invalid login details");
+                showError(res.message);
             }
         },
         error: function () {
             showError("Server error. Try again.");
         }
     });
+}
+
+function loadBlueprint() {
+    fetch('/Home/GetBlueprint')
+        .then(res => res.json())
+        .then(data => {
+            console.log("DB DATA:", data);   // 🔴 CHECK THIS
+            renderBlueprint(data);
+        })
+        .catch(err => console.error(err));
+}
+
+function renderBlueprint(data) {
+    const root = document.getElementById('blueprintTree');
+    root.innerHTML = '';
+
+    data.forEach((screen, s) => {
+        const view = document.createElement('div');
+        view.className = 'view-node';
+
+        const title = document.createElement('div');
+        title.className = 'view-title';
+        title.textContent = `${s + 1}. ${screen.screenName}`;
+        title.onclick = () => view.classList.toggle('active');
+
+        view.appendChild(title);
+
+        const jsContainer = document.createElement('div');
+        jsContainer.className = 'js-container';
+
+        screen.jsFunctions.forEach((js, j) => {
+            const jsNode = document.createElement('div');
+            jsNode.className = 'js-node';
+            jsNode.textContent = `${s + 1}.${j + 1} ${js.jsFunctionName}`;
+
+            const ctrlList = document.createElement('div');
+            ctrlList.className = 'controller-list';
+
+            js.controllers.forEach((c, k) => {
+                const ctrl = document.createElement('div');
+                ctrl.className = `controller ${c.httpType === 'GET' ? 'get' : 'post'}`;
+                ctrl.textContent = `${s + 1}.${j + 1}.${k + 1} ${c.controllerAction}`;
+                ctrlList.appendChild(ctrl);
+            });
+
+            jsNode.onclick = () => jsNode.classList.toggle('active');
+
+            jsContainer.appendChild(jsNode);
+            jsContainer.appendChild(ctrlList);
+        });
+
+        view.appendChild(jsContainer);
+        root.appendChild(view);
+    });
+}
+
+function loadOCRTreeView() {
+    fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Failed to load files");
+                return;
+            }
+
+            const treeView = document.getElementById("treeView");
+            treeView.innerHTML = "";
+
+            const ul = document.createElement("ul");
+            renderNode(data.data, ul);
+            treeView.appendChild(ul);
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error loading tree view");
+        });
+}
+
+function renderNode(node, parentUl) {
+    const li = document.createElement("li");
+
+    if (node.isDirectory) {
+        const header = document.createElement("div");
+        header.className = "tree-folder";
+
+        const caret = document.createElement("span");
+        caret.className = "tree-caret";
+        caret.textContent = "▶";
+
+        const icon = document.createElement("span");
+        icon.className = "tree-folder-icon";
+        icon.textContent = "📁";
+
+        const name = document.createElement("span");
+        name.className = "tree-name";
+        name.textContent = node.name;
+
+        header.append(caret, icon, name);
+        li.appendChild(header);
+
+        const childrenUl = document.createElement("ul");
+        childrenUl.className = "tree-children";
+
+        node.children.forEach(child => renderNode(child, childrenUl));
+
+        header.addEventListener("click", () => {
+            const isOpen = childrenUl.classList.contains("open");
+
+            childrenUl.classList.toggle("open", !isOpen);
+            caret.classList.toggle("open", !isOpen);
+            icon.textContent = !isOpen ? "📂" : "📁";
+        });
+
+        li.appendChild(childrenUl);
+    }
+    else {
+        li.className = "tree-file";
+        li.innerHTML = `
+            <span class="tree-file-icon">📄</span>
+            <span class="tree-name">${node.name}</span>
+        `;
+    }
+
+    parentUl.appendChild(li);
+}
+
+
+
+
+
+function togglePassword() {
+    const input = $("#password");
+    input.attr("type", input.attr("type") === "password" ? "text" : "password");
+}
+
+function showError(msg) {
+    $("#errorBox").text(msg).fadeIn();
 }
 
 function validateForm() {
@@ -145,81 +325,6 @@ function Initialize_Registration_Report_Details() {
     });
 }
 
-function loadOCRTreeView() {
-    fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) {
-                alert("Failed to load files");
-                return;
-            }
-
-            const treeView = document.getElementById("treeView");
-            treeView.innerHTML = "";
-
-            const ul = document.createElement("ul");
-            renderNode(data.data, ul);
-            treeView.appendChild(ul);
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error loading tree view");
-        });
-}
-
-function renderNode(node, parentUl) {
-    const li = document.createElement("li");
-    li.classList.add("tree-item");
-
-    if (node.isDirectory) {
-        const header = document.createElement("div");
-        header.classList.add("tree-folder");
-
-        const caret = document.createElement("span");
-        caret.classList.add("tree-caret", "closed");
-
-        const icon = document.createElement("span");
-        icon.classList.add("tree-folder-icon");
-        icon.textContent = "📁";
-
-        const name = document.createElement("span");
-        name.classList.add("tree-name");
-        name.textContent = node.name;
-
-        header.appendChild(caret);
-        header.appendChild(icon);
-        header.appendChild(name);
-        li.appendChild(header);
-
-        const childrenUl = document.createElement("ul");
-        childrenUl.classList.add("tree-children");
-        childrenUl.style.display = "none";
-
-        node.children.forEach(child => {
-            renderNode(child, childrenUl);
-        });
-
-        header.addEventListener("click", () => {
-            const open = childrenUl.style.display === "block";
-            childrenUl.style.display = open ? "none" : "block";
-
-            caret.classList.toggle("open", !open);
-            caret.classList.toggle("closed", open);
-            icon.textContent = open ? "📁" : "📂";
-        });
-
-        li.appendChild(childrenUl);
-    } else {
-        li.classList.add("tree-file");
-        li.innerHTML = `
-            <span class="tree-file-icon">📄</span>
-            <span class="tree-name">${node.name}</span>
-        `;
-    }
-
-    parentUl.appendChild(li);
-}
-
 function uploadFiles() {
     if (!selectedFiles || selectedFiles.length === 0) {
         alert("No files selected");
@@ -294,55 +399,7 @@ function Sent_Data_To_AI() {
         });
 }
 
-function loadBlueprint() {
-    fetch('/Home/GetBlueprint')
-        .then(res => res.json())
-        .then(data => {
-            console.log("DB DATA:", data);   // 🔴 CHECK THIS
-            renderBlueprint(data);
-        })
-        .catch(err => console.error(err));
-}
 
-function renderBlueprint(data) {
-    const root = document.getElementById('blueprintTree');
-    root.innerHTML = '';
-
-    data.forEach(screen => {
-        const view = document.createElement('div');
-        view.className = 'view-node';
-
-        view.innerHTML = `
-            <div class="view-title">${screen.screenName}</div>
-            <div class="js-container"></div>
-        `;
-
-        const jsContainer = view.querySelector('.js-container');
-
-        screen.jsFunctions.forEach(js => {
-            const jsNode = document.createElement('div');
-            jsNode.className = 'js-node';
-            jsNode.textContent = js.jsFunctionName;
-
-            const ctrlList = document.createElement('div');
-            ctrlList.className = 'controller-list';
-
-            js.controllers.forEach(c => {
-                const ctrl = document.createElement('div');
-                ctrl.className = `controller ${c.httpType.includes('GET') ? 'get' : 'post'}`;
-                ctrl.textContent = `${c.controllerAction} (${c.httpType})`;
-                ctrlList.appendChild(ctrl);
-            });
-
-            jsNode.onclick = () => jsNode.classList.toggle('active');
-
-            jsContainer.appendChild(jsNode);
-            jsContainer.appendChild(ctrlList);
-        });
-
-        root.appendChild(view);
-    });
-}
 
 
 

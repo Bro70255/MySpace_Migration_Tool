@@ -35,7 +35,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=MySapce_Login}/{id?}")
+    pattern: "{controller=Home}/{action=MySpace_Login}/{id?}")
     .WithStaticAssets();
 
 app.Run();

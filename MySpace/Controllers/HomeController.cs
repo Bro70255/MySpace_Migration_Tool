@@ -23,7 +23,7 @@ namespace MySpace.Controllers
             return View();
         }
 
-        public IActionResult MySapce_Login()
+        public IActionResult MySpace_Login()
         {
             return View();
         }

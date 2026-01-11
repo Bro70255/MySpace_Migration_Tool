@@ -166,6 +166,7 @@ function loadOCRTreeView() {
             alert("Error loading tree view");
         });
 }
+
 function renderNode(node, parentUl) {
     const li = document.createElement("li");
     li.classList.add("tree-item");
@@ -292,6 +293,7 @@ function Sent_Data_To_AI() {
             document.getElementById("AIResponse").value = "Error calling AI";
         });
 }
+
 function loadBlueprint() {
     fetch('/Home/GetBlueprint')
         .then(res => res.json())

@@ -10,6 +10,7 @@
 </head>
 
 <body>
+
     <div class="bp-wrap">
         <div class="bp-canvas">
 
@@ -17,19 +18,47 @@
                 PROJECT BLUEPRINT
             </div>
 
+            <!-- Expand / Collapse All -->
+            <div class="tree-controls">
+                <label class="tree-toggle">
+                    <input type="checkbox" id="toggleBlueprintAll" />
+                    <span>Expand all</span>
+                </label>
+            </div>
+
             <div class="blueprint">
                 <div id="blueprintTree" class="tree-root"></div>
             </div>
 
-
         </div>
     </div>
 
-    <!-- Initialize function -->
+    <!-- Scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            loadBlueprint();   // ✅ initialize here
+
+            // Load blueprint data
+            loadBlueprint();
+
+            // Expand / Collapse All
+            document.addEventListener("change", function (e) {
+
+                if (e.target.id === "toggleBlueprintAll") {
+                    const expand = e.target.checked;
+
+                    // Expand / collapse all view nodes
+                    document.querySelectorAll(".view-node").forEach(view => {
+                        view.classList.toggle("active", expand);
+                    });
+
+                    // Expand / collapse all JS nodes
+                    document.querySelectorAll(".js-node").forEach(js => {
+                        js.classList.toggle("active", expand);
+                    });
+                }
+            });
         });
     </script>
+
 </body>
 </html>

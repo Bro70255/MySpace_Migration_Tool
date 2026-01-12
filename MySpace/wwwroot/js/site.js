@@ -84,7 +84,7 @@ function loadBlueprint() {
     fetch('/Home/GetBlueprint')
         .then(res => res.json())
         .then(data => {
-            console.log("DB DATA:", data);   // 🔴 CHECK THIS
+            console.log("DB DATA:", data);
             renderBlueprint(data);
         })
         .catch(err => console.error(err));
@@ -95,6 +95,8 @@ function renderBlueprint(data) {
     root.innerHTML = '';
 
     data.forEach((screen, s) => {
+
+        // ================= SCREEN =================
         const view = document.createElement('div');
         view.className = 'view-node';
 
@@ -105,25 +107,40 @@ function renderBlueprint(data) {
 
         view.appendChild(title);
 
+        // ================= JS CONTAINER =================
         const jsContainer = document.createElement('div');
         jsContainer.className = 'js-container';
 
         screen.jsFunctions.forEach((js, j) => {
+
+            // -------- JS NODE --------
             const jsNode = document.createElement('div');
             jsNode.className = 'js-node';
             jsNode.textContent = `${s + 1}.${j + 1} ${js.jsFunctionName}`;
 
+            // -------- CONTROLLER LIST --------
             const ctrlList = document.createElement('div');
             ctrlList.className = 'controller-list';
 
             js.controllers.forEach((c, k) => {
+
+                // 🔑 FIX: Normalize HTTP type
+                const type = c.httpType?.toUpperCase().includes('GET')
+                    ? 'get'
+                    : 'post';
+
                 const ctrl = document.createElement('div');
-                ctrl.className = `controller ${c.httpType === 'GET' ? 'get' : 'post'}`;
+                ctrl.className = `controller ${type}`;
                 ctrl.textContent = `${s + 1}.${j + 1}.${k + 1} ${c.controllerAction}`;
+
                 ctrlList.appendChild(ctrl);
             });
 
-            jsNode.onclick = () => jsNode.classList.toggle('active');
+            // Toggle only this JS function
+            jsNode.onclick = () => {
+                jsNode.classList.toggle('active');
+                ctrlList.classList.toggle('active');
+            };
 
             jsContainer.appendChild(jsNode);
             jsContainer.appendChild(ctrlList);

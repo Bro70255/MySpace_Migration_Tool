@@ -12,7 +12,7 @@ namespace MySpace_Common.EntityModels
         public string ProjectName { get; set; }
         public string ProjectType { get; set; }
         public string ProjectFlow { get; set; }
-        public string CreatedBy { get; set; }
+        public int CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
     }
 

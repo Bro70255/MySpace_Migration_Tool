@@ -1,9 +1,0 @@
-public JsonResult Add_Newunit(string unit)
-        {
-            try
-            {
-                BLL.Add_Newunit(unit);
-                return Json(1);
-            }
-            catch (Exception ex) { throw ex; }
-        }

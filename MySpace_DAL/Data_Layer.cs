@@ -240,7 +240,7 @@ namespace MySpace_DAL
                         }).ToList()
                 }).ToList();
         }
-        public async Task<int> Save_Create_Project(ProjectCreateDto model, string userId)
+        public async Task<int> Save_Create_Project(ProjectCreateDto model, int userId)
         {
             var entity = new ProjectMaster
             {
@@ -251,12 +251,12 @@ namespace MySpace_DAL
                 CreatedOn = DateTime.Now
             };
 
-            await _context.ProjectMaster.AddAsync(entity);
+            await _context.ProjectMasters.AddAsync(entity);
             await _context.SaveChangesAsync();
 
             return entity.ProjectId;
         }
-        public async Task<List<ProjectMaster>> Get_Project_Details(string userId)
+        public async Task<List<ProjectMaster>> Get_Project_Details(int userId)
         {
             return await _context.ProjectMasters
                                  .Where(x => x.CreatedBy == userId)

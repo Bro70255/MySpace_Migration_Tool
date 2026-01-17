@@ -290,473 +290,476 @@ Explain what this screen does in simple words.
             return node;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UploadScreenFolder(int projectId,string projectName,List<IFormFile> files)
-        {
-            if (files == null || files.Count == 0)
-                return Json(new { success = false, message = "No files uploaded" });
+        //    [HttpPost]
+        //    public async Task<IActionResult> UploadScreenFolder(int projectId,string projectName,List<IFormFile> files)
+        //    {
+        //        if (files == null || files.Count == 0)
+        //            return Json(new { success = false, message = "No files uploaded" });
 
-            if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName))
-                return Json(new { success = false, message = "Invalid project" });
+        //        if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName))
+        //            return Json(new { success = false, message = "Invalid project" });
 
-            // 🔐 Sanitize project name for folder usage
-            projectName = string.Concat(
-                projectName.Split(Path.GetInvalidFileNameChars())
-            ).Trim();
+        //        int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
+        //        var data = await _dal.Get_Project_Details(userId);
+        //        // 🔐 Sanitize project name for folder usage
+        //        projectName = string.Concat(
+        //            projectName.Split(Path.GetInvalidFileNameChars())
+        //        ).Trim();
 
-            // ================= BASE PATH =================
-            string basePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot",
-                "TestScreenOCR",
-                projectName
-            );
+        //        // ================= BASE PATH =================
+        //        string basePath = Path.Combine(
+        //            Directory.GetCurrentDirectory(),
+        //            "wwwroot",
+        //            "TestScreenOCR",
+        //            projectName
+        //        );
 
-            // ================= MODULE FOLDERS =================
-            string viewsPath = Path.Combine(basePath, "Views");
-            string jsPath = Path.Combine(basePath, "js");
-            string cssPath = Path.Combine(basePath, "css");
-            string controllerPath = Path.Combine(basePath, "Controller");
-            string databasePath = Path.Combine(basePath, "Database");
+        //        // ================= MODULE FOLDERS =================
+        //        string viewsPath = Path.Combine(basePath, "Views");
+        //        string jsPath = Path.Combine(basePath, "js");
+        //        string cssPath = Path.Combine(basePath, "css");
+        //        string controllerPath = Path.Combine(basePath, "Controller");
+        //        string databasePath = Path.Combine(basePath, "Database");
 
-            Directory.CreateDirectory(viewsPath);
-            Directory.CreateDirectory(jsPath);
-            Directory.CreateDirectory(cssPath);
-            Directory.CreateDirectory(controllerPath);
-            Directory.CreateDirectory(databasePath);
+        //        Directory.CreateDirectory(viewsPath);
+        //        Directory.CreateDirectory(jsPath);
+        //        Directory.CreateDirectory(cssPath);
+        //        Directory.CreateDirectory(controllerPath);
+        //        Directory.CreateDirectory(databasePath);
 
-            // ================= FILE PROCESS =================
-            foreach (var file in files)
-            {
-                if (file.Length == 0)
-                    continue;
+        //        // ================= FILE PROCESS =================
+        //        foreach (var file in files)
+        //        {
+        //            if (file.Length == 0)
+        //                continue;
 
-                string safeFileName = Path.GetFileName(file.FileName);
-                string extension = Path.GetExtension(safeFileName).ToLower();
-                string originalName = Path.GetFileNameWithoutExtension(safeFileName);
+        //            string safeFileName = Path.GetFileName(file.FileName);
+        //            string extension = Path.GetExtension(safeFileName).ToLower();
+        //            string originalName = Path.GetFileNameWithoutExtension(safeFileName);
 
-                string savePath;
-                string fileType;
+        //            string savePath;
+        //            string fileType;
 
-                switch (extension)
-                {
-                    case ".cshtml":
-                        savePath = Path.Combine(viewsPath, originalName + ".txt");
-                        fileType = "cshtml";
-                        break;
+        //            switch (extension)
+        //            {
+        //                case ".cshtml":
+        //                    savePath = Path.Combine(viewsPath, originalName + ".txt");
+        //                    fileType = "cshtml";
+        //                    break;
 
-                    case ".js":
-                        savePath = Path.Combine(jsPath, originalName + ".txt");
-                        fileType = "js";
-                        break;
+        //                case ".js":
+        //                    savePath = Path.Combine(jsPath, originalName + ".txt");
+        //                    fileType = "js";
+        //                    break;
 
-                    case ".css":
-                        savePath = Path.Combine(cssPath, originalName + ".txt");
-                        fileType = "css";
-                        break;
+        //                case ".css":
+        //                    savePath = Path.Combine(cssPath, originalName + ".txt");
+        //                    fileType = "css";
+        //                    break;
 
-                    case ".cs":
-                        savePath = Path.Combine(controllerPath, originalName + ".txt");
-                        fileType = "cs";
-                        break;
+        //                case ".cs":
+        //                    savePath = Path.Combine(controllerPath, originalName + ".txt");
+        //                    fileType = "cs";
+        //                    break;
 
-                    case ".sql":
-                        savePath = Path.Combine(databasePath, originalName + ".txt");
-                        fileType = "sql";
-                        break;
+        //                case ".sql":
+        //                    savePath = Path.Combine(databasePath, originalName + ".txt");
+        //                    fileType = "sql";
+        //                    break;
 
-                    default:
-                        continue;
-                }
+        //                default:
+        //                    continue;
+        //            }
 
-                // ================= READ CONTENT =================
-                string textContent;
-                using (var reader = new StreamReader(file.OpenReadStream()))
-                {
-                    textContent = await reader.ReadToEndAsync();
-                }
+        //            // ================= READ CONTENT =================
+        //            string textContent;
+        //            using (var reader = new StreamReader(file.OpenReadStream()))
+        //            {
+        //                textContent = await reader.ReadToEndAsync();
+        //            }
 
-                // ================= SAVE FILE =================
-                await System.IO.File.WriteAllTextAsync(savePath, textContent);
+        //            // ================= SAVE FILE =================
+        //            await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
-                // ================= DB SAVE (PARENT) =================
-                int parentFileId = await _dal.Save_File_Details(
-                    projectId,
-                    0,
-                    safeFileName,
-                    savePath,
-                    fileType,
-                    textContent
-                );
+        //            // ================= DB SAVE (PARENT) =================
+        //            int parentFileId = await _dal.Save_File_Details(
+        //                projectId,
+        //                0,
+        //                safeFileName,
+        //                savePath,
+        //                fileType,
+        //                textContent
+        //            );
 
-                // ================= CHILD EXTRACTION =================
-                switch (fileType)
-                {
-                    case "js":
-                        await SplitJSFunctions(projectId, projectName, savePath, parentFileId);
-                        break;
+        //            // ================= CHILD EXTRACTION =================
+        //            switch (fileType)
+        //            {
+        //                case "js":
+        //                    await SplitJSFunctions(projectId, projectName, savePath, parentFileId);
+        //                    break;
 
-                    case "cs":
-                        await SplitCSharpMethods(projectId, projectName, savePath, parentFileId);
-                        break;
+        //                case "cs":
+        //                    await SplitCSharpMethods(projectId, projectName, savePath, parentFileId);
+        //                    break;
 
-                    case "sql":
-                        await SplitSqlTablesAndProcedures(projectId, projectName, savePath, parentFileId);
-                        break;
+        //                case "sql":
+        //                    await SplitSqlTablesAndProcedures(projectId, projectName, savePath, parentFileId);
+        //                    break;
 
-                    case "cshtml":
-                        await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
-                        break;
-                }
-            }
+        //                case "cshtml":
+        //                    await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
+        //                    break;
+        //            }
+        //        }
 
-            return Json(new
-            {
-                success = true,
-                message = "Files uploaded, saved under project folder, and extracted successfully"
-            });
-        }
+        //        return Json(new
+        //        {
+        //            success = true,
+        //            message = "Files uploaded, saved under project folder, and extracted successfully"
+        //        });
+        //    }
 
 
         // =========================================================
         // JS FUNCTION SPLITTER
         // =========================================================
-        private async Task SplitJSFunctions(int projectId,string projectName,string sourcePath, int parentFileId)
-        {
-            var outputDir = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                 "wwwroot", "TestScreenOCR", projectName, "js", "jsfunctions"
-            );
+        //private async Task SplitJSFunctions(int projectId, string projectName, string sourcePath, int parentFileId)
+        //{
+        //    var outputDir = Path.Combine(
+        //        Directory.GetCurrentDirectory(),
+        //         "wwwroot", "TestScreenOCR", projectName, "js", "jsfunctions"
+        //    );
 
-            Directory.CreateDirectory(outputDir);
+        //    Directory.CreateDirectory(outputDir);
 
-            string content = await System.IO.File.ReadAllTextAsync(sourcePath);
+        //    string content = await System.IO.File.ReadAllTextAsync(sourcePath);
 
-            var functionRegex = new Regex(
-                @"function\s+([a-zA-Z0-9_]+)\s*\(",
-                RegexOptions.Multiline);
+        //    var functionRegex = new Regex(
+        //        @"function\s+([a-zA-Z0-9_]+)\s*\(",
+        //        RegexOptions.Multiline);
 
-            foreach (Match match in functionRegex.Matches(content))
-            {
-                string functionName = match.Groups[1].Value;
-                int start = match.Index;
+        //    foreach (Match match in functionRegex.Matches(content))
+        //    {
+        //        string functionName = match.Groups[1].Value;
+        //        int start = match.Index;
 
-                int braceStart = content.IndexOf('{', start);
-                if (braceStart == -1) continue;
+        //        int braceStart = content.IndexOf('{', start);
+        //        if (braceStart == -1) continue;
 
-                int count = 0, end = braceStart;
+        //        int count = 0, end = braceStart;
 
-                for (int i = braceStart; i < content.Length; i++)
-                {
-                    if (content[i] == '{') count++;
-                    else if (content[i] == '}') count--;
+        //        for (int i = braceStart; i < content.Length; i++)
+        //        {
+        //            if (content[i] == '{') count++;
+        //            else if (content[i] == '}') count--;
 
-                    if (count == 0) { end = i; break; }
-                }
+        //            if (count == 0) { end = i; break; }
+        //        }
 
-                if (count != 0) continue;
+        //        if (count != 0) continue;
 
-                string body = content.Substring(start, end - start + 1);
+        //        string body = content.Substring(start, end - start + 1);
 
-                string filePath = Path.Combine(outputDir, functionName + ".txt");
-                await System.IO.File.WriteAllTextAsync(filePath, body);
+        //        string filePath = Path.Combine(outputDir, functionName + ".txt");
+        //        await System.IO.File.WriteAllTextAsync(filePath, body);
 
 
-                // 1. Save Js file
-                int FileId = await _dal.Save_File_Details(
-                    projectId,
-                    parentFileId,
-                    functionName,
-                    filePath,
-                    "js-function",
-                    body
-                );
+        //        // 1. Save Js file
+        //        int FileId = await _dal.Save_File_Details(
+        //            projectId,
+        //            parentFileId,
+        //            functionName,
+        //            filePath,
+        //            "js-function",
+        //            body
+        //        );
 
-                // 🔥 Extract API Calls
-                await ExtractControllerCalls(projectId,body, FileId);
-            }
-        }
+        //        // 🔥 Extract API Calls
+        //        await ExtractControllerCalls(projectId, body, FileId);
+        //    }
+        //}
 
-        // =========================================================
+        //// =========================================================
         // C# METHOD SPLITTER
         // =========================================================
-        private async Task SplitCSharpMethods(int projectId,string projectName,string sourcePath, int parentFileId)
-        {
-            var outputDir = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", projectName, "Controller", "Controllerfunctions"
-            );
+        //private async Task SplitCSharpMethods(int projectId, string projectName, string sourcePath, int parentFileId)
+        //{
+        //    var outputDir = Path.Combine(
+        //        Directory.GetCurrentDirectory(),
+        //        "wwwroot", "TestScreenOCR", projectName, "Controller", "Controllerfunctions"
+        //    );
 
-            Directory.CreateDirectory(outputDir);
+        //    Directory.CreateDirectory(outputDir);
 
-            var content = System.IO.File.ReadAllText(sourcePath);
-            var regex = new Regex(
-                @"(public|private|protected|internal)\s+[\w\<\>\[\]]+\s+([a-zA-Z0-9_]+)\s*\(",
-                RegexOptions.Multiline
-            );
+        //    var content = System.IO.File.ReadAllText(sourcePath);
+        //    var regex = new Regex(
+        //        @"(public|private|protected|internal)\s+[\w\<\>\[\]]+\s+([a-zA-Z0-9_]+)\s*\(",
+        //        RegexOptions.Multiline
+        //    );
 
-            foreach (Match match in regex.Matches(content))
-            {
-                string name = match.Groups[2].Value;
-                int start = match.Index;
+        //    foreach (Match match in regex.Matches(content))
+        //    {
+        //        string name = match.Groups[2].Value;
+        //        int start = match.Index;
 
-                int braceStart = content.IndexOf('{', start);
-                if (braceStart == -1) continue;
+        //        int braceStart = content.IndexOf('{', start);
+        //        if (braceStart == -1) continue;
 
-                int count = 0, end = braceStart;
+        //        int count = 0, end = braceStart;
 
-                for (int i = braceStart; i < content.Length; i++)
-                {
-                    if (content[i] == '{') count++;
-                    else if (content[i] == '}') count--;
+        //        for (int i = braceStart; i < content.Length; i++)
+        //        {
+        //            if (content[i] == '{') count++;
+        //            else if (content[i] == '}') count--;
 
-                    if (count == 0) { end = i; break; }
-                }
+        //            if (count == 0) { end = i; break; }
+        //        }
 
-                if (count != 0) continue;
+        //        if (count != 0) continue;
 
-                string body = content.Substring(start, end - start + 1);
-                string filePath = Path.Combine(outputDir, name + ".txt");
+        //        string body = content.Substring(start, end - start + 1);
+        //        string filePath = Path.Combine(outputDir, name + ".txt");
 
-                System.IO.File.WriteAllText(filePath, body);
+        //        System.IO.File.WriteAllText(filePath, body);
 
-                // 1. Save Controller file
-                int FileId = await _dal.Save_File_Details(
-                    projectId,
-                    parentFileId,
-                    name,
-                    filePath,
-                    "Controller-function",
-                    body
-                );
-            }
-        }
+        //        // 1. Save Controller file
+        //        int FileId = await _dal.Save_File_Details(
+        //            projectId,
+        //            parentFileId,
+        //            name,
+        //            filePath,
+        //            "Controller-function",
+        //            body
+        //        );
+        //    }
+        //}
 
-        // =========================================================
-        // SQL TABLE & PROCEDURE SPLITTER
-        // =========================================================
-        private async Task SplitSqlTablesAndProcedures(int projectId,string projectName, string sourcePath, int parentFileId)
-        {
-            string baseDir = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", projectName, "Database"
-            );
+        //// =========================================================
+        //// SQL TABLE & PROCEDURE SPLITTER
+        //// =========================================================
+        //private async Task SplitSqlTablesAndProcedures(int projectId, string projectName, string sourcePath, int parentFileId)
+        //{
+        //    string baseDir = Path.Combine(
+        //        Directory.GetCurrentDirectory(),
+        //        "wwwroot", "TestScreenOCR", projectName, "Database"
+        //    );
 
-            string tableDir = Path.Combine(baseDir, "Tables");
-            string procDir = Path.Combine(baseDir, "Procedures");
+        //    string tableDir = Path.Combine(baseDir, "Tables");
+        //    string procDir = Path.Combine(baseDir, "Procedures");
 
-            Directory.CreateDirectory(tableDir);
-            Directory.CreateDirectory(procDir);
+        //    Directory.CreateDirectory(tableDir);
+        //    Directory.CreateDirectory(procDir);
 
-            string sql = System.IO.File.ReadAllText(sourcePath);
+        //    string sql = System.IO.File.ReadAllText(sourcePath);
 
-            var batches = Regex.Split(sql, @"^\s*GO\s*$",
-                RegexOptions.Multiline | RegexOptions.IgnoreCase);
+        //    var batches = Regex.Split(sql, @"^\s*GO\s*$",
+        //        RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
-            foreach (var batch in batches)
-            {
-                string block = batch.Trim();
-                if (string.IsNullOrWhiteSpace(block)) continue;
+        //    foreach (var batch in batches)
+        //    {
+        //        string block = batch.Trim();
+        //        if (string.IsNullOrWhiteSpace(block)) continue;
 
-                if (Regex.IsMatch(block, @"^CREATE\s+TABLE", RegexOptions.IgnoreCase))
-                {
-                    var m = Regex.Match(block,
-                        @"CREATE\s+TABLE\s+(\[[^\]]+\]\.\[[^\]]+\])",
-                        RegexOptions.IgnoreCase);
+        //        if (Regex.IsMatch(block, @"^CREATE\s+TABLE", RegexOptions.IgnoreCase))
+        //        {
+        //            var m = Regex.Match(block,
+        //                @"CREATE\s+TABLE\s+(\[[^\]]+\]\.\[[^\]]+\])",
+        //                RegexOptions.IgnoreCase);
 
-                    if (m.Success)
-                    {
-                        string name = m.Groups[1].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
-                        string path = Path.Combine(tableDir, name + ".txt");
+        //            if (m.Success)
+        //            {
+        //                string name = m.Groups[1].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
+        //                string path = Path.Combine(tableDir, name + ".txt");
 
-                        System.IO.File.WriteAllText(path, block);
-
-
-                        // 1. Save Controller file
-                        int FileId = await _dal.Save_File_Details(
-                            projectId,
-                            parentFileId,
-                            name,
-                            path,
-                            "sql-table",
-                            block
-                        );
-                    }
-                }
-                else if (Regex.IsMatch(block, @"^(CREATE|ALTER)\s+PROC", RegexOptions.IgnoreCase))
-                {
-                    var m = Regex.Match(block,
-                        @"(CREATE|ALTER)\s+PROC(?:EDURE)?\s+(\[[^\]]+\]\.\[[^\]]+\])",
-                        RegexOptions.IgnoreCase);
-
-                    if (m.Success)
-                    {
-                        string name = m.Groups[2].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
-                        string path = Path.Combine(procDir, name + ".txt");
-
-                        System.IO.File.WriteAllText(path, block);
+        //                System.IO.File.WriteAllText(path, block);
 
 
-                        // 1. Save Controller file
-                        int FileId = await _dal.Save_File_Details(
-                            projectId,
-                            parentFileId,
-                            name,
-                            path,
-                            "sql-procedure",
-                            block
-                        );
-                    }
-                }
-            }
-        }
+        //                // 1. Save Controller file
+        //                int FileId = await _dal.Save_File_Details(
+        //                    projectId,
+        //                    parentFileId,
+        //                    name,
+        //                    path,
+        //                    "sql-table",
+        //                    block
+        //                );
+        //            }
+        //        }
+        //        else if (Regex.IsMatch(block, @"^(CREATE|ALTER)\s+PROC", RegexOptions.IgnoreCase))
+        //        {
+        //            var m = Regex.Match(block,
+        //                @"(CREATE|ALTER)\s+PROC(?:EDURE)?\s+(\[[^\]]+\]\.\[[^\]]+\])",
+        //                RegexOptions.IgnoreCase);
 
-        private async Task ExtractAllCshtmlFunctions(int projectId,string filePath, int parentFileId)
-        {
-            string content = await System.IO.File.ReadAllTextAsync(filePath);
+        //            if (m.Success)
+        //            {
+        //                string name = m.Groups[2].Value.Replace("[", "").Replace("]", "").Replace(".", "_");
+        //                string path = Path.Combine(procDir, name + ".txt");
 
-            HashSet<string> functions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        //                System.IO.File.WriteAllText(path, block);
 
-            // JS keywords + jQuery boilerplate (IGNORED)
-            HashSet<string> jsKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-    {
-        "if","else","for","while","switch","return",
-        "function","var","let","const","new",
-        "document","window","console","log",
-        "settimeout","setinterval","parseint","parsefloat",
-        "alert","this","true","false","null","undefined",
-        "ready","$"
-    };
 
-            /* =============================
-               1. JS function declarations
-               function myFunc() {}
-            ============================== */
-            foreach (Match match in Regex.Matches(content,
-                @"function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
-            {
-                functions.Add(match.Groups[1].Value);
-            }
+        //                // 1. Save Controller file
+        //                int FileId = await _dal.Save_File_Details(
+        //                    projectId,
+        //                    parentFileId,
+        //                    name,
+        //                    path,
+        //                    "sql-procedure",
+        //                    block
+        //                );
+        //            }
+        //        }
+        //    }
+        //}
 
-            /* =============================
-               2. Arrow functions
-               const myFunc = () => {}
-            ============================== */
-            foreach (Match match in Regex.Matches(content,
-                @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\("))
-            {
-                functions.Add(match.Groups[2].Value);
-            }
+        //private async Task ExtractAllCshtmlFunctions(int projectId, string filePath, int parentFileId)
+        //{
+        //    string content = await System.IO.File.ReadAllTextAsync(filePath);
 
-            /* =============================
-               3. Anonymous functions
-               var myFunc = function() {}
-            ============================== */
-            foreach (Match match in Regex.Matches(content,
-                @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*function\s*\("))
-            {
-                functions.Add(match.Groups[2].Value);
-            }
+        //    HashSet<string> functions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            /* =============================
-               4. HTML event handlers
-               onclick="myFunc()"
-            ============================== */
-            foreach (Match match in Regex.Matches(content,
-                @"on\w+\s*=\s*[""']\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\(",
-                RegexOptions.IgnoreCase))
-            {
-                functions.Add(match.Groups[1].Value);
-            }
+        //    // JS keywords + jQuery boilerplate (IGNORED)
+        //    HashSet<string> jsKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        //{
+        //    "if","else","for","while","switch","return",
+        //    "function","var","let","const","new",
+        //    "document","window","console","log",
+        //    "settimeout","setinterval","parseint","parsefloat",
+        //    "alert","this","true","false","null","undefined",
+        //    "ready","$"
+        //};
 
-            /* =============================
-               5. Function calls
-               myFunc();
-               (filter keywords & jQuery)
-            ============================== */
-            foreach (Match match in Regex.Matches(content,
-                @"\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
-            {
-                string funcName = match.Groups[1].Value;
+        //    /* =============================
+        //       1. JS function declarations
+        //       function myFunc() {}
+        //    ============================== */
+        //    foreach (Match match in Regex.Matches(content,
+        //        @"function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
+        //    {
+        //        functions.Add(match.Groups[1].Value);
+        //    }
 
-                if (jsKeywords.Contains(funcName))
-                    continue;
+        //    /* =============================
+        //       2. Arrow functions
+        //       const myFunc = () => {}
+        //    ============================== */
+        //    foreach (Match match in Regex.Matches(content,
+        //        @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\("))
+        //    {
+        //        functions.Add(match.Groups[2].Value);
+        //    }
 
-                if (funcName.StartsWith("$"))
-                    continue;
+        //    /* =============================
+        //       3. Anonymous functions
+        //       var myFunc = function() {}
+        //    ============================== */
+        //    foreach (Match match in Regex.Matches(content,
+        //        @"(var|let|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*function\s*\("))
+        //    {
+        //        functions.Add(match.Groups[2].Value);
+        //    }
 
-                functions.Add(funcName);
-            }
+        //    /* =============================
+        //       4. HTML event handlers
+        //       onclick="myFunc()"
+        //    ============================== */
+        //    foreach (Match match in Regex.Matches(content,
+        //        @"on\w+\s*=\s*[""']\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*\(",
+        //        RegexOptions.IgnoreCase))
+        //    {
+        //        functions.Add(match.Groups[1].Value);
+        //    }
 
-            /* =============================
-               Save extracted functions
-            ============================== */
-            foreach (string func in functions)
-            {
-                await _dal.Save_Child_File_Details(
-                    projectId,
-                    parentFileId,
-                    func,
-                    "cshtml-function"
-                );
-            }
-        }
+        //    /* =============================
+        //       5. Function calls
+        //       myFunc();
+        //       (filter keywords & jQuery)
+        //    ============================== */
+        //    foreach (Match match in Regex.Matches(content,
+        //        @"\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\("))
+        //    {
+        //        string funcName = match.Groups[1].Value;
 
-        private async Task ExtractControllerCalls(int projectId,string jsBody, int parentFunctionId)
-        {
-            var apiRegex = new Regex(
-                @"(?:(?:\$\.ajax\s*\(\s*\{[\s\S]*?type\s*:\s*['""]?(GET|POST)['""]?[\s\S]*?url\s*:\s*['""]([^'""]+)['""])|" +
-                @"(?:\$\.(get|post)\s*\(\s*['""]([^'""]+)['""])|" +
-                @"(?:fetch\s*\(\s*['""]([^'""]+)['""]\s*,\s*\{[\s\S]*?method\s*:\s*['""]?(GET|POST)['""]?)|" +
-                @"(?:axios\.(get|post)\s*\(\s*['""]([^'""]+)['""]))",
-                RegexOptions.IgnoreCase);
+        //        if (jsKeywords.Contains(funcName))
+        //            continue;
 
-            foreach (Match match in apiRegex.Matches(jsBody))
-            {
-                string httpMethod = "GET";
-                string url = null;
+        //        if (funcName.StartsWith("$"))
+        //            continue;
 
-                if (!string.IsNullOrEmpty(match.Groups[1].Value))
-                {
-                    httpMethod = match.Groups[1].Value;
-                    url = match.Groups[2].Value;
-                }
-                else if (!string.IsNullOrEmpty(match.Groups[3].Value))
-                {
-                    httpMethod = match.Groups[3].Value.ToUpper();
-                    url = match.Groups[4].Value;
-                }
-                else if (!string.IsNullOrEmpty(match.Groups[5].Value))
-                {
-                    url = match.Groups[5].Value;
-                    httpMethod = match.Groups[6].Value;
-                }
-                else if (!string.IsNullOrEmpty(match.Groups[7].Value))
-                {
-                    httpMethod = match.Groups[7].Value.ToUpper();
-                    url = match.Groups[8].Value;
-                }
+        //        functions.Add(funcName);
+        //    }
 
-                if (string.IsNullOrEmpty(url)) continue;
+        //    /* =============================
+        //       Save extracted functions
+        //    ============================== */
+        //    foreach (string func in functions)
+        //    {
+        //        await _dal.Save_Child_File_Details(
+        //            projectId,
+        //            parentFileId,
+        //            func,
+        //            "cshtml-function"
+        //        );
+        //    }
+        //}
 
-                // Parse /Controller/Action
-                var parts = url.Trim('/').Split('/');
-                if (parts.Length < 2) continue;
+        //    private async Task ExtractControllerCalls(int projectId,string jsBody, int parentFunctionId)
+        //    {
+        //        var apiRegex = new Regex(
+        //            @"(?:(?:\$\.ajax\s*\(\s*\{[\s\S]*?type\s*:\s*['""]?(GET|POST)['""]?[\s\S]*?url\s*:\s*['""]([^'""]+)['""])|" +
+        //            @"(?:\$\.(get|post)\s*\(\s*['""]([^'""]+)['""])|" +
+        //            @"(?:fetch\s*\(\s*['""]([^'""]+)['""]\s*,\s*\{[\s\S]*?method\s*:\s*['""]?(GET|POST)['""]?)|" +
+        //            @"(?:axios\.(get|post)\s*\(\s*['""]([^'""]+)['""]))",
+        //            RegexOptions.IgnoreCase);
 
-                string controller = parts[0];
-                string action = parts[1];
+        //        foreach (Match match in apiRegex.Matches(jsBody))
+        //        {
+        //            string httpMethod = "GET";
+        //            string url = null;
 
-                await _dal.Save_Child_File_Details(
-                    projectId,
-                    parentFunctionId,
-                    $"{controller}/{action}",
-                    $"{httpMethod}-controller"
-                );
-            }
-        }
+        //            if (!string.IsNullOrEmpty(match.Groups[1].Value))
+        //            {
+        //                httpMethod = match.Groups[1].Value;
+        //                url = match.Groups[2].Value;
+        //            }
+        //            else if (!string.IsNullOrEmpty(match.Groups[3].Value))
+        //            {
+        //                httpMethod = match.Groups[3].Value.ToUpper();
+        //                url = match.Groups[4].Value;
+        //            }
+        //            else if (!string.IsNullOrEmpty(match.Groups[5].Value))
+        //            {
+        //                url = match.Groups[5].Value;
+        //                httpMethod = match.Groups[6].Value;
+        //            }
+        //            else if (!string.IsNullOrEmpty(match.Groups[7].Value))
+        //            {
+        //                httpMethod = match.Groups[7].Value.ToUpper();
+        //                url = match.Groups[8].Value;
+        //            }
+
+        //            if (string.IsNullOrEmpty(url)) continue;
+
+        //            // Parse /Controller/Action
+        //            var parts = url.Trim('/').Split('/');
+        //            if (parts.Length < 2) continue;
+
+        //            string controller = parts[0];
+        //            string action = parts[1];
+
+        //            await _dal.Save_Child_File_Details(
+        //                projectId,
+        //                parentFunctionId,
+        //                $"{controller}/{action}",
+        //                $"{httpMethod}-controller"
+        //            );
+        //        }
+        //    }
 
 
         // API – used by JS
+
         [HttpGet]
         public async Task<IActionResult> GetBlueprint()
         {
@@ -770,10 +773,8 @@ Explain what this screen does in simple words.
             if (model == null)
                 return BadRequest("Invalid data");
 
-            string userId = HttpContext.Request.Cookies["USER_ID"];
+            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
 
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
 
             await _dal.Save_Create_Project(model, userId);
 
@@ -782,16 +783,314 @@ Explain what this screen does in simple words.
 
         public async Task<JsonResult> Get_Project_Details()
         {
-            string userId = HttpContext.Request.Cookies["USER_ID"];
-
-            if (string.IsNullOrEmpty(userId))
-                return Json(new List<ProjectMaster>());
+            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
 
             var data = await _dal.Get_Project_Details(userId);
             return Json(data);
         }
 
 
+        // =========================================================
+        // UPLOAD SCREEN FOLDER
+        // =========================================================
+        [HttpPost]
+        public async Task<IActionResult> UploadScreenFolder(
+            int projectId,
+            string projectName,
+            List<IFormFile> files)
+        {
+            if (files == null || files.Count == 0)
+                return Json(new { success = false, message = "No files uploaded" });
+
+            if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName))
+                return Json(new { success = false, message = "Invalid project" });
+
+            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
+
+            List<ProjectMaster> projects = await _dal.Get_Project_Details(userId);
+
+            var project = projects.FirstOrDefault(p => p.ProjectId == projectId);
+            if (project == null)
+                return Json(new { success = false, message = "Project not found" });
+
+            string projectFlowJson = project.ProjectFlow ?? "[]";
+
+            var (flowOrder, flowSet) = ParseAndNormalizeProjectFlow(projectFlowJson);
+
+            projectName = string.Concat(projectName.Split(Path.GetInvalidFileNameChars())).Trim();
+
+            string basePath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "TestScreenOCR",
+                projectName
+            );
+
+            // ================= MODULE PATH MAP (DYNAMIC) =================
+            Dictionary<string, string> modulePathMap = new(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var module in flowOrder)
+            {
+                string folderName = module switch
+                {
+                    "View" => "Views",
+                    "JavaScript" => "js",
+                    "CSS" => "css",
+                    _ => module
+                };
+
+                string modulePath = Path.Combine(basePath, folderName);
+                Directory.CreateDirectory(modulePath);
+                modulePathMap[module] = modulePath;
+            }
+
+            // ================= FILE PROCESS =================
+            foreach (var file in files)
+            {
+                if (file == null || file.Length == 0)
+                    continue;
+
+                string uploadedRelativePath = file.FileName ?? "";
+                string safeFileName = Path.GetFileName(uploadedRelativePath);
+                string extension = Path.GetExtension(safeFileName).ToLowerInvariant();
+                string originalName = Path.GetFileNameWithoutExtension(safeFileName);
+
+                string? module = DetermineModuleForFile(
+                    extension,
+                    uploadedRelativePath,
+                    flowSet,
+                    flowOrder
+                );
+
+                if (string.IsNullOrWhiteSpace(module))
+                    continue;
+
+                if (!modulePathMap.TryGetValue(module, out string moduleRoot))
+                    continue;
+
+                var subDirs = GetSubDirsAfterModule(uploadedRelativePath, module);
+                string finalDir = moduleRoot;
+
+                foreach (var seg in subDirs)
+                    finalDir = Path.Combine(finalDir, SanitizePathSegment(seg));
+
+                Directory.CreateDirectory(finalDir);
+
+                string savePath = Path.Combine(finalDir, originalName + ".txt");
+
+                string textContent;
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                {
+                    textContent = await reader.ReadToEndAsync();
+                }
+
+                await System.IO.File.WriteAllTextAsync(savePath, textContent);
+
+                string fileType = extension switch
+                {
+                    ".cshtml" => "cshtml",
+                    ".js" => "js",
+                    ".css" => "css",
+                    ".cs" => "cs",
+                    ".sql" => "sql",
+                    _ => "unknown"
+                };
+
+                int parentFileId = await _dal.Save_File_Details(
+                    projectId,
+                    0,
+                    safeFileName,
+                    savePath,
+                    fileType,
+                    textContent
+                );
+
+                // ================= CHILD EXTRACTION =================
+                if (fileType == "js" && module == "JavaScript")
+                    await SplitJSFunctions(projectId, modulePathMap, savePath, parentFileId);
+
+                else if (fileType == "cs" && module is "Controller" or "BLL" or "DAL")
+                    await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, module);
+
+                else if (fileType == "sql" && module == "Database")
+                    await SplitSqlTablesAndProcedures(projectId, modulePathMap, savePath, parentFileId);
+
+                else if (fileType == "cshtml" && module == "View")
+                    await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
+            }
+
+            return Json(new
+            {
+                success = true,
+                message = "Files uploaded and processed dynamically using ProjectFlow"
+            });
+        }
+
+        // =========================================================
+        // FLOW PARSER
+        // =========================================================
+        private static (List<string>, HashSet<string>) ParseAndNormalizeProjectFlow(string json)
+        {
+            List<string> raw;
+            try
+            {
+                raw = JsonSerializer.Deserialize<List<string>>(json) ?? new();
+            }
+            catch
+            {
+                raw = new();
+            }
+
+            if (raw.Count == 0)
+                raw = new() { "View", "JavaScript", "Controller", "BLL", "DAL", "Database" };
+
+            var order = raw.Select(NormalizeModuleName)
+                           .Where(x => !string.IsNullOrWhiteSpace(x))
+                           .Distinct(StringComparer.OrdinalIgnoreCase)
+                           .ToList();
+
+            return (order, new HashSet<string>(order, StringComparer.OrdinalIgnoreCase));
+        }
+
+        private static string NormalizeModuleName(string name)
+        {
+            return name.Trim() switch
+            {
+                "Views" => "View",
+                "JS" => "JavaScript",
+                "Scripts" => "JavaScript",
+                "Controllers" => "Controller",
+                "DB" => "Database",
+                "Styles" => "CSS",
+                _ => name.Trim()
+            };
+        }
+
+        // =========================================================
+        // MODULE RESOLUTION
+        // =========================================================
+        private static string? DetermineModuleForFile(
+            string ext,
+            string path,
+            HashSet<string> flowSet,
+            List<string> flowOrder)
+        {
+            return ext switch
+            {
+                ".cshtml" when flowSet.Contains("View") => "View",
+                ".js" when flowSet.Contains("JavaScript") => "JavaScript",
+                ".css" when flowSet.Contains("View") => "CSS",
+                ".sql" when flowSet.Contains("Database") => "Database",
+                ".cs" => ResolveCsModule(path, flowSet, flowOrder),
+                _ => null
+            };
+        }
+
+        private static string? ResolveCsModule(
+            string path,
+            HashSet<string> flowSet,
+            List<string> flowOrder)
+        {
+            path = path.Replace("\\", "/");
+
+            if (path.Contains("/Controller/") && flowSet.Contains("Controller")) return "Controller";
+            if (path.Contains("/BLL/") && flowSet.Contains("BLL")) return "BLL";
+            if (path.Contains("/DAL/") && flowSet.Contains("DAL")) return "DAL";
+
+            return flowOrder.FirstOrDefault(m =>
+                (m == "Controller" || m == "BLL" || m == "DAL") && flowSet.Contains(m));
+        }
+
+        // =========================================================
+        // HELPERS
+        // =========================================================
+        private static List<string> GetSubDirsAfterModule(string path, string module)
+        {
+            var parts = path.Replace("\\", "/").Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (parts.Count <= 1) return new();
+
+            parts.RemoveAt(parts.Count - 1);
+            int idx = parts.FindIndex(p => p.Equals(module, StringComparison.OrdinalIgnoreCase));
+            return idx >= 0 ? parts.Skip(idx + 1).ToList() : new();
+        }
+
+        private static string SanitizePathSegment(string s)
+        {
+            return string.Concat(s.Split(Path.GetInvalidFileNameChars())).Trim();
+        }
+
+        // =========================================================
+        // SPLITTERS
+        // =========================================================
+        private async Task SplitCSharpMethods(int projectId, Dictionary<string, string> map,string sourcePath,int parentId,string module)
+        {
+            string outDir = Path.Combine(map[module], $"{module}functions");
+            Directory.CreateDirectory(outDir);
+
+            string content = await System.IO.File.ReadAllTextAsync(sourcePath);
+            var regex = new Regex(@"(public|private|protected|internal)\s+[\w\<\>]+\s+(\w+)\s*\(");
+
+            foreach (Match m in regex.Matches(content))
+            {
+                string name = m.Groups[2].Value;
+                string file = Path.Combine(outDir, name + ".txt");
+                await System.IO.File.WriteAllTextAsync(file, m.Value);
+
+                await _dal.Save_File_Details(projectId, parentId, name, file, $"{module}-function", m.Value);
+            }
+        }
+
+        private async Task SplitJSFunctions(int projectId,Dictionary<string, string> map,string sourcePath,int parentId)
+        {
+            string outDir = Path.Combine(map["JavaScript"], "jsfunctions");
+            Directory.CreateDirectory(outDir);
+
+            string content = await System.IO.File.ReadAllTextAsync(sourcePath);
+            var regex = new Regex(@"function\s+(\w+)\s*\(");
+
+            foreach (Match m in regex.Matches(content))
+            {
+                string name = m.Groups[1].Value;
+                string file = Path.Combine(outDir, name + ".txt");
+                await System.IO.File.WriteAllTextAsync(file, m.Value);
+
+                int id = await _dal.Save_File_Details(projectId, parentId, name, file, "js-function", m.Value);
+                await ExtractControllerCalls(projectId, m.Value, id);
+            }
+        }
+
+        private async Task SplitSqlTablesAndProcedures(int projectId,Dictionary<string, string> map,string sourcePath,int parentId)
+        {
+            string baseDir = map["Database"];
+            Directory.CreateDirectory(baseDir);
+
+            string sql = await System.IO.File.ReadAllTextAsync(sourcePath);
+
+            foreach (Match m in Regex.Matches(sql, @"(CREATE|ALTER)\s+(TABLE|PROC).*", RegexOptions.IgnoreCase))
+            {
+                string name = Guid.NewGuid().ToString("N");
+                string file = Path.Combine(baseDir, name + ".txt");
+                await System.IO.File.WriteAllTextAsync(file, m.Value);
+
+                await _dal.Save_File_Details(projectId, parentId, name, file, "sql-block", m.Value);
+            }
+        }
+
+        private async Task ExtractAllCshtmlFunctions(int projectId, string filePath, int parentId)
+        {
+            string content = await System.IO.File.ReadAllTextAsync(filePath);
+            var matches = Regex.Matches(content, @"\b(\w+)\s*\(");
+
+            foreach (Match m in matches)
+                await _dal.Save_Child_File_Details(projectId, parentId, m.Groups[1].Value, "cshtml-function");
+        }
+
+        private async Task ExtractControllerCalls(int projectId, string jsBody, int parentId)
+        {
+            var regex = new Regex(@"['""]\/(\w+)\/(\w+)['""]");
+            foreach (Match m in regex.Matches(jsBody))
+                await _dal.Save_Child_File_Details(projectId, parentId, $"{m.Groups[1]}/{m.Groups[2]}", "controller-call");
+        }
     }
 
 }

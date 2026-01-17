@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MySpace.Models;
 using MySpace_Common;
+using MySpace_Common.ControllerModels;
 using MySpace_DAL;
 using System.Diagnostics;
 using System.Text;
@@ -52,6 +53,10 @@ namespace MySpace.Controllers
             return View();
         }
         public IActionResult Blueprint()
+        {
+            return View();
+        }
+        public IActionResult Create_project()
         {
             return View();
         }
@@ -130,9 +135,6 @@ namespace MySpace.Controllers
                 username = user.Username
             });
         }
-
-
-
 
 
         [HttpPost]
@@ -727,7 +729,21 @@ Explain what this screen does in simple words.
             return Json(data);
         }
 
-       
+        [HttpPost]
+        public async Task<IActionResult> Create_Project([FromBody] ProjectCreateDto model)
+        {
+            if (model == null)
+                return BadRequest("Invalid data");
+
+            string userId = HttpContext.Request.Cookies["USER_ID"];
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            await _dal.Save_Create_Project(model, userId);
+
+            return Json(new { success = true });
+        }
 
     }
 

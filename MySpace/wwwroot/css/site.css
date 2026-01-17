@@ -412,3 +412,78 @@ html, body {
             font-size: 11px;
             font-weight: 700;
         }
+
+/*
+ ===============================
+FLOW STYLES (EXTENSION ONLY)
+================================ */
+.flow-hint {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.flow-example {
+    display: block;
+    margin-top: 4px;
+    color: var(--primary);
+    font-size: 13px;
+}
+
+.flow-builder {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.flow-select {
+    background: var(--bg-panel-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text-main);
+    font-size: 14px;
+    min-width: 240px;
+}
+
+.flow-pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.flow-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, #111a2e, #0f172a);
+    border: 1px solid #22325a;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+
+    .flow-node span:first-child {
+        color: var(--primary);
+    }
+
+.flow-arrow {
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.flow-remove {
+    cursor: pointer;
+    color: #ef4444;
+    font-size: 14px;
+    margin-left: 6px;
+    opacity: 0.75;
+}
+
+    .flow-remove:hover {
+        opacity: 1;
+    }

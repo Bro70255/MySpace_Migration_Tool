@@ -1,4 +1,0 @@
-CREATE TABLE [dbo].[User_Type_Indication](
-	[User_Type_Id] [int] NULL,
-	[User_Type] [varchar](50) NULL
-) ON [PRIMARY]

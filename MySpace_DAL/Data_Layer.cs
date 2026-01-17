@@ -2,6 +2,9 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MySpace_Common;
+using MySpace_Common.ControllerModels;
+using MySpace_Common.EntityModels;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace MySpace_DAL
@@ -73,9 +76,9 @@ namespace MySpace_DAL
             return user;
         }
 
-       
-        
-        
+
+
+
         // =========================
         // REGISTRATION FORM
         // =========================
@@ -236,6 +239,22 @@ namespace MySpace_DAL
                                 }).ToList()
                         }).ToList()
                 }).ToList();
+        }
+        public async Task<int> Save_Create_Project(ProjectCreateDto model, string userId)
+        {
+            var entity = new ProjectMaster
+            {
+                ProjectName = model.ProjectName,
+                ProjectType = model.ProjectType,
+                ProjectFlow = JsonConvert.SerializeObject(model.ProjectFlow),
+                CreatedBy = userId,
+                CreatedOn = DateTime.Now
+            };
+
+            await _context.ProjectMaster.AddAsync(entity);
+            await _context.SaveChangesAsync();
+
+            return entity.ProjectId;
         }
     }
 }

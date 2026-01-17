@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySpace_Common;
+using MySpace_Common.EntityModels;
 
 namespace MySpace_DAL
 {
@@ -12,6 +13,7 @@ namespace MySpace_DAL
         public DbSet<ExtractedFileDetails> ExtractedFileDetails { get; set; }
         public DbSet<FileChildDetail> FileChildDetails { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ProjectMaster> ProjectMaster { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()

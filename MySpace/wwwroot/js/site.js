@@ -484,29 +484,80 @@ function saveProject() {
         });
 }
 
-/* ================= BIND PROJECT ================= */
-function BindProject() {
+/* ================= LOAD PROJECTS ================= */
+function loadProjects() {
+
     $.ajax({
         url: "/Home/Get_Project_Details",
         type: "GET",
         success: function (data) {
 
-            $("#projectSelect").empty()
+            console.log("AJAX RESPONSE:", data);
+
+            // 🔴 HARD CHECK
+            if (!Array.isArray(data)) {
+                alert("ERROR: Backend is NOT returning JSON array.\nCheck Home/Get_Project_Details");
+                return;
+            }
+
+            // ---------- PROJECT DROPDOWN ----------
+            $("#projectSelect")
+                .empty()
                 .append('<option value="">-- Select Project --</option>');
 
-            $.each(data, function (i, item) {
+            data.forEach(p => {
                 $("#projectSelect").append(
-                    `<option value="${item.projectId}">
-                                ${item.projectName}
-                            </option>`
+                    `<option value="${p.projectId}">${p.projectName}</option>`
                 );
+            });
+
+            // Auto-load file types for first project
+            if (data.length > 0) {
+                bindFileTypes(data[0].projectFlow);
+            }
+
+            // On project change → update file types
+            $("#projectSelect").off("change").on("change", function () {
+                let selectedId = $(this).val();
+                let proj = data.find(x => x.projectId == selectedId);
+                if (proj) {
+                    bindFileTypes(proj.projectFlow);
+                }
             });
         },
         error: function (err) {
-            console.error(err);
+            console.error("AJAX ERROR:", err);
+            alert("AJAX call failed. Check console.");
         }
     });
 }
+
+/* ================= BIND FILE TYPES ================= */
+function bindFileTypes(projectFlowJson) {
+
+    $("#fileTypeSelect")
+        .empty()
+        .append('<option value="">-- Select File Type --</option>');
+
+    if (!projectFlowJson) return;
+
+    let flowArray;
+
+    try {
+        flowArray = JSON.parse(projectFlowJson);
+    } catch (e) {
+        console.error("ProjectFlow parse error:", projectFlowJson);
+        alert("Invalid ProjectFlow JSON");
+        return;
+    }
+
+    flowArray.forEach(flow => {
+        $("#fileTypeSelect").append(
+            `<option value="${flow}">${flow}</option>`
+        );
+    });
+}
+
 
 
 

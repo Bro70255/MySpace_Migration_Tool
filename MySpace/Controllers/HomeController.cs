@@ -790,41 +790,30 @@ Explain what this screen does in simple words.
         }
 
 
-        // =========================================================
-        // UPLOAD SCREEN FOLDER
-        // =========================================================
         [HttpPost]
-        public async Task<IActionResult> UploadScreenFolder(
-            int projectId,
-            string projectName,
-            List<IFormFile> files)
+        public async Task<IActionResult> UploadScreenFolder(int projectId, string projectName, string fileType, List<IFormFile> files)
         {
-            if (files == null || files.Count == 0)
-                return Json(new { success = false, message = "No files uploaded" });
+            if (files == null || files.Count == 0) return Json(new { success = false, message = "No files uploaded" });
+            if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName)) return Json(new { success = false, message = "Invalid project" });
+            if (string.IsNullOrWhiteSpace(fileType)) return Json(new { success = false, message = "File type not selected" });
 
-            if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName))
-                return Json(new { success = false, message = "Invalid project" });
-
-            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
+            if (!int.TryParse(HttpContext.Request.Cookies["USER_ID"], out int userId)) return Json(new { success = false, message = "User not found" });
 
             List<ProjectMaster> projects = await _dal.Get_Project_Details(userId);
-
             var project = projects.FirstOrDefault(p => p.ProjectId == projectId);
-            if (project == null)
-                return Json(new { success = false, message = "Project not found" });
+            if (project == null) return Json(new { success = false, message = "Project not found" });
 
             string projectFlowJson = project.ProjectFlow ?? "[]";
-
             var (flowOrder, flowSet) = ParseAndNormalizeProjectFlow(projectFlowJson);
+
+            string selectedModule = NormalizeSelectedFileType(fileType);
+            if (string.IsNullOrWhiteSpace(selectedModule)) return Json(new { success = false, message = "Invalid file type selected" });
+            if (!flowSet.Contains(selectedModule)) return Json(new { success = false, message = $"'{selectedModule}' not allowed in ProjectFlow" });
 
             projectName = string.Concat(projectName.Split(Path.GetInvalidFileNameChars())).Trim();
 
-            string basePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot",
-                "TestScreenOCR",
-                projectName
-            );
+            string basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "TestScreenOCR", projectName);
+            Directory.CreateDirectory(basePath);
 
             // ================= MODULE PATH MAP (DYNAMIC) =================
             Dictionary<string, string> modulePathMap = new(StringComparer.OrdinalIgnoreCase);
@@ -844,86 +833,52 @@ Explain what this screen does in simple words.
                 modulePathMap[module] = modulePath;
             }
 
+            if (!modulePathMap.TryGetValue(selectedModule, out string moduleRoot)) return Json(new { success = false, message = "Module folder not created" });
+
+            int processed = 0;
+            int skipped = 0;
+
             // ================= FILE PROCESS =================
             foreach (var file in files)
             {
-                if (file == null || file.Length == 0)
-                    continue;
+                if (file == null || file.Length == 0) { skipped++; continue; }
 
                 string uploadedRelativePath = file.FileName ?? "";
                 string safeFileName = Path.GetFileName(uploadedRelativePath);
                 string extension = Path.GetExtension(safeFileName).ToLowerInvariant();
                 string originalName = Path.GetFileNameWithoutExtension(safeFileName);
 
-                string? module = DetermineModuleForFile(
-                    extension,
-                    uploadedRelativePath,
-                    flowSet,
-                    flowOrder
-                );
+                // Validate extension belongs to selected module (prevents BLL/DAL mixing into Controller)
+                if (!IsValidExtensionForModule(extension, selectedModule)) { skipped++; continue; }
 
-                if (string.IsNullOrWhiteSpace(module))
-                    continue;
-
-                if (!modulePathMap.TryGetValue(module, out string moduleRoot))
-                    continue;
-
-                var subDirs = GetSubDirsAfterModule(uploadedRelativePath, module);
+                // Keep subfolders if present (after module folder if found, else keep full folder structure)
+                var subDirs = GetSubDirsForSelectedModule(uploadedRelativePath, selectedModule);
                 string finalDir = moduleRoot;
-
-                foreach (var seg in subDirs)
-                    finalDir = Path.Combine(finalDir, SanitizePathSegment(seg));
-
+                foreach (var seg in subDirs) finalDir = Path.Combine(finalDir, SanitizePathSegment(seg));
                 Directory.CreateDirectory(finalDir);
 
                 string savePath = Path.Combine(finalDir, originalName + ".txt");
 
                 string textContent;
-                using (var reader = new StreamReader(file.OpenReadStream()))
-                {
-                    textContent = await reader.ReadToEndAsync();
-                }
-
+                using (var reader = new StreamReader(file.OpenReadStream())) { textContent = await reader.ReadToEndAsync(); }
                 await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
-                string fileType = extension switch
-                {
-                    ".cshtml" => "cshtml",
-                    ".js" => "js",
-                    ".css" => "css",
-                    ".cs" => "cs",
-                    ".sql" => "sql",
-                    _ => "unknown"
-                };
+                string dbFileType = GetDbFileTypeForModule(selectedModule);
 
-                int parentFileId = await _dal.Save_File_Details(
-                    projectId,
-                    0,
-                    safeFileName,
-                    savePath,
-                    fileType,
-                    textContent
-                );
+                int parentFileId = await _dal.Save_File_Details(projectId, 0, safeFileName, savePath, dbFileType, textContent);
 
-                // ================= CHILD EXTRACTION =================
-                if (fileType == "js" && module == "JavaScript")
-                    await SplitJSFunctions(projectId, modulePathMap, savePath, parentFileId);
+                // ================= CHILD EXTRACTION (SEPARATE FOR CONTROLLER/BLL/DAL) =================
+                if (selectedModule == "JavaScript") await SplitJSFunctions(projectId, modulePathMap, savePath, parentFileId);
+                else if (selectedModule == "Controller") await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, "Controller");
+                else if (selectedModule == "BLL") await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, "BLL");
+                else if (selectedModule == "DAL") await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, "DAL");
+                else if (selectedModule == "Database") await SplitSqlTablesAndProcedures(projectId, modulePathMap, savePath, parentFileId);
+                else if (selectedModule == "View") await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
 
-                else if (fileType == "cs" && module is "Controller" or "BLL" or "DAL")
-                    await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, module);
-
-                else if (fileType == "sql" && module == "Database")
-                    await SplitSqlTablesAndProcedures(projectId, modulePathMap, savePath, parentFileId);
-
-                else if (fileType == "cshtml" && module == "View")
-                    await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
+                processed++;
             }
 
-            return Json(new
-            {
-                success = true,
-                message = "Files uploaded and processed dynamically using ProjectFlow"
-            });
+            return Json(new { success = true, message = $"Upload done. Processed: {processed}, Skipped: {skipped}, Module: {selectedModule}" });
         }
 
         // =========================================================
@@ -932,29 +887,19 @@ Explain what this screen does in simple words.
         private static (List<string>, HashSet<string>) ParseAndNormalizeProjectFlow(string json)
         {
             List<string> raw;
-            try
-            {
-                raw = JsonSerializer.Deserialize<List<string>>(json) ?? new();
-            }
-            catch
-            {
-                raw = new();
-            }
+            try { raw = JsonSerializer.Deserialize<List<string>>(json) ?? new(); }
+            catch { raw = new(); }
 
-            if (raw.Count == 0)
-                raw = new() { "View", "JavaScript", "Controller", "BLL", "DAL", "Database" };
+            if (raw.Count == 0) raw = new() { "View", "JavaScript", "Controller", "BLL", "DAL", "Database" };
 
-            var order = raw.Select(NormalizeModuleName)
-                           .Where(x => !string.IsNullOrWhiteSpace(x))
-                           .Distinct(StringComparer.OrdinalIgnoreCase)
-                           .ToList();
-
+            var order = raw.Select(NormalizeModuleName).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             return (order, new HashSet<string>(order, StringComparer.OrdinalIgnoreCase));
         }
 
         private static string NormalizeModuleName(string name)
         {
-            return name.Trim() switch
+            name = name?.Trim() ?? "";
+            return name switch
             {
                 "Views" => "View",
                 "JS" => "JavaScript",
@@ -962,73 +907,113 @@ Explain what this screen does in simple words.
                 "Controllers" => "Controller",
                 "DB" => "Database",
                 "Styles" => "CSS",
-                _ => name.Trim()
+                _ => name
             };
         }
 
-        // =========================================================
-        // MODULE RESOLUTION
-        // =========================================================
-        private static string? DetermineModuleForFile(
-            string ext,
-            string path,
-            HashSet<string> flowSet,
-            List<string> flowOrder)
+        private static string NormalizeSelectedFileType(string fileType)
         {
-            return ext switch
+            fileType = (fileType ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(fileType)) return "";
+
+            string ft = fileType.ToLowerInvariant();
+            return ft switch
             {
-                ".cshtml" when flowSet.Contains("View") => "View",
-                ".js" when flowSet.Contains("JavaScript") => "JavaScript",
-                ".css" when flowSet.Contains("View") => "CSS",
-                ".sql" when flowSet.Contains("Database") => "Database",
-                ".cs" => ResolveCsModule(path, flowSet, flowOrder),
-                _ => null
+                "cshtml" => "View",
+                "view" => "View",
+                "js" => "JavaScript",
+                "javascript" => "JavaScript",
+                "css" => "CSS",
+                "sql" => "Database",
+                "database" => "Database",
+                "db" => "Database",
+                "controller" => "Controller",
+                "controllers" => "Controller",
+                "bll" => "BLL",
+                "dal" => "DAL",
+                _ => NormalizeModuleName(fileType)
             };
         }
 
-        private static string? ResolveCsModule(
-            string path,
-            HashSet<string> flowSet,
-            List<string> flowOrder)
+        private static string GetDbFileTypeForModule(string module)
         {
-            path = path.Replace("\\", "/");
+            module = NormalizeModuleName(module);
+            return module switch
+            {
+                "View" => "cshtml",
+                "JavaScript" => "js",
+                "CSS" => "css",
+                "Database" => "sql",
+                "Controller" => "controller",
+                "BLL" => "bll",
+                "DAL" => "dal",
+                _ => "unknown"
+            };
+        }
 
-            if (path.Contains("/Controller/") && flowSet.Contains("Controller")) return "Controller";
-            if (path.Contains("/BLL/") && flowSet.Contains("BLL")) return "BLL";
-            if (path.Contains("/DAL/") && flowSet.Contains("DAL")) return "DAL";
+        private static bool IsValidExtensionForModule(string ext, string module)
+        {
+            ext = (ext ?? "").ToLowerInvariant();
+            module = NormalizeModuleName(module);
 
-            return flowOrder.FirstOrDefault(m =>
-                (m == "Controller" || m == "BLL" || m == "DAL") && flowSet.Contains(m));
+            return module switch
+            {
+                "View" => ext == ".cshtml",
+                "JavaScript" => ext == ".js",
+                "CSS" => ext == ".css",
+                "Database" => ext == ".sql",
+                "Controller" or "BLL" or "DAL" => ext == ".cs",
+                _ => false
+            };
         }
 
         // =========================================================
         // HELPERS
         // =========================================================
-        private static List<string> GetSubDirsAfterModule(string path, string module)
+        private static List<string> GetSubDirsForSelectedModule(string path, string module)
         {
-            var parts = path.Replace("\\", "/").Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var parts = (path ?? "").Replace("\\", "/").Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
             if (parts.Count <= 1) return new();
 
-            parts.RemoveAt(parts.Count - 1);
-            int idx = parts.FindIndex(p => p.Equals(module, StringComparison.OrdinalIgnoreCase));
-            return idx >= 0 ? parts.Skip(idx + 1).ToList() : new();
+            parts.RemoveAt(parts.Count - 1); // remove filename
+
+            var aliases = GetModuleFolderAliases(module);
+            int idx = parts.FindIndex(p => aliases.Any(a => p.Equals(a, StringComparison.OrdinalIgnoreCase)));
+
+            if (idx >= 0) return parts.Skip(idx + 1).ToList();
+
+            // If module folder not found in uploaded path, keep full folder structure (prevents flattening)
+            return parts;
         }
 
-        private static string SanitizePathSegment(string s)
+        private static IEnumerable<string> GetModuleFolderAliases(string module)
         {
-            return string.Concat(s.Split(Path.GetInvalidFileNameChars())).Trim();
+            module = NormalizeModuleName(module);
+            return module switch
+            {
+                "Controller" => new[] { "Controller", "Controllers" },
+                "View" => new[] { "View", "Views" },
+                "JavaScript" => new[] { "JavaScript", "JS", "Scripts", "Script", "js" },
+                "CSS" => new[] { "CSS", "Styles", "Style", "css" },
+                "Database" => new[] { "Database", "DB", "Sql", "SQL" },
+                "BLL" => new[] { "BLL" },
+                "DAL" => new[] { "DAL" },
+                _ => new[] { module }
+            };
         }
+
+        private static string SanitizePathSegment(string s) { return string.Concat((s ?? "").Split(Path.GetInvalidFileNameChars())).Trim(); }
 
         // =========================================================
         // SPLITTERS
         // =========================================================
-        private async Task SplitCSharpMethods(int projectId, Dictionary<string, string> map,string sourcePath,int parentId,string module)
+        private async Task SplitCSharpMethods(int projectId, Dictionary<string, string> map, string sourcePath, int parentId, string module)
         {
             string outDir = Path.Combine(map[module], $"{module}functions");
             Directory.CreateDirectory(outDir);
 
             string content = await System.IO.File.ReadAllTextAsync(sourcePath);
-            var regex = new Regex(@"(public|private|protected|internal)\s+[\w\<\>]+\s+(\w+)\s*\(");
+            var regex = new Regex(@"(public|private|protected|internal)\s+[\w\<\>\[\]]+\s+(\w+)\s*\(");
 
             foreach (Match m in regex.Matches(content))
             {
@@ -1040,7 +1025,7 @@ Explain what this screen does in simple words.
             }
         }
 
-        private async Task SplitJSFunctions(int projectId,Dictionary<string, string> map,string sourcePath,int parentId)
+        private async Task SplitJSFunctions(int projectId, Dictionary<string, string> map, string sourcePath, int parentId)
         {
             string outDir = Path.Combine(map["JavaScript"], "jsfunctions");
             Directory.CreateDirectory(outDir);
@@ -1059,7 +1044,7 @@ Explain what this screen does in simple words.
             }
         }
 
-        private async Task SplitSqlTablesAndProcedures(int projectId,Dictionary<string, string> map,string sourcePath,int parentId)
+        private async Task SplitSqlTablesAndProcedures(int projectId, Dictionary<string, string> map, string sourcePath, int parentId)
         {
             string baseDir = map["Database"];
             Directory.CreateDirectory(baseDir);
@@ -1081,15 +1066,13 @@ Explain what this screen does in simple words.
             string content = await System.IO.File.ReadAllTextAsync(filePath);
             var matches = Regex.Matches(content, @"\b(\w+)\s*\(");
 
-            foreach (Match m in matches)
-                await _dal.Save_Child_File_Details(projectId, parentId, m.Groups[1].Value, "cshtml-function");
+            foreach (Match m in matches) await _dal.Save_Child_File_Details(projectId, parentId, m.Groups[1].Value, "cshtml-function");
         }
 
         private async Task ExtractControllerCalls(int projectId, string jsBody, int parentId)
         {
             var regex = new Regex(@"['""]\/(\w+)\/(\w+)['""]");
-            foreach (Match m in regex.Matches(jsBody))
-                await _dal.Save_Child_File_Details(projectId, parentId, $"{m.Groups[1]}/{m.Groups[2]}", "controller-call");
+            foreach (Match m in regex.Matches(jsBody)) await _dal.Save_Child_File_Details(projectId, parentId, $"{m.Groups[1]}/{m.Groups[2]}", "controller-call");
         }
     }
 

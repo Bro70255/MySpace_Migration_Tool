@@ -1,0 +1,18 @@
+public JsonResult Get_Bind_Bank(int unit)
+        {
+            try
+            {
+                var dtDetails = BLL.Get_Bind_Bank(unit);
+                var bankList = dtDetails.AsEnumerable().Select(row => new
+                {
+                    BANK = row.Field<string>("BANK") // Assuming "BANK" is the column name
+                }).ToList();
+
+                return Json(bankList, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }

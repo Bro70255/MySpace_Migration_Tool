@@ -77,8 +77,6 @@ namespace MySpace_DAL
         }
 
 
-
-
         // =========================
         // REGISTRATION FORM
         // =========================
@@ -99,10 +97,11 @@ namespace MySpace_DAL
         // =========================
         // FILE DETAILS
         // =========================
-        public async Task<int> Save_File_Details(int parentFileId, string fileName, string filePath, string fileType, string textContent)
+        public async Task<int> Save_File_Details(int projectId,int parentFileId, string fileName, string filePath, string fileType, string textContent)
         {
             var entity = new FileDetails
             {
+                ProjectId = projectId,
                 ParentFileId = parentFileId,
                 FileName = fileName,
                 FilePath = filePath,
@@ -160,7 +159,7 @@ namespace MySpace_DAL
         // =========================
         // CHILD FILE DETAILS
         // =========================
-        public async Task Save_Child_File_Details(int parentFileId, string name, string type)
+        public async Task Save_Child_File_Details(int projectId,int parentFileId, string name, string type)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return;
@@ -179,6 +178,7 @@ namespace MySpace_DAL
 
             var entity = new FileChildDetail
             {
+                ProjectId = projectId,
                 ParentFileId = parentFileId,
                 Name = name,
                 Type = type,
@@ -256,5 +256,13 @@ namespace MySpace_DAL
 
             return entity.ProjectId;
         }
+        public async Task<List<ProjectMaster>> Get_Project_Details(string userId)
+        {
+            return await _context.ProjectMasters
+                                 .Where(x => x.CreatedBy == userId)
+                                 .OrderByDescending(x => x.CreatedOn)
+                                 .ToListAsync();
+        }
+
     }
 }

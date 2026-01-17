@@ -1,0 +1,10 @@
+private string GenerateUniqueCode(string result, int employeeCode)
+        {
+            // Use HMACSHA256 for hashing
+            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes("YourSecretKey")))
+            {
+                var inputString = $"{employeeCode}-{result}-{DateTime.UtcNow.Ticks}";
+                var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+                return Convert.ToBase64String(hash);
+            }
+        }

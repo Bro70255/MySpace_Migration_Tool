@@ -2,6 +2,7 @@
 using MySpace.Models;
 using MySpace_Common;
 using MySpace_Common.ControllerModels;
+using MySpace_Common.EntityModels;
 using MySpace_DAL;
 using System.Diagnostics;
 using System.Text;
@@ -290,17 +291,28 @@ Explain what this screen does in simple words.
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadScreenFolder(List<IFormFile> files)
+        public async Task<IActionResult> UploadScreenFolder(int projectId,string projectName,List<IFormFile> files)
         {
             if (files == null || files.Count == 0)
                 return Json(new { success = false, message = "No files uploaded" });
 
+            if (projectId <= 0 || string.IsNullOrWhiteSpace(projectName))
+                return Json(new { success = false, message = "Invalid project" });
+
+            // 🔐 Sanitize project name for folder usage
+            projectName = string.Concat(
+                projectName.Split(Path.GetInvalidFileNameChars())
+            ).Trim();
+
+            // ================= BASE PATH =================
             string basePath = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot",
-                "TestScreenOCR"
+                "TestScreenOCR",
+                projectName
             );
 
+            // ================= MODULE FOLDERS =================
             string viewsPath = Path.Combine(basePath, "Views");
             string jsPath = Path.Combine(basePath, "js");
             string cssPath = Path.Combine(basePath, "css");
@@ -313,14 +325,18 @@ Explain what this screen does in simple words.
             Directory.CreateDirectory(controllerPath);
             Directory.CreateDirectory(databasePath);
 
+            // ================= FILE PROCESS =================
             foreach (var file in files)
             {
+                if (file.Length == 0)
+                    continue;
+
                 string safeFileName = Path.GetFileName(file.FileName);
                 string extension = Path.GetExtension(safeFileName).ToLower();
                 string originalName = Path.GetFileNameWithoutExtension(safeFileName);
 
-                string savePath = null;
-                string fileType = null;
+                string savePath;
+                string fileType;
 
                 switch (extension)
                 {
@@ -353,15 +369,19 @@ Explain what this screen does in simple words.
                         continue;
                 }
 
-                using var reader = new StreamReader(file.OpenReadStream());
-                string content = await reader.ReadToEndAsync();
+                // ================= READ CONTENT =================
+                string textContent;
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                {
+                    textContent = await reader.ReadToEndAsync();
+                }
 
-                string textContent = content;
-
+                // ================= SAVE FILE =================
                 await System.IO.File.WriteAllTextAsync(savePath, textContent);
 
-                // 1. Save original file
+                // ================= DB SAVE (PARENT) =================
                 int parentFileId = await _dal.Save_File_Details(
+                    projectId,
                     0,
                     safeFileName,
                     savePath,
@@ -369,33 +389,43 @@ Explain what this screen does in simple words.
                     textContent
                 );
 
-                // 2. Extract & save children
-                if (fileType == "js")
-                    await SplitJSFunctions(savePath, parentFileId);
-                else if (fileType == "cs")
-                    await SplitCSharpMethods(savePath, parentFileId);
-                else if (fileType == "sql")
-                    await SplitSqlTablesAndProcedures(savePath, parentFileId);
-                else if (fileType == "cshtml")
-                    await ExtractAllCshtmlFunctions(savePath, parentFileId);
+                // ================= CHILD EXTRACTION =================
+                switch (fileType)
+                {
+                    case "js":
+                        await SplitJSFunctions(projectId, projectName, savePath, parentFileId);
+                        break;
 
+                    case "cs":
+                        await SplitCSharpMethods(projectId, projectName, savePath, parentFileId);
+                        break;
+
+                    case "sql":
+                        await SplitSqlTablesAndProcedures(projectId, projectName, savePath, parentFileId);
+                        break;
+
+                    case "cshtml":
+                        await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
+                        break;
+                }
             }
 
             return Json(new
             {
                 success = true,
-                message = "Files uploaded, converted and extracted successfully"
+                message = "Files uploaded, saved under project folder, and extracted successfully"
             });
         }
+
 
         // =========================================================
         // JS FUNCTION SPLITTER
         // =========================================================
-        private async Task SplitJSFunctions(string sourcePath, int parentFileId)
+        private async Task SplitJSFunctions(int projectId,string projectName,string sourcePath, int parentFileId)
         {
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "js", "jsfunctions"
+                 "wwwroot", "TestScreenOCR", projectName, "js", "jsfunctions"
             );
 
             Directory.CreateDirectory(outputDir);
@@ -434,6 +464,7 @@ Explain what this screen does in simple words.
 
                 // 1. Save Js file
                 int FileId = await _dal.Save_File_Details(
+                    projectId,
                     parentFileId,
                     functionName,
                     filePath,
@@ -442,19 +473,18 @@ Explain what this screen does in simple words.
                 );
 
                 // 🔥 Extract API Calls
-                await ExtractControllerCalls(body, FileId);
+                await ExtractControllerCalls(projectId,body, FileId);
             }
         }
-
 
         // =========================================================
         // C# METHOD SPLITTER
         // =========================================================
-        private async Task SplitCSharpMethods(string sourcePath, int parentFileId)
+        private async Task SplitCSharpMethods(int projectId,string projectName,string sourcePath, int parentFileId)
         {
             var outputDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "Controller", "Controllerfunctions"
+                "wwwroot", "TestScreenOCR", projectName, "Controller", "Controllerfunctions"
             );
 
             Directory.CreateDirectory(outputDir);
@@ -492,6 +522,7 @@ Explain what this screen does in simple words.
 
                 // 1. Save Controller file
                 int FileId = await _dal.Save_File_Details(
+                    projectId,
                     parentFileId,
                     name,
                     filePath,
@@ -504,11 +535,11 @@ Explain what this screen does in simple words.
         // =========================================================
         // SQL TABLE & PROCEDURE SPLITTER
         // =========================================================
-        private async Task SplitSqlTablesAndProcedures(string sourcePath, int parentFileId)
+        private async Task SplitSqlTablesAndProcedures(int projectId,string projectName, string sourcePath, int parentFileId)
         {
             string baseDir = Path.Combine(
                 Directory.GetCurrentDirectory(),
-                "wwwroot", "TestScreenOCR", "Database"
+                "wwwroot", "TestScreenOCR", projectName, "Database"
             );
 
             string tableDir = Path.Combine(baseDir, "Tables");
@@ -543,6 +574,7 @@ Explain what this screen does in simple words.
 
                         // 1. Save Controller file
                         int FileId = await _dal.Save_File_Details(
+                            projectId,
                             parentFileId,
                             name,
                             path,
@@ -567,6 +599,7 @@ Explain what this screen does in simple words.
 
                         // 1. Save Controller file
                         int FileId = await _dal.Save_File_Details(
+                            projectId,
                             parentFileId,
                             name,
                             path,
@@ -578,7 +611,7 @@ Explain what this screen does in simple words.
             }
         }
 
-        private async Task ExtractAllCshtmlFunctions(string filePath, int parentFileId)
+        private async Task ExtractAllCshtmlFunctions(int projectId,string filePath, int parentFileId)
         {
             string content = await System.IO.File.ReadAllTextAsync(filePath);
 
@@ -661,6 +694,7 @@ Explain what this screen does in simple words.
             foreach (string func in functions)
             {
                 await _dal.Save_Child_File_Details(
+                    projectId,
                     parentFileId,
                     func,
                     "cshtml-function"
@@ -668,7 +702,7 @@ Explain what this screen does in simple words.
             }
         }
 
-        private async Task ExtractControllerCalls(string jsBody, int parentFunctionId)
+        private async Task ExtractControllerCalls(int projectId,string jsBody, int parentFunctionId)
         {
             var apiRegex = new Regex(
                 @"(?:(?:\$\.ajax\s*\(\s*\{[\s\S]*?type\s*:\s*['""]?(GET|POST)['""]?[\s\S]*?url\s*:\s*['""]([^'""]+)['""])|" +
@@ -713,6 +747,7 @@ Explain what this screen does in simple words.
                 string action = parts[1];
 
                 await _dal.Save_Child_File_Details(
+                    projectId,
                     parentFunctionId,
                     $"{controller}/{action}",
                     $"{httpMethod}-controller"
@@ -744,6 +779,18 @@ Explain what this screen does in simple words.
 
             return Json(new { success = true });
         }
+
+        public async Task<JsonResult> Get_Project_Details()
+        {
+            string userId = HttpContext.Request.Cookies["USER_ID"];
+
+            if (string.IsNullOrEmpty(userId))
+                return Json(new List<ProjectMaster>());
+
+            var data = await _dal.Get_Project_Details(userId);
+            return Json(data);
+        }
+
 
     }
 

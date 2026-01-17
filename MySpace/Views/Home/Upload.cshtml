@@ -1,89 +1,170 @@
 ﻿@{
-    ViewData["Title"] = "Upload";
+    ViewData["Title"] = "Upload Screens";
 }
 
-<h3>Upload Screens</h3>
+<div class="content-wrapper">
 
-<div class="upload-zone" id="dropZone"
-     style="border:2px dashed #93c5fd; padding:30px; border-radius:10px; text-align:center;">
+    <div class="glass-body module-wrapper">
 
-    <p>Drag & drop folders or files here</p>
-    <span>or</span>
+        <!-- HEADER -->
+        <div class="module-header">
+            <span class="module-icon">📤</span>
+            <span class="module-title">Upload Screens</span>
+        </div>
 
-    <!-- Folder Upload -->
-    <input type="file" id="folderInput" multiple webkitdirectory hidden />
+        <div class="module-body">
 
-    <!-- File Upload -->
-    <input type="file" id="fileInput" multiple hidden />
+            <!-- ================= MESSAGE ================= -->
+            <div id="uploadMessage" class="upload-message" style="display:none;"></div>
 
-    <div class="upload-actions" style="margin-top:15px;">
-        <button class="modern-btn" type="button" id="btnFolder">
-            Browse Folder
-        </button>
+            <!-- ================= PROJECT SELECT ================= -->
+            <div class="project-select-wrapper">
+                <label class="project-select-label">Project</label>
 
-        <button class="modern-btn" type="button" id="btnFiles">
-            Browse Files
-        </button>
+                <select id="projectSelect" class="project-select">
+                    <option value="">-- Select Project --</option>
+                </select>
+
+                <div id="projectHint" class="project-select-hint">
+                    Please select a project before uploading
+                </div>
+            </div>
+
+            <!-- ================= UPLOAD ZONE ================= -->
+            <div id="dropZone" class="upload-zone">
+
+                <p class="upload-title">Drag & drop folders or files here</p>
+                <span class="upload-separator">or</span>
+
+                <!-- Hidden Inputs -->
+                <input type="file" id="folderInput" multiple webkitdirectory hidden />
+                <input type="file" id="fileInput" multiple hidden />
+
+                <div class="upload-actions">
+                    <button type="button" class="modern-btn" id="btnFolder">
+                        Browse Folder
+                    </button>
+
+                    <button type="button" class="modern-btn" id="btnFiles">
+                        Browse Files
+                    </button>
+                </div>
+
+                <div class="upload-info" id="uploadInfo"></div>
+
+            </div>
+
+        </div>
     </div>
 
-    <div class="upload-info" id="uploadInfo" style="margin-top:15px;"></div>
 </div>
 
-<script>
-    /* ================= GLOBALS ================= */
-    let selectedFiles = [];
-    let uploadInfo;
+@section Scripts {
+    <script>
 
-    document.addEventListener("DOMContentLoaded", () => {
+        let selectedFiles = [];
 
-        const dropZone = document.getElementById("dropZone");
-        const folderInput = document.getElementById("folderInput");
-        const fileInput = document.getElementById("fileInput");
-        const btnFolder = document.getElementById("btnFolder");
-        const btnFiles = document.getElementById("btnFiles");
-        uploadInfo = document.getElementById("uploadInfo");
-
-        /* ---------- BUTTONS ---------- */
-        btnFolder.addEventListener("click", () => folderInput.click());
-        btnFiles.addEventListener("click", () => fileInput.click());
-
-        /* ---------- FILE SELECT ---------- */
-        folderInput.addEventListener("change", e => handleFiles(e.target.files));
-        fileInput.addEventListener("change", e => handleFiles(e.target.files));
-
-        /* ---------- DRAG & DROP ---------- */
-        dropZone.addEventListener("dragover", e => {
-            e.preventDefault();
-            dropZone.style.borderColor = "#3b82f6";
+        /* ================= PAGE LOAD ================= */
+        $(document).ready(function () {
+            BindProject();
         });
 
-        dropZone.addEventListener("dragleave", () => {
-            dropZone.style.borderColor = "#93c5fd";
+        /* ================= GET SELECTED PROJECT ================= */
+        function getSelectedProject() {
+            const ddl = document.getElementById("projectSelect");
+            return {
+                projectId: ddl.value,
+                projectName: ddl.options[ddl.selectedIndex].text
+            };
+        }
+
+        /* ================= MESSAGE ================= */
+        function showMessage(message, type) {
+            const msg = document.getElementById("uploadMessage");
+            msg.className = `upload-message ${type}`;
+            msg.innerText = message;
+            msg.style.display = "block";
+
+            setTimeout(() => {
+                msg.style.display = "none";
+            }, 4000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const dropZone = document.getElementById("dropZone");
+            const folderInput = document.getElementById("folderInput");
+            const fileInput = document.getElementById("fileInput");
+            const btnFolder = document.getElementById("btnFolder");
+            const btnFiles = document.getElementById("btnFiles");
+            const projectSelect = document.getElementById("projectSelect");
+            const projectHint = document.getElementById("projectHint");
+            const uploadInfo = document.getElementById("uploadInfo");
+
+            /* ================= VALIDATION ================= */
+            function validateProject() {
+                if (!projectSelect.value) {
+                    projectHint.style.display = "block";
+                    return false;
+                }
+                projectHint.style.display = "none";
+                return true;
+            }
+
+            /* ================= BUTTONS ================= */
+            btnFolder.addEventListener("click", () => {
+                if (!validateProject()) return;
+                folderInput.click();
+            });
+
+            btnFiles.addEventListener("click", () => {
+                if (!validateProject()) return;
+                fileInput.click();
+            });
+
+            /* ================= FILE INPUT ================= */
+            folderInput.addEventListener("change", e => handleFiles(e.target.files));
+            fileInput.addEventListener("change", e => handleFiles(e.target.files));
+
+            /* ================= DRAG DROP ================= */
+            dropZone.addEventListener("dragover", e => {
+                e.preventDefault();
+                dropZone.classList.add("drag-active");
+            });
+
+            dropZone.addEventListener("dragleave", () => {
+                dropZone.classList.remove("drag-active");
+            });
+
+            dropZone.addEventListener("drop", e => {
+                e.preventDefault();
+                dropZone.classList.remove("drag-active");
+                if (!validateProject()) return;
+                handleFiles(e.dataTransfer.files);
+            });
+
+            /* ================= HANDLE FILES ================= */
+            function handleFiles(files) {
+                if (!files || files.length === 0) return;
+
+                selectedFiles = files;
+
+                uploadInfo.innerHTML = `
+                    <strong>${files.length} file(s) selected</strong>
+                    <ul></ul>`;
+
+                const ul = uploadInfo.querySelector("ul");
+
+                Array.from(files).forEach(f => {
+                    const li = document.createElement("li");
+                    li.textContent = f.webkitRelativePath || f.name;
+                    ul.appendChild(li);
+                });
+
+                uploadFiles();
+            }
         });
 
-        dropZone.addEventListener("drop", e => {
-            e.preventDefault();
-            dropZone.style.borderColor = "#93c5fd";
-            handleFiles(e.dataTransfer.files);
-        });
-    });
 
-    function handleFiles(files) {
-        if (!files || files.length === 0) return;
-
-        selectedFiles = files;
-
-        uploadInfo.innerHTML = `<strong>${files.length} file(s) selected</strong><ul></ul>`;
-        const ul = uploadInfo.querySelector("ul");
-
-        Array.from(files).forEach(f => {
-            const li = document.createElement("li");
-            li.textContent = f.webkitRelativePath || f.name;
-            ul.appendChild(li);
-        });
-
-        uploadFiles();
-    }
-
-   
-</script>
+    </script>
+}

@@ -340,33 +340,50 @@ function Initialize_Registration_Report_Details() {
     });
 }
 
+/* ================= UPLOAD ================= */
+/* ================= UPLOAD ================= */
 function uploadFiles() {
+
+    const project = getSelectedProject();
+
+    if (!project.projectId) {
+        showMessage("Please select a project", "error");
+        return;
+    }
+
     if (!selectedFiles || selectedFiles.length === 0) {
-        alert("No files selected");
+        showMessage("No files selected", "error");
         return;
     }
 
     const formData = new FormData();
+    formData.append("projectId", project.projectId);
+    formData.append("projectName", project.projectName);
 
-    for (let file of selectedFiles) {
-        // preserve folder info if available
-        formData.append("files", file, file.webkitRelativePath || file.name);
-    }
+    Array.from(selectedFiles).forEach(file => {
+        formData.append("files", file);
+    });
 
-    fetch("/Home/UploadScreenFolder", {
-        method: "POST",
-        body: formData
-    })
-        .then(r => r.json())
-        .then(res => {
-            uploadInfo.innerHTML += res.success
-                ? `<div style="color:green;margin-top:10px;">✅ ${res.message}</div>`
-                : `<div style="color:red;margin-top:10px;">❌ ${res.message}</div>`;
-        })
-        .catch(err => {
-            console.error(err);
-            uploadInfo.innerHTML += `<div style="color:red;margin-top:10px;">❌ Upload failed</div>`;
-        });
+    $.ajax({
+        url: "/Home/UploadScreenFolder",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+
+            if (res.success) {
+                showMessage(res.message || "Upload completed successfully", "success");
+                selectedFiles = [];
+                $("#uploadInfo").html("");
+            } else {
+                showMessage(res.message || "Upload failed", "error");
+            }
+        },
+        error: function () {
+            showMessage("Server error during upload", "error");
+        }
+    });
 }
 
 function Sent_Data_To_AI() {
@@ -413,6 +430,7 @@ function Sent_Data_To_AI() {
             document.getElementById("AIResponse").value = "Error calling AI";
         });
 }
+
 function saveProject() {
 
     const projectName = document.querySelector('input[name="ProjectName"]').value.trim();
@@ -466,7 +484,29 @@ function saveProject() {
         });
 }
 
+/* ================= BIND PROJECT ================= */
+function BindProject() {
+    $.ajax({
+        url: "/Home/Get_Project_Details",
+        type: "GET",
+        success: function (data) {
 
+            $("#projectSelect").empty()
+                .append('<option value="">-- Select Project --</option>');
+
+            $.each(data, function (i, item) {
+                $("#projectSelect").append(
+                    `<option value="${item.projectId}">
+                                ${item.projectName}
+                            </option>`
+                );
+            });
+        },
+        error: function (err) {
+            console.error(err);
+        }
+    });
+}
 
 
 

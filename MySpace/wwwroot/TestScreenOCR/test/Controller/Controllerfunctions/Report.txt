@@ -1,0 +1,6 @@
+public ActionResult Report()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }

@@ -12,6 +12,7 @@ namespace MySpace_Common
         [Key] // ✅ REQUIRED
         public int Id { get; set; }
 
+        public int ProjectId { get; set; }
         public int ParentFileId { get; set; }
 
         public string Name { get; set; }      // function / method name

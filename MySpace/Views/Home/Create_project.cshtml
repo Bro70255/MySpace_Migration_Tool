@@ -12,21 +12,21 @@
             <!-- ===============================
                  BASIC PROJECT DETAILS
             ================================ -->
-            <div class="form-group mb-3">
-                <label>Project Name</label>
+            <div class="project-form-group">
+                <label class="project-label">Project Name</label>
                 <input type="text"
                        name="ProjectName"
-                       class="form-control"
+                       class="project-input"
                        placeholder="Enter project name"
                        required />
             </div>
 
-            <div class="form-group mb-4">
-                <label>Project Type</label>
+            <div class="project-form-group">
+                <label class="project-label">Project Type</label>
                 <select name="ProjectType"
-                        class="form-control"
+                        class="project-input"
                         required>
-                    <option value="">-- Select Project Type --</option>
+                    <option value="">Select project type</option>
                     <option value="ASP.NET">ASP.NET</option>
                     <option value="ASP.NET Core">ASP.NET Core</option>
                 </select>
@@ -79,7 +79,7 @@
                  ACTIONS
             ================================ -->
             <div class="mt-4">
-                <button type="button" class="modern-btn" onclick="saveProject()">
+                <button type="submit" class="modern-btn">
                     Create Project
                 </button>
             </div>
@@ -103,8 +103,6 @@
         flow.push(step);
         renderFlow();
         updateHiddenField();
-
-        // Reset dropdown instantly
         select.value = "";
     }
 
@@ -141,5 +139,3 @@
         document.getElementById("ProjectFlow").value = JSON.stringify(flow);
     }
 </script>
-
-

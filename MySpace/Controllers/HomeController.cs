@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using MySpace.Models;
 using MySpace_Common;
 using MySpace_Common.ControllerModels;
@@ -873,7 +874,7 @@ Explain what this screen does in simple words.
                 else if (selectedModule == "BLL") await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, "BLL");
                 else if (selectedModule == "DAL") await SplitCSharpMethods(projectId, modulePathMap, savePath, parentFileId, "DAL");
                 else if (selectedModule == "Database") await SplitSqlTablesAndProcedures(projectId, modulePathMap, savePath, parentFileId);
-                else if (selectedModule == "View") await ExtractAllCshtmlFunctions(projectId, savePath, parentFileId);
+                else if (selectedModule == "View") await ExtractViewFunctionsAndControllerCalls(projectId, savePath, parentFileId);
 
                 processed++;
             }
@@ -1007,12 +1008,11 @@ Explain what this screen does in simple words.
         // =========================================================
         // SPLITTERS
         // =========================================================
-        private async Task SplitCSharpMethods(int projectId, Dictionary<string, string> map, string sourcePath, int parentId, string module)
+        private async Task SplitCSharpMethods(int projectId,Dictionary<string, string> map,string sourcePath,int parentId,string module)
         {
             string outDir = Path.Combine(map[module], $"{module}functions");
             Directory.CreateDirectory(outDir);
 
-            // ⚠️ IMPORTANT: fully qualify System.IO.File (fixes ControllerBase.File issue)
             string content = await System.IO.File.ReadAllTextAsync(sourcePath);
 
             var regex = new Regex(
@@ -1027,44 +1027,32 @@ Explain what this screen does in simple words.
             foreach (Match m in regex.Matches(content))
             {
                 string name = m.Groups["name"].Value;
-
                 int methodStart = m.Index;
 
-                // Find first opening brace
                 int braceStart = content.IndexOf('{', m.Index);
-                if (braceStart == -1)
-                    continue;
+                if (braceStart == -1) continue;
 
                 int depth = 0;
                 int i = braceStart;
 
-                // Brace matching to get full method body
                 for (; i < content.Length; i++)
                 {
-                    if (content[i] == '{')
-                        depth++;
+                    if (content[i] == '{') depth++;
                     else if (content[i] == '}')
                     {
                         depth--;
-                        if (depth == 0)
-                        {
-                            i++; // include closing brace
-                            break;
-                        }
+                        if (depth == 0) { i++; break; }
                     }
                 }
 
-                if (depth != 0)
-                    continue;
+                if (depth != 0) continue;
 
                 string methodText = content.Substring(methodStart, i - methodStart);
-
                 string filePath = Path.Combine(outDir, $"{name}.cs");
 
-                // ⚠️ fully qualified again
                 await System.IO.File.WriteAllTextAsync(filePath, methodText);
 
-                await _dal.Save_File_Details(
+                int id = await _dal.Save_File_Details(
                     projectId,
                     parentId,
                     name,
@@ -1072,6 +1060,9 @@ Explain what this screen does in simple words.
                     $"{module}-function",
                     methodText
                 );
+
+                // ✅ PASS REAL FILE PATH
+                await ExtractViewFunctionsAndControllerCalls(projectId, filePath, id);
             }
         }
 
@@ -1090,7 +1081,7 @@ Explain what this screen does in simple words.
                 await System.IO.File.WriteAllTextAsync(file, m.Value);
 
                 int id = await _dal.Save_File_Details(projectId, parentId, name, file, "js-function", m.Value);
-                await ExtractControllerCalls(projectId, m.Value, id);
+                await ExtractViewFunctionsAndControllerCalls(projectId, m.Value, id);
             }
         }
 
@@ -1111,18 +1102,160 @@ Explain what this screen does in simple words.
             }
         }
 
-        private async Task ExtractAllCshtmlFunctions(int projectId, string filePath, int parentId)
+        private async Task ExtractViewFunctionsAndControllerCalls(int projectId, string filePath, int parentId)
         {
             string content = await System.IO.File.ReadAllTextAsync(filePath);
-            var matches = Regex.Matches(content, @"\b(\w+)\s*\(");
 
-            foreach (Match m in matches) await _dal.Save_Child_File_Details(projectId, parentId, m.Groups[1].Value, "cshtml-function");
-        }
+            /* =========================================================
+               1) CSHTML / JS function calls
+            ========================================================= */
+            var functionRegex = new Regex(@"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(");
 
-        private async Task ExtractControllerCalls(int projectId, string jsBody, int parentId)
-        {
-            var regex = new Regex(@"['""]\/(\w+)\/(\w+)['""]");
-            foreach (Match m in regex.Matches(jsBody)) await _dal.Save_Child_File_Details(projectId, parentId, $"{m.Groups[1]}/{m.Groups[2]}", "controller-call");
+            foreach (Match match in functionRegex.Matches(content))
+            {
+                string functionName = match.Groups[1].Value;
+
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    functionName,
+                    "cshtml-function"
+                );
+            }
+
+            /* =========================================================
+               2) Controller/Action calls inside JS strings
+               Example: "/Home/Get_Project_Details"
+            ========================================================= */
+            var controllerRegex = new Regex(@"['""]\/([A-Za-z0-9_]+)\/([A-Za-z0-9_]+)['""]");
+
+            foreach (Match match in controllerRegex.Matches(content))
+            {
+                string controllerCall = $"{match.Groups[1].Value}/{match.Groups[2].Value}";
+
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    controllerCall,
+                    "controller-call"
+                );
+            }
+
+            /* =========================================================
+               3) Controller/BLL style linking method calls (same logic)
+               Example:
+                 Save_File_Details(...)
+                 _service.Save_File_Details(...)
+                 RedirectToAction("Index")
+            ========================================================= */
+            var methodCallRegex = new Regex(@"\b(?:\w+\.)?([A-Za-z_][A-Za-z0-9_]*)\s*\(");
+
+            foreach (Match match in methodCallRegex.Matches(content))
+            {
+                string calledMethod = match.Groups[1].Value;
+
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    calledMethod,
+                    "controller-link"
+                );
+
+                // BLL same as controller (you asked “double the same as controller”)
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    calledMethod,
+                    "bll-link"
+                );
+            }
+
+            /* =========================================================
+               4) DAL Extraction
+               - CacheTagKey("...") / CacheTagKey = "..."
+               - Stored procedure name: "dbo.ProcName" / "ProcName"
+               - Table name from SQL text: FROM / JOIN / INTO / UPDATE / DELETE FROM
+            ========================================================= */
+
+            // 4A) CacheTagKey values
+            var cacheTagRegex = new Regex(
+                @"\bCacheTagKey\b\s*(?:\(\s*['""]([^'""]+)['""]\s*\)|=\s*['""]([^'""]+)['""])",
+                RegexOptions.IgnoreCase);
+
+            foreach (Match match in cacheTagRegex.Matches(content))
+            {
+                string tag = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
+                if (string.IsNullOrWhiteSpace(tag)) continue;
+
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    tag.Trim(),
+                    "dal-cachetagkey"
+                );
+            }
+
+            // 4B) Stored procedure names (common DAL patterns)
+            // Supports: "dbo.ProcName", "[dbo].[ProcName]", "ProcName"
+            var spRegex = new Regex(
+                @"\b(?:EXEC(?:UTE)?|CommandType\.StoredProcedure)\b|(?:Execute(?:NonQuery|Reader|Scalar)\s*\(\s*['""])",
+                RegexOptions.IgnoreCase);
+
+            // Direct extraction of proc-like strings anywhere (safer for mixed DAL code)
+            var spNameRegex = new Regex(
+                @"['""]\s*(?:\[(?<schema>[A-Za-z0-9_]+)\]\s*\.\s*\[(?<proc>[A-Za-z0-9_]+)\]|(?<schema>[A-Za-z0-9_]+)\s*\.\s*(?<proc>[A-Za-z0-9_]+)|(?<procOnly>[A-Za-z0-9_]+))\s*['""]",
+                RegexOptions.IgnoreCase);
+
+            // If DAL file contains stored-proc usage markers, then collect proc names from strings
+            if (spRegex.IsMatch(content))
+            {
+                foreach (Match match in spNameRegex.Matches(content))
+                {
+                    string proc =
+                        match.Groups["proc"].Success ? match.Groups["proc"].Value :
+                        match.Groups["procOnly"].Success ? match.Groups["procOnly"].Value :
+                        null;
+
+                    string schema = match.Groups["schema"].Success ? match.Groups["schema"].Value : null;
+
+                    if (string.IsNullOrWhiteSpace(proc)) continue;
+
+                    string spFull = string.IsNullOrWhiteSpace(schema) ? proc : $"{schema}.{proc}";
+
+                    await _dal.Save_Child_File_Details(
+                        projectId,
+                        parentId,
+                        spFull,
+                        "dal-stored-proc"
+                    );
+                }
+            }
+
+            // 4C) Table names from SQL snippets in DAL (FROM/JOIN/UPDATE/INTO/DELETE FROM)
+            // Handles [dbo].[Table], dbo.Table, Table
+            var tableRegex = new Regex(
+                @"\b(?:FROM|JOIN|INTO|UPDATE|DELETE\s+FROM)\s+(?<tbl>\[[^\]]+\](?:\s*\.\s*\[[^\]]+\])?|\w+(?:\s*\.\s*\w+)?)",
+                RegexOptions.IgnoreCase);
+
+            foreach (Match match in tableRegex.Matches(content))
+            {
+                string raw = match.Groups["tbl"].Value;
+                if (string.IsNullOrWhiteSpace(raw)) continue;
+
+                // normalize: remove [] and whitespace around dots
+                string tableName = raw
+                    .Replace("[", "")
+                    .Replace("]", "")
+                    .Replace(" ", "")
+                    .Trim();
+
+                await _dal.Save_Child_File_Details(
+                    projectId,
+                    parentId,
+                    tableName,
+                    "dal-table"
+                );
+            }
         }
     }
 

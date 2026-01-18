@@ -1,1 +1,0 @@
-function Initialize_Get_Bank_Information(

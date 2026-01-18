@@ -1012,16 +1012,66 @@ Explain what this screen does in simple words.
             string outDir = Path.Combine(map[module], $"{module}functions");
             Directory.CreateDirectory(outDir);
 
+            // ⚠️ IMPORTANT: fully qualify System.IO.File (fixes ControllerBase.File issue)
             string content = await System.IO.File.ReadAllTextAsync(sourcePath);
-            var regex = new Regex(@"(public|private|protected|internal)\s+[\w\<\>\[\]]+\s+(\w+)\s*\(");
+
+            var regex = new Regex(
+                @"(?m)^\s*(?!//)\s*" +
+                @"(public|private|protected|internal)\s+" +
+                @"(?:static\s+|async\s+|virtual\s+|override\s+|sealed\s+|new\s+)*" +
+                @"[\w\.<>\[\]\?,]+\s+" +
+                @"(?<name>\w+)\s*\(",
+                RegexOptions.Compiled
+            );
 
             foreach (Match m in regex.Matches(content))
             {
-                string name = m.Groups[2].Value;
-                string file = Path.Combine(outDir, name + ".txt");
-                await System.IO.File.WriteAllTextAsync(file, m.Value);
+                string name = m.Groups["name"].Value;
 
-                await _dal.Save_File_Details(projectId, parentId, name, file, $"{module}-function", m.Value);
+                int methodStart = m.Index;
+
+                // Find first opening brace
+                int braceStart = content.IndexOf('{', m.Index);
+                if (braceStart == -1)
+                    continue;
+
+                int depth = 0;
+                int i = braceStart;
+
+                // Brace matching to get full method body
+                for (; i < content.Length; i++)
+                {
+                    if (content[i] == '{')
+                        depth++;
+                    else if (content[i] == '}')
+                    {
+                        depth--;
+                        if (depth == 0)
+                        {
+                            i++; // include closing brace
+                            break;
+                        }
+                    }
+                }
+
+                if (depth != 0)
+                    continue;
+
+                string methodText = content.Substring(methodStart, i - methodStart);
+
+                string filePath = Path.Combine(outDir, $"{name}.cs");
+
+                // ⚠️ fully qualified again
+                await System.IO.File.WriteAllTextAsync(filePath, methodText);
+
+                await _dal.Save_File_Details(
+                    projectId,
+                    parentId,
+                    name,
+                    filePath,
+                    $"{module}-function",
+                    methodText
+                );
             }
         }
 

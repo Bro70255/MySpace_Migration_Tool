@@ -1,0 +1,15 @@
+
+        public JsonResult Get_Bind_Unit()
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                dtDetails = BLL.Get_Bind_Unit();
+
+            }
+            catch (Exception ex) { throw ex; }
+
+            string JsResult;
+            JsResult = JsonConvert.SerializeObject(dtDetails);
+            return Json(JsResult, JsonRequestBehavior.AllowGet);
+        }

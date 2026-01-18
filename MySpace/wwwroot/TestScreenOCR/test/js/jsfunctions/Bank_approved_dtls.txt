@@ -1,1 +1,0 @@
-function Bank_approved_dtls(

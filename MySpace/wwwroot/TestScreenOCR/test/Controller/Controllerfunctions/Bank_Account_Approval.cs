@@ -1,0 +1,8 @@
+
+        public ActionResult Bank_Account_Approval()
+        {
+
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }

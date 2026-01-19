@@ -1,0 +1,417 @@
+CREATE TABLE [dbo].[User_Type_Indication](
+	[User_Type_Id] [int] NULL,
+	[User_Type] [varchar](50) NULL
+) ON [PRIMARY]
+GO
+SET IDENTITY_INSERT [dbo].[Approval_Flow_Table] ON 
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (1, 34, 151410, CAST(N'2024-09-24T16:35:38.203' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (2, 34, 151410, CAST(N'2024-09-24T16:35:58.807' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (3, 3, 151410, CAST(N'2024-09-24T16:49:01.460' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (4, 3, 151410, CAST(N'2024-09-24T16:49:24.847' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (5, 3, 151410, CAST(N'2024-09-24T16:49:49.047' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (6, 3, 151410, CAST(N'2024-09-24T16:49:59.157' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (7, 1, 151410, CAST(N'2024-09-25T14:50:12.567' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (8, 1, 151410, CAST(N'2024-09-25T14:56:24.987' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (9, 2, 151410, CAST(N'2024-09-25T17:36:03.693' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (10, 2, 151410, CAST(N'2024-09-25T17:36:29.570' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (11, 1, 151410, CAST(N'2024-09-25T17:40:03.423' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (12, 1, 151410, CAST(N'2024-09-25T17:40:22.847' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (13, 48, 151410, CAST(N'2024-09-26T10:27:38.420' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (14, 41, 151410, CAST(N'2024-09-26T11:50:58.173' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (15, 41, 151410, CAST(N'2024-09-26T11:51:47.197' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (16, 45, 151410, CAST(N'2024-09-27T16:15:37.533' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (17, 45, 151410, CAST(N'2024-09-27T16:18:16.987' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (18, 47, 151410, CAST(N'2024-10-08T16:15:59.007' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (19, 47, 25912, CAST(N'2024-10-08T16:17:20.643' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (20, 46, 25912, CAST(N'2024-10-08T16:23:30.807' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (21, 46, 27672, CAST(N'2024-10-08T16:23:47.717' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (22, 53, 25912, CAST(N'2024-10-08T17:20:00.473' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (23, 58, 25912, CAST(N'2024-10-08T18:49:45.430' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (24, 60, 151410, CAST(N'2024-10-08T18:54:48.367' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (25, 69, 151410, CAST(N'2024-10-09T11:46:26.493' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (26, 69, 25912, CAST(N'2024-10-09T11:46:51.647' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (27, 70, 27672, CAST(N'2024-10-09T12:13:10.293' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (28, 71, 25912, CAST(N'2024-10-09T12:23:04.787' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (29, 4, 25912, CAST(N'2024-10-18T14:53:30.940' AS DateTime), 0)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (30, 35, 27672, CAST(N'2024-12-13T10:32:56.820' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (31, 36, 27672, CAST(N'2024-12-13T10:33:09.127' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (32, 37, 27672, CAST(N'2025-06-13T10:26:43.690' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (33, 38, 27672, CAST(N'2025-06-13T10:26:49.317' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (34, 39, 27672, CAST(N'2025-06-13T10:26:55.557' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (35, 40, 27672, CAST(N'2025-06-13T10:27:02.587' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (36, 10, 25912, CAST(N'2025-07-07T11:04:31.583' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (37, 24, 25912, CAST(N'2025-10-28T09:30:02.020' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (38, 42, 25912, CAST(N'2025-11-15T08:59:07.400' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (39, 41, 25912, CAST(N'2025-11-15T09:00:17.633' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (40, 23, 25912, CAST(N'2025-11-17T12:13:38.300' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (41, 10, 25912, CAST(N'2025-11-17T12:14:16.383' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (42, 24, 25912, CAST(N'2025-11-17T12:16:14.433' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (43, 29, 25912, CAST(N'2025-11-17T12:39:21.153' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (44, 26, 25912, CAST(N'2025-11-17T12:40:37.440' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (45, 30, 25912, CAST(N'2025-11-17T12:42:16.513' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (46, 27, 25912, CAST(N'2025-11-17T12:43:41.063' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (47, 28, 25912, CAST(N'2025-11-17T12:44:40.433' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (48, 31, 25912, CAST(N'2025-11-17T12:49:07.903' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (49, 34, 25912, CAST(N'2025-11-17T12:50:28.310' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (50, 36, 25912, CAST(N'2025-11-17T12:51:58.323' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (51, 35, 25912, CAST(N'2025-11-17T12:53:13.933' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (52, 25, 25912, CAST(N'2025-11-17T12:55:14.517' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (53, 5, 25912, CAST(N'2025-11-17T15:05:05.470' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (54, 5, 27672, CAST(N'2025-11-18T11:59:12.653' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (55, 10, 27672, CAST(N'2025-11-18T11:59:18.017' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (56, 23, 27672, CAST(N'2025-11-18T11:59:22.773' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (57, 24, 27672, CAST(N'2025-11-18T11:59:26.567' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (58, 25, 27672, CAST(N'2025-11-18T11:59:31.343' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (59, 26, 27672, CAST(N'2025-11-18T11:59:54.843' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (60, 27, 27672, CAST(N'2025-11-18T11:59:59.303' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (61, 28, 27672, CAST(N'2025-11-18T12:00:06.510' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (62, 36, 27672, CAST(N'2025-11-18T12:00:22.237' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (63, 35, 27672, CAST(N'2025-11-18T12:00:31.450' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (64, 34, 27672, CAST(N'2025-11-18T12:00:41.877' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (65, 31, 27672, CAST(N'2025-11-18T12:00:52.540' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (66, 29, 27672, CAST(N'2025-11-18T12:01:01.617' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (67, 30, 27672, CAST(N'2025-11-18T12:01:13.327' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (68, 10, 25912, CAST(N'2025-11-20T14:12:47.113' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (69, 23, 25912, CAST(N'2025-11-20T14:13:08.013' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (70, 26, 25912, CAST(N'2025-11-20T14:16:09.083' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (71, 28, 25912, CAST(N'2025-11-20T14:17:34.283' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (72, 33, 25912, CAST(N'2025-11-20T14:19:32.603' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (73, 10, 27672, CAST(N'2025-11-20T15:07:31.457' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (74, 23, 27672, CAST(N'2025-11-20T15:07:37.297' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (75, 26, 27672, CAST(N'2025-11-20T15:07:51.897' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (76, 28, 27672, CAST(N'2025-11-20T15:09:09.220' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (77, 10, 25912, CAST(N'2025-11-20T15:35:26.743' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (78, 23, 25912, CAST(N'2025-11-20T15:35:56.527' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (79, 29, 25912, CAST(N'2025-11-27T10:10:26.353' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (80, 29, 27672, CAST(N'2025-11-27T10:11:58.937' AS DateTime), 1)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (81, 29, 25912, CAST(N'2025-11-27T10:13:20.583' AS DateTime), 2)
+GO
+INSERT [dbo].[Approval_Flow_Table] ([Approval_id], [ID], [Emp_code], [Created_datetime], [Status]) VALUES (82, 29, 27672, CAST(N'2025-11-27T10:13:50.357' AS DateTime), 1)
+GO
+SET IDENTITY_INSERT [dbo].[Approval_Flow_Table] OFF
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (4, CAST(919020009287737 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'', N'', 25912, CAST(N'2024-10-18T00:00:00.000' AS DateTime), NULL)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (10, CAST(4360002100006374 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'Nikhi T C', N'LALITHA V', 25912, CAST(N'2025-07-07T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (24, CAST(14250200006026 AS Numeric(18, 0)), N'Jisa', N'VISHNU K S', N'REKHA M P', N'Fidal Raj', 25912, CAST(N'2025-10-28T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (23, CAST(268101000823 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (10, CAST(4360002100006374 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (24, CAST(14250200006026 AS Numeric(18, 0)), N'Jisa', N'VISHNU K S', N'REKHA M P', N'Fidal Raj', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (29, CAST(924010001706712 AS Numeric(18, 0)), N'BIJU TC', N'FIDAL RAJ ER ', N'REKHA M P', N'SOUMYA T S', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (26, CAST(923010072979256 AS Numeric(18, 0)), N'BIJU TC', N'FIDAL RAJ ER ', N'SOUMYA T S', N'AMALJITH', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (30, CAST(924010003625015 AS Numeric(18, 0)), N'NIKHIL RAJ', N'FIDAL RAJ ER', N'REKHA M P', N'SOUMYA T S', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (27, CAST(924010000913292 AS Numeric(18, 0)), N'REKHA M P', N' ANIRUDHAN T', N'FIDAL RAJ ER', N'SUMI K G', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (28, CAST(924010001570319 AS Numeric(18, 0)), N' SUMI K S', N'FIDAL RAJ ER', N'ANIRUDHAN T', N'REKHA M P', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (31, CAST(924010007327625 AS Numeric(18, 0)), N'REKHA M P', N'BIJU T C ', N'FIDAL RAJ ER', N'SOUMYA T S', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (34, CAST(337201010536590 AS Numeric(18, 0)), N'SIVAKUMAR SU', N'FIDAL RAJ', N'REKHA M P', N'SALMA A V', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (36, CAST(17250100093621 AS Numeric(18, 0)), N'ANIRUDHAN T', N'FIDAL RAJ E R', N'REKHA M P', N'SUMI K G', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (35, CAST(52250200000171 AS Numeric(18, 0)), N'FIDAL RAJ E R', N'BIJU T C', N'REKHA M P', N'SOUMYA T S', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (25, CAST(1616110110054146 AS Numeric(18, 0)), N'Fidal Raj', N'PRIYA K B', N'Rekha MP', N'JOSEPH JOSE', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (5, CAST(4360002100005807 AS Numeric(18, 0)), N'Fidal Raj', N'SINUKUMAR K', N'Rekha MP', N'SATHI E', 25912, CAST(N'2025-11-17T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (10, CAST(4360002100006374 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (23, CAST(268101000823 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (26, CAST(923010072979256 AS Numeric(18, 0)), N'SOUMYA T S', N'FIDAL RAJ ER ', N'REKHA M P', N'AMALJITH', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (28, CAST(924010001570319 AS Numeric(18, 0)), N' SUMI ', N'FIDAL RAJ ER', N'ANIRUDHAN T', N'REKHA M P', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (33, CAST(39643652786 AS Numeric(18, 0)), N'FIDAL RAJ E R', N'REKHA M P', N'ANIRUDHAN T', N'SUMI K G', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (10, CAST(4360002100006374 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (23, CAST(268101000823 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', 25912, CAST(N'2025-11-20T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (29, CAST(924010001706712 AS Numeric(18, 0)), N'LALITHA V', N'FIDAL RAJ ER ', N'REKHA M P', N'SOUMYA T S', 25912, CAST(N'2025-11-27T00:00:00.000' AS DateTime), 2)
+GO
+INSERT [dbo].[Bank_Correction_dtls] ([Correction_Id], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Created_datetime], [Status]) VALUES (29, CAST(924010001706712 AS Numeric(18, 0)), N'BIJU TC', N'FIDAL RAJ ER ', N'REKHA M P', N'SOUMYA T S', 25912, CAST(N'2025-11-27T00:00:00.000' AS DateTime), 2)
+GO
+SET IDENTITY_INSERT [dbo].[Bank_Signatures_Dtls] ON 
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (1, N'1', N'Punjab National Bank', CAST(4360000100086981 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (2, N'1', N'Syndicate/Canara Bank', CAST(45612200029747 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (3, N'1', N'Axis Bank', CAST(917010066970040 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (4, N'1', N'Axis Bank', CAST(919020009287737 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (5, N'2', N'Punjab National Bank', CAST(4360002100005807 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', NULL, NULL, 1, 27672, CAST(N'2025-11-18T11:59:12.653' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (6, N'3', N'Syndicate/Canara Bank', CAST(45613070000897 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (7, N'4', N'Axis Bank', CAST(924010007503081 AS Numeric(18, 0)), N'NIVAS BABU ', N'NISHA CR', N'FIDAL RAJ ER', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (8, N'5', N'Punjab National Bank', CAST(4360002100006295 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (9, N'6', N'Punjab National Bank', CAST(4360002100006392 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (10, N'7', N'Punjab National Bank', CAST(4360002100006374 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', NULL, 1, 27672, CAST(N'2025-11-20T15:07:31.457' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (11, N'8', N'Punjab National Bank', CAST(4360002100006435 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (12, N'9', N'Punjab National Bank', CAST(4360002100006417 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (13, N'10', N'Punjab National Bank', CAST(4360002100006426 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (14, N'11', N'Punjab National Bank', CAST(4360002100006400 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (15, N'12', N'Punjab National Bank', CAST(4360000100131131 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (16, N'13', N'Punjab National Bank', CAST(4360000100131238 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (17, N'14', N'Punjab National Bank', NULL, N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (18, N'15', N'Punjab National Bank', CAST(4360000100131210 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (19, N'16', N'Punjab National Bank', NULL, N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (20, N'17', N'Punjab National Bank', CAST(4360000100131186 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (21, N'18', N'Punjab National Bank', CAST(4360000100131195 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (22, N'19', N'ESAF ', CAST(50210011118350 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', N'', NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (23, N'7', N'ICICI Bank', CAST(268101000823 AS Numeric(18, 0)), N'Fidal Raj', N'Mintu Mathew', N'REKHA M P', N'LALITHA V', NULL, 1, 27672, CAST(N'2025-11-20T15:07:37.297' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (24, N'20', N'FEDERAL BANK', CAST(14250200006026 AS Numeric(18, 0)), N'Jisa', N'VISHNU K S', N'REKHA M P', N'Fidal Raj', NULL, 1, 27672, CAST(N'2025-11-18T11:59:26.567' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (25, N'21', N'UJJIVAN BANK', CAST(1616110110054146 AS Numeric(18, 0)), N'Fidal Raj', N'George de das', N'Rekha MP', NULL, NULL, 1, 27672, CAST(N'2025-11-18T11:59:31.343' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (26, N'22', N'AXIS BANK', CAST(923010072979256 AS Numeric(18, 0)), N'BIJU TC', N'FIDAL RAJ ER ', N'AKSHAYA RADHAKRISHNAN', N'JEPPIN DANIEL ALEX', NULL, 1, 27672, CAST(N'2025-11-20T15:07:51.897' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (27, N'23', N'AXIS BANK', CAST(924010000913292 AS Numeric(18, 0)), N'REKHA M P', N' ANIRUDHAN T', N'FIDAL RAJ ER', N'SUMI K G', NULL, 1, 27672, CAST(N'2025-11-18T11:59:59.303' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (28, N'24', N'AXIS BANK', CAST(924010001570319 AS Numeric(18, 0)), N' SUMI ', N'FIDAL RAJ ER', N'ANIRUDHAN T', N'REKHA M P', NULL, 1, 27672, CAST(N'2025-11-20T15:09:09.220' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (29, N'25', N'AXIS BANK', CAST(924010001706712 AS Numeric(18, 0)), N'BIJU TC', N'FIDAL RAJ ER ', N'REKHA M P', N'SOUMYA T S', NULL, 1, 27672, CAST(N'2025-11-27T10:13:50.357' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (30, N'26', N'AXIS BANK', CAST(924010003625015 AS Numeric(18, 0)), N'NIKHIL RAJ', N'FIDAL RAJ ER', N'REKHA M P', N'SOUMYA T S', NULL, 1, 27672, CAST(N'2025-11-18T12:01:13.327' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (31, N'27', N'AXIS BANK', CAST(924010007327625 AS Numeric(18, 0)), N'REKHA M P', N'BIJU T C ', N'FIDAL RAJ ER', N'SOUMYA T S', NULL, 1, 27672, CAST(N'2025-11-18T12:00:52.540' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (32, N'24', N'STATE BANK OF INDIA', CAST(39643796319 AS Numeric(18, 0)), N'SIVAKUMAR SU', N'SUJATHA PA', N'JEPPIN DANIEL ALEX', N'BIJU TC', NULL, 1, 27672, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (33, N'23', N'STATE BANK OF INDIA', CAST(39643652786 AS Numeric(18, 0)), N'SIVAKUMAR SU', N'SUJATHA PA', N'JEPPIN DANIEL ALEX', N'BIJU TC', NULL, 2, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (34, N'28', N'UNION BANK', CAST(337201010536590 AS Numeric(18, 0)), N'SIVAKUMAR SU', N'FIDAL RAJ', N'RENJITH', N'ANJU ADMIN', NULL, 1, 27672, CAST(N'2025-11-18T12:00:41.877' AS DateTime), NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (35, N'29', N'BANK OF BARODA', CAST(52250200000171 AS Numeric(18, 0)), N'FIDAL RAJ E R', N'BIJU T C', N'REKHA M P', N'SOUMYA T S', NULL, 1, 27672, CAST(N'2025-11-18T12:00:31.450' AS DateTime), 25912, CAST(N'2024-12-10T16:39:01.760' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (36, N'30', N'THE FEDERL BANK', CAST(17250100093621 AS Numeric(18, 0)), N'ANIRUDHAN T', N'FIDAL RAJ E R', N'REKHA M P', N'SUMI K G', NULL, 1, 27672, CAST(N'2025-11-18T12:00:22.237' AS DateTime), 25912, CAST(N'2024-12-10T16:44:26.620' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (40, N'34', N'HDFC BANK', CAST(50200105297921 AS Numeric(18, 0)), N'JEROME I', N'ANJALI V U', N'FIDAL RAJ E R', N'REKHA M P', NULL, 1, 27672, CAST(N'2025-06-13T10:27:02.587' AS DateTime), 25912, CAST(N'2025-06-13T10:05:29.687' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (41, N'1', N'PNB EMPLOYEES RD ACCOUNT', CAST(436000210006851 AS Numeric(18, 0)), N'FIDAL RAJ', N'George De Das', N'Rekha MP', NULL, NULL, 1, 25912, CAST(N'2025-11-15T09:00:17.633' AS DateTime), 25912, CAST(N'2025-11-15T09:02:19.053' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (42, N'1', N'ICICI BANK MANAPPURAM FOUNDATION', CAST(268101001277 AS Numeric(18, 0)), N'FIDAL RAJ', N'George De Das', N'Rekha MP', N'ARYA SUDARSAN', NULL, 1, 25912, CAST(N'2025-11-15T08:59:07.400' AS DateTime), 25912, CAST(N'2025-12-18T11:42:28.387' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (43, N'35', N'ICICI', CAST(268101001278 AS Numeric(18, 0)), N'FIDAL RAJ', N'Rekha MP', N'SMITHA PAUL', NULL, NULL, 0, NULL, NULL, 25912, CAST(N'2025-11-19T15:55:02.030' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (44, N'35', N'ICICI', NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (45, N'25', N'HDFC BANK', CAST(50200117808941 AS Numeric(18, 0)), N'BIJU T C', N'JOSEPH JOSE', N'GEETHA DILEEP', NULL, NULL, 0, NULL, NULL, 25912, CAST(N'2026-01-16T16:06:29.707' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (37, N'31', N'HDFC BANK', CAST(50200105289132 AS Numeric(18, 0)), N'JEROME I', N'ANJALI V U', N'FIDAL RAJ E R', N'REKHA M P', NULL, 1, 27672, CAST(N'2025-06-13T10:26:43.690' AS DateTime), 25912, CAST(N'2025-06-13T10:00:58.803' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (38, N'32', N'HDFC BANK', CAST(50200105200549 AS Numeric(18, 0)), N'JEROME I', N'ANJALI V U', N'FIDAL RAJ E R', N'REKHA M P', NULL, 1, 27672, CAST(N'2025-06-13T10:26:49.317' AS DateTime), 25912, CAST(N'2025-01-11T17:29:41.293' AS DateTime))
+GO
+INSERT [dbo].[Bank_Signatures_Dtls] ([ID], [UNIT], [BANK], [ACCOUNT_NUMBER], [SIGNATURE1], [SIGNATURE2], [SIGNATURE3], [SIGNATURE4], [Edited_by], [Status], [Approved_by], [Approved_datetime], [Created_by], [Created_datetime]) VALUES (39, N'33', N'HDFC BANK', CAST(50200105301911 AS Numeric(18, 0)), N'JEROME I', N'ANJALI V U', N'FIDAL RAJ E R', N'REKHA M P', NULL, 1, 27672, CAST(N'2025-06-13T10:26:55.557' AS DateTime), 25912, CAST(N'2025-01-11T17:31:46.283' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[Bank_Signatures_Dtls] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Login_Dtls] ON 
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (1, 152799, N'Aparna', 1, N'123')
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (2, 151410, N'Fasil', 1, N'123')
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (3, 25912, N'Anilkumar', 2, N'123')
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (4, 151460, N'Akshaya Radhakrishnan', 1, N'123')
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (5, 152020, N'jithu', 1, N'123')
+GO
+INSERT [dbo].[Login_Dtls] ([Login_id], [Employee_Code], [Name], [User_type], [Password]) VALUES (6, 27672, N'Fidal Raj ', 3, N'123')
+GO
+SET IDENTITY_INSERT [dbo].[Login_Dtls] OFF
+GO
+SET IDENTITY_INSERT [dbo].[mfBranchMaster] ON 
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (1, N'Administrative Office')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (2, N'Ma Campus')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (3, N'Manappuram Institute of Skill Development')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (4, N'Ma Academy Palakkad')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (5, N'DDUGKY Project')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (6, N'DDUGKY Project -TN')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (7, N'Mageet School')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (8, N'ASIRVAD MICROFINANCE - CSR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (9, N'MAIBRO CSR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (10, N'MABEN- CSR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (11, N'MAHOFIN CSR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (12, N'MANAPPURAM AQUATIC COMPLEX')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (13, N'RITI -CSR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (14, N'MANAPPURAM CIVIL SERVICE ACADEMY')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (15, N'MANAPPURAM INSTITUTE OF  AUTOMOTIVE ')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (16, N'MANAPPURAM AMBULANCE SERVICE')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (17, N'MANAPPURAM FITNESS CENTRE')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (18, N'MANAPPURAM YOGA CENTRE ')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (19, N'Manappuram Civil Service/Asirvad Micro Finance')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (20, N'Ma Academy Valappad')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (21, N'MAHIMA COUNSELLING')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (22, N'MACRE VISION PLUS TCR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (23, N'MACRE DIAGNO CENTRE KALOOR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (24, N'MACARE MEDICALS KALOOR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (25, N'MACARE POLYCLINIC THRISSUR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (26, N'MACARE MEDICALS THRISSUR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (27, N'MACRE DIAGNO CENTRE PERINGANDOOR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (28, N'MACARE DIAGNOSTIC MATTANCHERRY')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (29, N'MACARE DIAGNOSTICS OLLUR')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (30, N'MACARE DIAGNOSTICS PUTHIYAKAVU')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (31, N'MACARE DIAGNOSTICS IRINJALAKUDA')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (32, N'MACARE PHARMACY IRINJALAKUDA')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (33, N'MACARE OPTICALS IRINJALAKUDA')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (34, N'MACARE DIAGNOSTICS IRINJALAKUDA CAFETERIA')
+GO
+INSERT [dbo].[mfBranchMaster] ([Branch_ID], [BranchName]) VALUES (35, N'MANAPPURAM INSTITUTE OF LANGUAGE STUDIES')
+GO
+SET IDENTITY_INSERT [dbo].[mfBranchMaster] OFF
+GO
+INSERT [dbo].[User_Type_Indication] ([User_Type_Id], [User_Type]) VALUES (0, N'User')
+GO
+INSERT [dbo].[User_Type_Indication] ([User_Type_Id], [User_Type]) VALUES (1, N'Admin')
+GO
+INSERT [dbo].[User_Type_Indication] ([User_Type_Id], [User_Type]) VALUES (2, N'Head')
+GO
+INSERT [dbo].[User_Type_Indication] ([User_Type_Id], [User_Type]) VALUES (3, N'Super Head')
+GO

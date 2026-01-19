@@ -194,7 +194,7 @@ namespace MySpace_DAL
         // =========================
         public async Task<List<BlueprintScreenDto>> GetBlueprintData()
         {
-            var result = new List<dynamic>();
+            var rows = new List<dynamic>();
 
             using var conn = _context.Database.GetDbConnection();
             await conn.OpenAsync();
@@ -206,23 +206,56 @@ namespace MySpace_DAL
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                result.Add(new
+                rows.Add(new
                 {
                     ScreenId = reader.GetInt32(0),
                     ScreenName = reader.GetString(1),
+
                     JsFunctionId = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2),
                     JsFunctionName = reader.IsDBNull(3) ? null : reader.GetString(3),
-                    ControllerAction = reader.IsDBNull(4) ? null : reader.GetString(4),
-                    HttpType = reader.IsDBNull(5) ? null : reader.GetString(5)
+
+                    ControllerRoute = reader.IsDBNull(4) ? null : reader.GetString(4),
+
+                    ControllerFunctionId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
+                    ControllerFunctionName = reader.IsDBNull(6) ? null : reader.GetString(6),
+
+                    BllFunctionId = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7),
+                    BllFunctionName = reader.IsDBNull(8) ? null : reader.GetString(8),
+
+                    DalFunctionId = reader.IsDBNull(9) ? (int?)null : reader.GetInt32(9),
+                    DalFunctionName = reader.IsDBNull(10) ? null : reader.GetString(10),
+
+                    StoredProcedureName = reader.IsDBNull(11) ? null : reader.GetString(11)
                 });
             }
 
-            return result
+            // Build a readable "full chain" text, but keep your DTOs same
+            string BuildChain(dynamic r)
+            {
+                var parts = new List<string>();
+
+                if (!string.IsNullOrWhiteSpace((string)r.ControllerRoute))
+                    parts.Add((string)r.ControllerRoute);
+
+                if (!string.IsNullOrWhiteSpace((string)r.BllFunctionName))
+                    parts.Add("BLL:" + (string)r.BllFunctionName);
+
+                if (!string.IsNullOrWhiteSpace((string)r.DalFunctionName))
+                    parts.Add("DAL:" + (string)r.DalFunctionName);
+
+                if (!string.IsNullOrWhiteSpace((string)r.StoredProcedureName))
+                    parts.Add("SP:" + (string)r.StoredProcedureName);
+
+                return string.Join(" -> ", parts);
+            }
+
+            return rows
                 .GroupBy(x => new { x.ScreenId, x.ScreenName })
                 .Select(screen => new BlueprintScreenDto
                 {
                     ScreenId = screen.Key.ScreenId,
                     ScreenName = screen.Key.ScreenName,
+
                     JsFunctions = screen
                         .Where(x => x.JsFunctionId != null)
                         .GroupBy(x => new { x.JsFunctionId, x.JsFunctionName })
@@ -230,16 +263,26 @@ namespace MySpace_DAL
                         {
                             JsFunctionId = js.Key.JsFunctionId,
                             JsFunctionName = js.Key.JsFunctionName,
+
                             Controllers = js
-                                .Where(x => x.ControllerAction != null)
-                                .Select(c => new BlueprintControllerDto
+                                .Where(r => r.ControllerRoute != null)
+                                .Select(r => new BlueprintControllerDto
                                 {
-                                    ControllerAction = c.ControllerAction,
-                                    HttpType = c.HttpType
-                                }).ToList()
-                        }).ToList()
-                }).ToList();
+                                    // Put the entire path here
+                                    ControllerAction = BuildChain(r),
+
+                                    // You don't have GET/POST in DB, so keep null or set "N/A"
+                                    HttpType = null
+                                })
+                                .DistinctBy(c => c.ControllerAction) // .NET 6+
+                                .ToList()
+                        })
+                        .ToList()
+                })
+                .ToList();
         }
+
+
         public async Task<int> Save_Create_Project(ProjectCreateDto model, int userId)
         {
             var entity = new ProjectMaster

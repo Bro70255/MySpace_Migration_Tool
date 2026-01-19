@@ -1136,22 +1136,95 @@ Explain what this screen does in simple words.
 
 
 
-        private async Task SplitSqlTablesAndProcedures(string selectedModule,int projectId, Dictionary<string, string> map, string sourcePath, int parentId)
+        private async Task SplitSqlTablesAndProcedures(
+     string selectedModule,
+     int projectId,
+     Dictionary<string, string> map,
+     string sourcePath,
+     int parentId)
         {
+            if (!map.ContainsKey("Database"))
+                return;
+
             string baseDir = map["Database"];
             Directory.CreateDirectory(baseDir);
 
+            // ⚠ IMPORTANT: fully qualify File (ControllerBase conflict fix)
             string sql = await System.IO.File.ReadAllTextAsync(sourcePath);
 
-            foreach (Match m in Regex.Matches(sql, @"(CREATE|ALTER)\s+(TABLE|PROC).*", RegexOptions.IgnoreCase))
-            {
-                string name = Guid.NewGuid().ToString("N");
-                string file = Path.Combine(baseDir, name + ".txt");
-                await System.IO.File.WriteAllTextAsync(file, m.Value);
+            // 1️⃣ Match CREATE / ALTER headers
+            var headerRegex = new Regex(
+                @"(CREATE|ALTER)\s+(TABLE|PROC|PROCEDURE|FUNCTION)\s+([^\s\(]+)",
+                RegexOptions.IgnoreCase | RegexOptions.Multiline
+            );
 
-                await _dal.Save_File_Details(projectId, parentId, name, file, "sql-block", m.Value);
+            MatchCollection headers = headerRegex.Matches(sql);
+
+            for (int i = 0; i < headers.Count; i++)
+            {
+                Match header = headers[i];
+
+                string objectType = header.Groups[2].Value.ToUpper();
+                string objectName = header.Groups[3].Value
+                    .Replace("[", "")
+                    .Replace("]", "");
+
+                if (objectName.Contains("."))
+                    objectName = objectName.Split('.').Last();
+
+                int startIndex = header.Index;
+                int endIndex = sql.Length;
+
+                // ===============================
+                // TABLE → up to next CREATE/ALTER
+                // ===============================
+                if (objectType == "TABLE")
+                {
+                    endIndex = (i + 1 < headers.Count)
+                        ? headers[i + 1].Index
+                        : sql.Length;
+                }
+                // ======================================
+                // PROC / FUNCTION → until END or GO
+                // ======================================
+                else
+                {
+                    var endRegex = new Regex(
+                        @"\bEND\b\s*(GO\b)?",
+                        RegexOptions.IgnoreCase | RegexOptions.Multiline
+                    );
+
+                    Match endMatch = endRegex.Match(sql, startIndex);
+
+                    endIndex = endMatch.Success
+                        ? endMatch.Index + endMatch.Length
+                        : (i + 1 < headers.Count ? headers[i + 1].Index : sql.Length);
+                }
+
+                // 🔥 FULL SQL BLOCK
+                string sqlBlock = sql.Substring(startIndex, endIndex - startIndex).Trim();
+
+                string saveType =
+                    objectType == "TABLE" ? "sql-table" :
+                    objectType == "FUNCTION" ? "sql-function" :
+                    "sql-procedure";
+
+                string filePath = Path.Combine(baseDir, objectName + ".sql");
+
+                // ⚠ IMPORTANT: fully qualify File
+                await System.IO.File.WriteAllTextAsync(filePath, sqlBlock);
+
+                await _dal.Save_File_Details(
+                    projectId,
+                    parentId,
+                    objectName,
+                    filePath,
+                    saveType,
+                    sqlBlock
+                );
             }
         }
+
 
         private async Task ExtractViewFunctionsAndControllerCalls(
      string selectedModule,
@@ -1332,13 +1405,65 @@ Explain what this screen does in simple words.
             ========================================================= */
             if (selectedModule == "Controller" || selectedModule == "BLL")
             {
+                // 1️⃣ Regex to capture method calls
                 var methodCallRegex =
-                    new Regex(@"\b(?:\w+\.)?([A-Za-z_][A-Za-z0-9_]*)\s*\(");
+                    new Regex(@"\b(?:\w+\.)?([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+                              RegexOptions.Compiled);
+
+                // 2️⃣ Excluded methods (noise)
+                var excludedMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        // C# keywords
+        "if", "catch", "using", "typeof", "exception", "for", "foreach",
+        "while", "switch", "return", "try", "throw", "new", "lock",
+
+        // Framework / common methods
+        "ToString", "ToInt32", "WriteLine",
+        "SerializeObject", "DeserializeObject", "Json",
+
+        // LINQ
+        "Select", "ToList", "AsEnumerable", "Where", "FirstOrDefault",
+
+        // Crypto / system
+        "GetBytes", "ComputeHash", "ToBase64String",
+
+        // Types / helpers
+        "DataTable", "Convert"
+    };
+
+                // 3️⃣ Business method naming filter
+                bool IsBusinessMethod(string methodName)
+                {
+                    return methodName.StartsWith("Get_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Add_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Save_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Insert_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Update_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Delete_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Approve_", StringComparison.OrdinalIgnoreCase)
+                        || methodName.StartsWith("Duplicate_", StringComparison.OrdinalIgnoreCase);
+                }
+
+                // 4️⃣ Avoid duplicate inserts
+                var uniqueMethods = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 foreach (Match match in methodCallRegex.Matches(content))
                 {
                     string methodName = match.Groups[1].Value;
 
+                    // ❌ Skip noise
+                    if (excludedMethods.Contains(methodName))
+                        continue;
+
+                    // ❌ Skip non-business methods
+                    if (!IsBusinessMethod(methodName))
+                        continue;
+
+                    // ❌ Skip duplicates
+                    if (!uniqueMethods.Add(methodName))
+                        continue;
+
+                    // 5️⃣ Save relationship
                     await _dal.Save_Child_File_Details(
                         projectId,
                         parentId,
@@ -1353,10 +1478,58 @@ Explain what this screen does in simple words.
             /* =========================================================
                DAL
             ========================================================= */
+            /* =========================================================
+               DAL (Stored Procedure Extraction) — STRING + CONST SAFE
+            ========================================================= */
             if (selectedModule == "DAL")
             {
-                // (same DAL logic you already have – unchanged)
+                var spRegex = new Regex(
+                    // 1️⃣ String-based SPs
+                    @"CommandText\s*=\s*""([^""]+)""|" +
+                    @"new\s+SqlCommand\s*\(\s*""([^""]+)""|" +
+                    @"Execute(?:Reader|Scalar|NonQuery|Dataset|DataTable)?\s*\(\s*""([^""]+)""|" +
+
+                    // 2️⃣ Constant / Enum-based SPs
+                    @"CommandType\.StoredProcedure\s*,\s*([A-Za-z0-9_\.]+)",
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled
+                );
+
+                var savedSps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                foreach (Match match in spRegex.Matches(content))
+                {
+                    string spName =
+                        match.Groups[1].Success ? match.Groups[1].Value :
+                        match.Groups[2].Success ? match.Groups[2].Value :
+                        match.Groups[3].Success ? match.Groups[3].Value :
+                        match.Groups[4].Value;
+
+                    if (string.IsNullOrWhiteSpace(spName))
+                        continue;
+
+                    // ✅ Normalize constant-based SP names
+                    // StoreProcedure.INSERT_SIGNUP_DETAILS → INSERT_SIGNUP_DETAILS
+                    if (spName.Contains("."))
+                        spName = spName.Split('.').Last();
+
+                    // ❌ Ignore inline SQL
+                    if (spName.Contains(" ") ||
+                        spName.StartsWith("select", StringComparison.OrdinalIgnoreCase) ||
+                        spName.StartsWith("update", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (!savedSps.Add(spName))
+                        continue;
+
+                    await _dal.Save_Child_File_Details(
+                        projectId,
+                        parentId,
+                        spName,
+                        "stored-procedure"
+                    );
+                }
             }
+
         }
     }
 

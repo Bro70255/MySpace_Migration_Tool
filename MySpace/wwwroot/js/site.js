@@ -151,7 +151,6 @@ function renderBlueprint(data) {
     });
 }
 
-
 function loadOCRTreeView() {
     fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')
         .then(res => res.json())

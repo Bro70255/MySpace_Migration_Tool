@@ -97,21 +97,26 @@ function renderBlueprintFromEdges(edges) {
         .filter(n => nodeType(n) === 'SCREEN')
         .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-    screens.forEach((screenNode) => {
-        const viewItem = makeTreeItem('VIEW', nodeLabel(screenNode), 'view', true);
+    screens.forEach((screenNode, sIdx) => {
+        const sNo = `${sIdx + 1}`;
+
+        const viewItem = makeTreeItem(sNo, 'VIEW', nodeLabel(screenNode), 'view', true);
 
         const jsNodes = (adj.get(screenNode) || [])
             .filter(n => nodeType(n) === 'JS')
             .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-        jsNodes.forEach((jsNodeValue) => {
-            const jsItem = makeTreeItem('JS', nodeLabel(jsNodeValue), 'js', false);
+        jsNodes.forEach((jsNodeValue, jIdx) => {
+            const jNo = `${sNo}.${jIdx + 1}`;
+
+            const jsItem = makeTreeItem(jNo, 'JS', nodeLabel(jsNodeValue), 'js', false);
 
             const ctrlNodes = (adj.get(jsNodeValue) || [])
                 .filter(n => nodeType(n) === 'CTRL')
                 .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-            ctrlNodes.forEach((ctrlNodeValue) => {
+            ctrlNodes.forEach((ctrlNodeValue, cIdx) => {
+                const cNo = `${jNo}.${cIdx + 1}`;
                 const route = nodeLabel(ctrlNodeValue);
 
                 const type =
@@ -119,48 +124,63 @@ function renderBlueprintFromEdges(edges) {
                         ? 'get'
                         : 'post';
 
-                const ctrlItem = makeTreeItem('CTRL', route, `ctrl ${type}`, false);
+                const ctrlItem = makeTreeItem(cNo, 'CTRL', route, `ctrl ${type}`, false);
 
                 const bllNodes = (adj.get(ctrlNodeValue) || [])
                     .filter(n => nodeType(n) === 'BLL')
                     .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-                bllNodes.forEach((bll) => {
-                    const bllItem = makeTreeItem('BLL', nodeLabel(bll), 'bll', false);
+                bllNodes.forEach((bll, bIdx) => {
+                    const bNo = `${cNo}.${bIdx + 1}`;
+                    const bllItem = makeTreeItem(bNo, 'BLL', `BLL: ${nodeLabel(bll)}`, 'bll', false);
 
                     const dalNodes = (adj.get(bll) || [])
                         .filter(n => nodeType(n) === 'DAL')
                         .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-                    dalNodes.forEach((dal) => {
-                        const dalItem = makeTreeItem('DAL', nodeLabel(dal), 'dal', false);
+                    dalNodes.forEach((dal, dIdx) => {
+                        const dNo = `${bNo}.${dIdx + 1}`;
+                        const dalItem = makeTreeItem(dNo, 'DAL', `DAL: ${nodeLabel(dal)}`, 'dal', false);
 
                         const spNodes = (adj.get(dal) || [])
                             .filter(n => nodeType(n) === 'SP')
                             .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-                        spNodes.forEach((sp) => {
-                            const spItem = makeTreeItem('SP', nodeLabel(sp), 'sp', false);
+                        spNodes.forEach((sp, spIdx) => {
+                            const spNo = `${dNo}.${spIdx + 1}`;
+                            const spItem = makeTreeItem(spNo, 'SP', `SP: ${nodeLabel(sp)}`, 'sp', false);
                             dalItem.body.appendChild(spItem.el);
                         });
+
+                        // leaf handling
+                        if (!dalItem.body.hasChildNodes()) dalItem.el.classList.add('leaf');
 
                         bllItem.body.appendChild(dalItem.el);
                     });
 
+                    if (!bllItem.body.hasChildNodes()) bllItem.el.classList.add('leaf');
+
                     ctrlItem.body.appendChild(bllItem.el);
                 });
 
+                if (!ctrlItem.body.hasChildNodes()) ctrlItem.el.classList.add('leaf');
+
                 jsItem.body.appendChild(ctrlItem.el);
             });
+
+            if (!jsItem.body.hasChildNodes()) jsItem.el.classList.add('leaf');
 
             viewItem.body.appendChild(jsItem.el);
         });
 
         root.appendChild(viewItem.el);
     });
+
+    // if Expand All checkbox already checked when data loads
+    if (window.__applyBlueprintExpandAll) window.__applyBlueprintExpandAll();
 }
 
-function makeTreeItem(tag, text, kindClass, openByDefault) {
+function makeTreeItem(no, tag, text, kindClass, openByDefault) {
     const el = document.createElement('div');
     el.className = `tree-item ${kindClass}`;
 
@@ -169,6 +189,10 @@ function makeTreeItem(tag, text, kindClass, openByDefault) {
 
     const twisty = document.createElement('span');
     twisty.className = 'twisty';
+
+    const num = document.createElement('span');
+    num.className = 'tree-num';
+    num.textContent = no;
 
     const pill = document.createElement('span');
     pill.className = `pill pill-${tag.toLowerCase()}`;
@@ -179,6 +203,7 @@ function makeTreeItem(tag, text, kindClass, openByDefault) {
     label.innerHTML = escapeHtml(text);
 
     header.appendChild(twisty);
+    header.appendChild(num);
     header.appendChild(pill);
     header.appendChild(label);
 
@@ -191,7 +216,7 @@ function makeTreeItem(tag, text, kindClass, openByDefault) {
     if (openByDefault) el.classList.add('open');
 
     header.addEventListener('click', () => {
-        // only show arrow if it has children
+        // only toggle if it has children
         if (!body.hasChildNodes()) return;
         el.classList.toggle('open');
     });
@@ -207,6 +232,7 @@ function escapeHtml(str) {
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
 }
+
 
 function buildGraph(edges) {
     const adj = new Map(); // from -> [to,to]

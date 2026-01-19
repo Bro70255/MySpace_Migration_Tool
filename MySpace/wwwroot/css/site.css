@@ -806,3 +806,10 @@ FLOW STYLES (EXTENSION ONLY)
         transform: none !important;
         color: rgba(148,163,184,0.9);
     }
+.tree-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 60px; /* keeps alignment nice */
+    display: inline-block;
+}

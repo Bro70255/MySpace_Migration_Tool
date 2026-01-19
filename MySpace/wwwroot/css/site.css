@@ -626,3 +626,183 @@ FLOW STYLES (EXTENSION ONLY)
         background: var(--bg-panel);
         color: var(--text-main);
     }
+/* =========================================================
+   BLUEPRINT TREE (HIERARCHY WITHOUT NUMBERS) - ADD BELOW
+========================================================= */
+
+/* The container where renderBlueprintFromEdges writes */
+#blueprintTree {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* One node box */
+.tree-item {
+    background: linear-gradient(180deg, #111a2e, #0f172a);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+/* Clickable header row */
+.tree-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Arrow (collapsed/expanded) */
+.twisty::before {
+    content: "▸";
+    display: inline-block;
+    width: 16px;
+    color: #94a3b8;
+    transition: transform .2s ease;
+}
+
+/* When open rotate arrow */
+.tree-item.open > .tree-header .twisty::before {
+    transform: rotate(90deg);
+}
+
+/* Children container */
+.tree-children {
+    display: none;
+    padding: 10px 12px 12px 38px;
+    position: relative;
+}
+
+/* Show children when open */
+.tree-item.open > .tree-children {
+    display: block;
+}
+
+/* Vertical connector line */
+.tree-children::before {
+    content: "";
+    position: absolute;
+    left: 22px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+}
+
+/* Horizontal connector line to each child */
+.tree-children > .tree-item {
+    margin-top: 10px;
+    position: relative;
+}
+
+    .tree-children > .tree-item::before {
+        content: "";
+        position: absolute;
+        left: -16px;
+        top: 18px;
+        width: 16px;
+        height: 2px;
+        background: rgba(255,255,255,0.08);
+    }
+
+/* Node text */
+.tree-text {
+    color: var(--text-main);
+    font-size: 13.5px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+/* Small tag pill (VIEW/JS/CTRL/BLL/DAL/SP) */
+.pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.88);
+}
+
+/* Tag colors (subtle; matches your dark theme) */
+.pill-view {
+    background: rgba(79,140,255,0.12);
+    border-color: rgba(79,140,255,0.25);
+}
+
+.pill-js {
+    background: rgba(34,197,94,0.12);
+    border-color: rgba(34,197,94,0.25);
+}
+
+.pill-ctrl {
+    background: rgba(56,189,248,0.10);
+    border-color: rgba(56,189,248,0.22);
+}
+
+.pill-bll {
+    background: rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.25);
+}
+
+.pill-dal {
+    background: rgba(236,72,153,0.12);
+    border-color: rgba(236,72,153,0.22);
+}
+
+.pill-sp {
+    background: rgba(148,163,184,0.10);
+    border-color: rgba(148,163,184,0.22);
+}
+
+/* Left accent bars per type to quickly see hierarchy */
+.tree-item.view {
+    border-left: 5px solid var(--primary);
+}
+
+.tree-item.js {
+    border-left: 5px solid rgba(34,197,94,0.85);
+}
+
+.tree-item.ctrl {
+    border-left: 5px solid rgba(56,189,248,0.80);
+}
+
+.tree-item.bll {
+    border-left: 5px solid rgba(245,158,11,0.80);
+}
+
+.tree-item.dal {
+    border-left: 5px solid rgba(236,72,153,0.75);
+}
+
+.tree-item.sp {
+    border-left: 5px solid rgba(148,163,184,0.70);
+}
+
+/* GET/POST highlight for controller headers */
+.tree-item.ctrl.get > .tree-header {
+    background: rgba(56,189,248,0.08);
+}
+
+.tree-item.ctrl.post > .tree-header {
+    background: rgba(251,146,60,0.08);
+}
+
+/* If a node has no children, make it feel like a leaf */
+.tree-item.leaf > .tree-header {
+    cursor: default;
+}
+
+    .tree-item.leaf > .tree-header .twisty::before {
+        content: "•";
+        transform: none !important;
+        color: rgba(148,163,184,0.9);
+    }

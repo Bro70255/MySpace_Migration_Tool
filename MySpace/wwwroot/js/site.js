@@ -82,74 +82,163 @@ function btnLogin() {
 
 function loadBlueprint() {
     fetch('/Home/GetBlueprint')
-        .then(res => res.json())
-        .then(data => {
-            console.log("DB DATA:", data);
-            renderBlueprint(data);
-        })
-        .catch(err => console.error(err));
+        .then(r => r.json())
+        .then(edges => renderBlueprintFromEdges(edges))
+        .catch(console.error);
 }
 
-function renderBlueprint(data) {
+function renderBlueprintFromEdges(edges) {
     const root = document.getElementById('blueprintTree');
     root.innerHTML = '';
 
-    data.forEach((screen, s) => {
+    const adj = buildGraph(edges);
 
-        // ================= SCREEN =================
-        const view = document.createElement('div');
-        view.className = 'view-node';
+    const screens = [...adj.keys()]
+        .filter(n => nodeType(n) === 'SCREEN')
+        .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-        const title = document.createElement('div');
-        title.className = 'view-title';
-        title.textContent = `${s + 1}. ${screen.screenName}`;
-        title.onclick = () => view.classList.toggle('active');
+    screens.forEach((screenNode) => {
+        const viewItem = makeTreeItem('VIEW', nodeLabel(screenNode), 'view', true);
 
-        view.appendChild(title);
+        const jsNodes = (adj.get(screenNode) || [])
+            .filter(n => nodeType(n) === 'JS')
+            .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-        // ================= JS CONTAINER =================
-        const jsContainer = document.createElement('div');
-        jsContainer.className = 'js-container';
+        jsNodes.forEach((jsNodeValue) => {
+            const jsItem = makeTreeItem('JS', nodeLabel(jsNodeValue), 'js', false);
 
-        screen.jsFunctions.forEach((js, j) => {
+            const ctrlNodes = (adj.get(jsNodeValue) || [])
+                .filter(n => nodeType(n) === 'CTRL')
+                .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-            // -------- JS NODE --------
-            const jsNode = document.createElement('div');
-            jsNode.className = 'js-node';
-            jsNode.textContent = `${s + 1}.${j + 1} ${js.jsFunctionName}`;
+            ctrlNodes.forEach((ctrlNodeValue) => {
+                const route = nodeLabel(ctrlNodeValue);
 
-            // -------- CONTROLLER LIST --------
-            const ctrlList = document.createElement('div');
-            ctrlList.className = 'controller-list';
+                const type =
+                    /(^|\/)(get|fetch)\b/i.test(route) || /\/Get_/i.test(route)
+                        ? 'get'
+                        : 'post';
 
-            js.controllers.forEach((c, k) => {
+                const ctrlItem = makeTreeItem('CTRL', route, `ctrl ${type}`, false);
 
-                // 🔑 FIX: Normalize HTTP type
-                const type = c.httpType?.toUpperCase().includes('GET')
-                    ? 'get'
-                    : 'post';
+                const bllNodes = (adj.get(ctrlNodeValue) || [])
+                    .filter(n => nodeType(n) === 'BLL')
+                    .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
 
-                const ctrl = document.createElement('div');
-                ctrl.className = `controller ${type}`;
-                ctrl.textContent = `${s + 1}.${j + 1}.${k + 1} ${c.controllerAction}`;
+                bllNodes.forEach((bll) => {
+                    const bllItem = makeTreeItem('BLL', nodeLabel(bll), 'bll', false);
 
-                ctrlList.appendChild(ctrl);
+                    const dalNodes = (adj.get(bll) || [])
+                        .filter(n => nodeType(n) === 'DAL')
+                        .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+
+                    dalNodes.forEach((dal) => {
+                        const dalItem = makeTreeItem('DAL', nodeLabel(dal), 'dal', false);
+
+                        const spNodes = (adj.get(dal) || [])
+                            .filter(n => nodeType(n) === 'SP')
+                            .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+
+                        spNodes.forEach((sp) => {
+                            const spItem = makeTreeItem('SP', nodeLabel(sp), 'sp', false);
+                            dalItem.body.appendChild(spItem.el);
+                        });
+
+                        bllItem.body.appendChild(dalItem.el);
+                    });
+
+                    ctrlItem.body.appendChild(bllItem.el);
+                });
+
+                jsItem.body.appendChild(ctrlItem.el);
             });
 
-            // Toggle only this JS function
-            jsNode.onclick = () => {
-                jsNode.classList.toggle('active');
-                ctrlList.classList.toggle('active');
-            };
-
-            jsContainer.appendChild(jsNode);
-            jsContainer.appendChild(ctrlList);
+            viewItem.body.appendChild(jsItem.el);
         });
 
-        view.appendChild(jsContainer);
-        root.appendChild(view);
+        root.appendChild(viewItem.el);
     });
 }
+
+function makeTreeItem(tag, text, kindClass, openByDefault) {
+    const el = document.createElement('div');
+    el.className = `tree-item ${kindClass}`;
+
+    const header = document.createElement('div');
+    header.className = 'tree-header';
+
+    const twisty = document.createElement('span');
+    twisty.className = 'twisty';
+
+    const pill = document.createElement('span');
+    pill.className = `pill pill-${tag.toLowerCase()}`;
+    pill.textContent = tag;
+
+    const label = document.createElement('span');
+    label.className = 'tree-text';
+    label.innerHTML = escapeHtml(text);
+
+    header.appendChild(twisty);
+    header.appendChild(pill);
+    header.appendChild(label);
+
+    const body = document.createElement('div');
+    body.className = 'tree-children';
+
+    el.appendChild(header);
+    el.appendChild(body);
+
+    if (openByDefault) el.classList.add('open');
+
+    header.addEventListener('click', () => {
+        // only show arrow if it has children
+        if (!body.hasChildNodes()) return;
+        el.classList.toggle('open');
+    });
+
+    return { el, body };
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function buildGraph(edges) {
+    const adj = new Map(); // from -> [to,to]
+
+    (edges || []).forEach(e => {
+        const from = e.fromNode;
+        const to = e.toNode;
+        if (!from || !to) return;
+
+        if (!adj.has(from)) adj.set(from, []);
+        adj.get(from).push(to);
+    });
+
+    // remove duplicates
+    for (const [k, arr] of adj.entries()) {
+        adj.set(k, [...new Set(arr)]);
+    }
+
+    return adj;
+}
+
+function nodeType(node) {
+    return (node || '').split('|')[0]; // SCREEN / JS / CTRL / BLL / DAL / SP
+}
+
+function nodeLabel(node) {
+    const parts = (node || '').split('|');
+    if (parts[0] === 'CTRL') return parts.slice(1).join('|');   // "Home/Get_Report"
+    if (parts[0] === 'SP') return parts.slice(1).join('|');     // "sp_..."
+    return parts.length >= 3 ? parts[2] : node;                 // Name part
+}
+
 
 function loadOCRTreeView() {
     fetch('/Home/List_out_the_Files_in_Folder_ReadOCRFile')

@@ -869,12 +869,12 @@ Explain what this screen does in simple words.
                 int parentFileId = await _dal.Save_File_Details(projectId, 0, safeFileName, savePath, dbFileType, textContent);
 
                 // ================= CHILD EXTRACTION (SEPARATE FOR CONTROLLER/BLL/DAL) =================
-                if (selectedModule == "JavaScript") await SplitJSFunctions(selectedModule,projectId, modulePathMap, savePath, parentFileId);
-                else if (selectedModule == "Controller") await SplitCSharpMethods(selectedModule,projectId, modulePathMap, savePath, parentFileId, "Controller");
-                else if (selectedModule == "BLL") await SplitCSharpMethods(selectedModule,projectId, modulePathMap, savePath, parentFileId, "BLL");
-                else if (selectedModule == "DAL") await SplitCSharpMethods(selectedModule,projectId, modulePathMap, savePath, parentFileId, "DAL");
-                else if (selectedModule == "Database") await SplitSqlTablesAndProcedures(selectedModule,projectId, modulePathMap, savePath, parentFileId);
-                else if (selectedModule == "View") await ExtractViewFunctionsAndControllerCalls(selectedModule,projectId, savePath, parentFileId);
+                if (selectedModule == "JavaScript") await SplitJSFunctions(selectedModule, projectId, modulePathMap, savePath, parentFileId);
+                else if (selectedModule == "Controller") await SplitCSharpMethods(selectedModule, projectId, modulePathMap, savePath, parentFileId, "Controller");
+                else if (selectedModule == "BLL") await SplitCSharpMethods(selectedModule, projectId, modulePathMap, savePath, parentFileId, "BLL");
+                else if (selectedModule == "DAL") await SplitCSharpMethods(selectedModule, projectId, modulePathMap, savePath, parentFileId, "DAL");
+                else if (selectedModule == "Database") await SplitSqlTablesAndProcedures(selectedModule, projectId, modulePathMap, savePath, parentFileId);
+                else if (selectedModule == "View") await ExtractViewFunctionsAndControllerCalls(selectedModule, projectId, savePath, parentFileId);
 
                 processed++;
             }
@@ -1008,7 +1008,7 @@ Explain what this screen does in simple words.
         // =========================================================
         // SPLITTERS
         // =========================================================
-        private async Task SplitCSharpMethods(string selectedModule, int projectId,Dictionary<string, string> map,string sourcePath,int parentId,string module)
+        private async Task SplitCSharpMethods(string selectedModule, int projectId, Dictionary<string, string> map, string sourcePath, int parentId, string module)
         {
             string outDir = Path.Combine(map[module], $"{module}functions");
             Directory.CreateDirectory(outDir);
@@ -1531,6 +1531,28 @@ Explain what this screen does in simple words.
             }
 
         }
+
+        public async Task<IActionResult> Get_File_Path_For_View_Code(string filename)
+        {
+            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
+
+            var file = await _dal.Get_File_Path_For_View_Code(userId, filename);
+
+            if (file == null)
+                return Json(null);
+
+            return Json(new
+            {
+                fileId = file.FileId,
+                fileName = file.FileName,
+                filePath = file.FilePath,
+                fileType = file.FileType,
+                textContent = System.IO.File.Exists(file.FilePath)
+                    ? await System.IO.File.ReadAllTextAsync(file.FilePath)
+                    : null
+            });
+        }
+
     }
 
 }

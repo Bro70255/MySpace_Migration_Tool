@@ -1,0 +1,52 @@
+
+@{
+    ViewBag.Title = "User_CRF_List";
+}
+
+<link href="~/Content/Tracker.css" rel="stylesheet" />
+<script src="~/Scripts/CRF_Tracker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div>
+    <div class="head_container">
+        <h2 class="head_main">User CRF List</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>CRF</th>
+                        <th>Subject</th>
+                        <th>Attachment</th>
+                        <th>Status</th>
+                        <th>CRF Created Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            Get_User_Crf_list();
+            $("#loading").hide();
+        });
+    </script>

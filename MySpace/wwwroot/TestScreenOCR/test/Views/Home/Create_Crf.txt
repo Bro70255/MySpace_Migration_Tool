@@ -1,0 +1,148 @@
+@{
+    ViewBag.Title = "Create_Crf";
+}
+<link href="~/Content/Tracker.css" rel="stylesheet" />
+<script src="~/Scripts/CRF_Tracker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+<div>
+    <div class="head_container">
+        <h3 class="head_main">Create CRF</h3>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label for="subject">Subject<span class="mandatory-symbol">*</span></label>
+            <input class="subject_input" type="text" id="subject" />
+        </div>
+        <div class="common_row gap_bottom">
+            <div id="editor"></div>
+        </div>
+        <div class="flex_div">
+            <div class="common_row gap_fill">
+                <label for="first-name-vertical">IT Team<span class="mandatory-symbol">*</span></label>
+                <fieldset>
+                    <select id="ddlTeam" onchange="Bind_Impactingmodule();">
+                    </select>
+                </fieldset>
+            </div>
+            <div class="common_row gap_fill">
+                <label for="first-name-vertical">Request Type<span class="mandatory-symbol">*</span> </label>
+                <fieldset>
+                    <select id="ddlReqType"></select>
+                </fieldset>
+            </div>
+            <div class="common_row gap_fill">
+                <label for="password-vertical">Choose Impacting Modules <span class="mandatory-symbol">*</span></label>
+                <div>
+                    <select id="ddlimpactingmodule" onchange="Bind_Project();"></select>
+                </div>
+            </div>
+            <div class="common_row gap_fill">
+                <label for="priority">Priority<span class="mandatory-symbol">*</span></label>
+                <select id="ddlpriority">
+                    <option value="SelectPriority">Select Priority</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+        </div>
+        <div class="common_row" id="select_module">
+            <label for="first-name-vertical">Select Module: <span class="mandatory-symbol">*</span> </label>
+            <fieldset class="form-group">
+                <select id="exmodule"></select>
+            </fieldset>
+        </div>
+        <div class="common_row" id="select_department" >
+            <label for="first-name-vertical">Select Department: <span class="mandatory-symbol">*</span> </label>
+            <fieldset class="form-group">
+                <select id="ddl_department"></select>
+            </fieldset>
+        </div>
+        <div class="flex_div flex_last">
+            <div class="common_row">
+                <label class="font-weight-bold">Target Date<span class="mandatory-symbol">*</span></label>
+                <input type="date" value="MM-DD-YYYY" name="TarDt" id="TarDt">
+            </div>
+            <div class="common_row">
+                <label>Attach Documents</label>
+                <button type="button" id="btnGeneralDocument" class="btnchoose" onclick="openFileUploadDialogue()">Choose File</button>
+                <div id="selected_attach_files_Container"></div>
+            </div>
+        </div>
+        <div class="crt_btn">
+            <button type="submit" class="confirm_btn" id="btnSubmit" onclick="Create_Crf_validation();">Confirm</button>
+            <button type="reset" class="exit_btn" onclick="refreshPage()">Clear</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script>
+        $(document).ready(function () {
+            Bind_Team();
+            Bind_Requesttype();
+            Bind_Impactingmodule();
+            Bind_Project();
+            // Initialize CKEditor
+            CKEDITOR.replace('editor');
+        });
+    </script>*@
+<script>
+    $(document).ready(function () {
+        console.log("Script is running");
+        Bind_Team();
+        Bind_Requesttype();
+        Bind_Department();
+        
+
+        // Initialize CKEditor
+        CKEDITOR.replace('editor');
+
+        // Attach change event to #ddlReqType dropdown
+        $("#ddlReqType").on("change", function () {
+            var selectedReqType = $(this).val();
+            console.log("Selected Request Type: " + selectedReqType);
+
+            var selectModuleDiv = $("#select_module");
+            // var exModuleDropdown = $("#exmodule");
+
+            // Hide both elements first
+            selectModuleDiv.hide();
+            // exModuleDropdown.hide();
+
+            // Check the selected value and show/hide the exmodule dropdown accordingly
+            if (selectedReqType === "2" || selectedReqType === "3" || selectedReqType === "4") {
+                selectModuleDiv.show();
+                // exModuleDropdown.show();
+                Bind_Project();
+            }
+        });
+
+        // Trigger change event on #ddlReqType to initialize
+        $("#ddlReqType").trigger("change");
+
+        $("#loading").hide();
+        // Example: Simulate loading for 3 seconds (replace with your actual loading logic)
+    });
+
+    // Attach the change event listener to the file input
+    $("#attacch_file").change(function (event) {
+        selected_attach_files_Container(event);
+    });
+
+</script>
+
+
+

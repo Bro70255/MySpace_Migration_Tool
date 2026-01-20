@@ -1,10 +1,9 @@
-
-        public JsonResult Get_Bind_Unit()
+        public JsonResult Get_Bind_Unit(int firm)
         {
             DataTable dtDetails = new DataTable();
             try
             {
-                dtDetails = BLL.Get_Bind_Unit();
+                dtDetails = CRF_Tracker_bll.Get_Bind_Unit(firm);
 
             }
             catch (Exception ex) { throw ex; }

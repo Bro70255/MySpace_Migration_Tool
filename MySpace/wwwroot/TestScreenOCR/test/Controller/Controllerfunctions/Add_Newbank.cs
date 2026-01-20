@@ -1,9 +1,0 @@
-        public JsonResult Add_Newbank(int unit, string bank)
-        {
-            try
-            {
-                BLL.Add_Newbank(unit, bank);
-                return Json(1);
-            }
-            catch (Exception ex) { throw ex; }
-        }

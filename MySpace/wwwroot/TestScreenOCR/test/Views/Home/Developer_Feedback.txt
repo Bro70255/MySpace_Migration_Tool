@@ -1,0 +1,63 @@
+
+@{
+    ViewBag.Title = "Developer_Feedback";
+}
+
+<div>
+    <div class="head_container">
+        <h3 class="head_main">User Feedback Request</h3>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF</label>
+            <select id="crf_for_usrfdback" onchange="Crf_Usefeedback_dtls();"></select>
+        </div>
+        <div class="common_row">
+            <label>CRF Content</label>
+            <textarea class="form-control" id="crf_content" disabled></textarea>
+        </div>
+
+        <div class="flex_con">
+            <div class="common_row">
+                <label for="prdctn_link">Production Link</label>
+                <input id="prdctn_link" type="text">
+            </div>
+            <div class="common_row">
+                <label for="path">Path</label>
+                <input id="path" type="text">
+            </div>
+        </div>
+
+        <div class="common_row">
+            <label>Remark</label>
+            <textarea class="form-control" id="remark"></textarea>
+        </div>
+        <div class="crt_btn">
+            <button type="submit" class="confirm_btn" onclick="Insert_Usefeedback_dtls();">Confirm</button>
+            <button type="submit" class="exit_btn">Clear</button>
+
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        Bind_CRF_for_dev_usrfeedback();
+        $("#loading").hide();
+    });
+</script>
+
+
+

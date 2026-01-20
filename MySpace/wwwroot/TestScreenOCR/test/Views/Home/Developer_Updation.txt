@@ -1,0 +1,176 @@
+@{
+    ViewBag.Title = "Developer_Updation";
+}
+
+<script src="~/Scripts/CRF_Tracker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div>
+    <div class="head_container">
+        <h2 class="head_main">CRF Developer Updation</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF<span class="mandatory-symbol">*</span></label>
+            <select id="crf_with_sub" onchange="Crf_dtls_for_Developer_Updation(); handleSelectChange();"></select>
+        </div>
+        <div class="common_row">
+            <label>Content</label>
+            <textarea class="form-control" id="descrption" disabled></textarea>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">IT Team</label>
+                <label class="label_fills" id="it_team"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Request Type</label>
+                <label class="label_fills" id="req_typ"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Requester</label>
+                <label class="label_fills" id="requester"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Requested Date</label>
+                <label class="label_fills" id="requested_date"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Priority</label>
+                <label class="label_fills" id="priority"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">User Expected Date</label>
+                <label class="label_fills" id="user_expected_date"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Developer Start Date</label>
+                <label class="label_fills" id="developer_start_date"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Developer Completion Date</label>
+                <label class="label_fills" id="developer_completion_date"></label>
+            </div>
+        </div>
+        <label class="attach_label">Attached Files</label>
+        <div class="attachment_show">
+            <table class="tableflow" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>File Name</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="tbletable">
+                    <!-- Sample data rows can be added here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="common_row">
+            <label>Technical Analysis Completed Details</label>
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>CRF ID</th>
+                        <th>Techlead</th>
+                        <th>Developer</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Phase</th>
+                        <th>Tech Changes</th>
+                        <th>Change Type</th>
+                        <th>No of changes</th>
+                        <th>Total Hours</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        <div class="common_row">
+            <label>Choose Status<span class="mandatory-symbol">*</span></label>
+            <select id="workstatus"></select>
+        </div>
+
+        <div class="pop_div" style="display: none;">
+            <div>
+                <h3 class="imp_heading">CheckIn File Details</h3>
+            </div>
+            <div class="flex_div">
+                <div class="common_row1 gap1">
+                    <label>Module Name:</label>
+                    <input type="text" id="mod_name">
+                </div>
+                <div class="common_row1 gap1">
+                    <label>TFS Folder/File Name:</label>
+                    <input type="text" id="tfs_name">
+                </div>
+                <div class="common_row1 gap1">
+                    <label>UAT Testing Link:</label>
+                    <input type="text" id="uat_link">
+                </div>
+                <div class="common_row1 gap1">
+                    <label>UAT Path:</label>
+                    <input type="text" id="uat_path">
+                </div>
+            </div>
+        </div>
+
+        <div class="common_row">
+            <label>Remark<span class="mandatory-symbol">*</span></label>
+            <textarea id="remark" class="form-control" maxlength="500"></textarea>
+        </div>
+        <div class="crt_btn">
+            @*<input type="submit" value="Confirm" onclick="Developer_Updation_Confirm();" />
+            <input type="submit" value="Exit" />*@
+            <button type="submit" class="confirm_btn" id="btnSubmit" onclick="Developer_Updation_Confirm();">Confirm</button>
+            <button type="reset" class="exit_btn" onclick="">Exit</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        Bind_CRF_for_Dev_Updation();
+        $('#workstatus').change(function () {
+            var selectedStatus = $(this).val();
+            if (selectedStatus === '12') {
+                $('.pop_div').show();
+                $('.imp_heading').show();
+            } else {
+                $('.pop_div').hide();
+                $('.imp_heading').hide();
+            }
+        });
+        // Trigger change event on page load if status is initially set to 12
+        if ($('#workstatus').val() === '12') {
+            $('#workstatus').change();
+        }
+    });
+    function handleSelectChange() {
+        var selectElement = document.getElementById('crf_with_sub');
+        var selectedValue = selectElement.value;
+        All_Attachments(selectedValue);
+    }
+</script>
+
+

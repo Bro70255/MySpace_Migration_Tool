@@ -1,0 +1,50 @@
+
+@{
+    ViewBag.Title = "Tester_Bug_Tracking";
+}
+
+<div>
+    <div class="head_container">
+        <h2 class="head_main">Tester Bug Tracking</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>CRF</th>
+                        <th>Bug Reported Count</th>
+                        <th>Developer Completed Count</th>
+                        <th>Resolved</th>
+                        <th>Bug List</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        $("#loading").hide();
+        initialization_Get_CRF_for_Tester_Bug_Tracking();
+      
+    });
+
+</script>

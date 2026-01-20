@@ -1,0 +1,125 @@
+@{
+    ViewBag.Title = "HOD_Recommendation";
+}
+
+<script src="~/Scripts/CRF_Tracker.js"></script>
+<link href="~/Content/Tracker.css" rel="stylesheet" />
+
+<div class="hod-wrapper">
+
+    <div class="head_container">
+        <h3 class="head_main">HOD Recommendation</h3>
+    </div>
+
+    <div class="body_container">
+
+        <div class="common_row">
+            <label>CRF</label>
+            <select id="crf_with_sub"
+                    onchange="Crf_dtls_for_hod_Recommendation();handleSelectChange()">
+            </select>
+        </div>
+
+        <div class="common_row">
+            <label>CRF Content</label>
+            <textarea id="crf_content" disabled></textarea>
+        </div>
+
+        <!-- DETAILS -->
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">IT Team</label>
+                <span class="label_fills" id="it_team"></span>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Requested Date</label>
+                <span class="label_fills" id="requested_date"></span>
+            </div>
+        </div>
+
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Request Type</label>
+                <span class="label_fills" id="req_typ"></span>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Target Date</label>
+                <span class="label_fills" id="target_date"></span>
+            </div>
+        </div>
+
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Module Name</label>
+                <span class="label_fills" id="module_type"></span>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Impact Module</label>
+                <span class="label_fills" id="impact_nodule"></span>
+            </div>
+        </div>
+
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Requested By</label>
+                <span class="label_fills" id="req_by"></span>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Priority</label>
+                <span class="label_fills" id="priority"></span>
+            </div>
+        </div>
+
+        <!-- ATTACHMENTS -->
+        <label class="attach_label">Attached Files</label>
+        <div class="attachment_show">
+            <table id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>File Name</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="tbletable"></tbody>
+            </table>
+        </div>
+
+        <div class="common_row">
+            <label>Remark</label>
+            <textarea id="remark"></textarea>
+        </div>
+
+        <div class="crt_btn">
+            <button class="confirm_btn" onclick="Update_hod_recommendation()">Confirm</button>
+            <button class="exit_btn" onclick="Update_hod_reject()">Reject</button>
+        </div>
+
+        <!-- LOADER -->
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        Bind_CRF_Id_With_Subject();
+    });
+
+    function handleSelectChange() {
+        var id = $("#crf_with_sub").val();
+        All_Attachments(id);
+    }
+</script>

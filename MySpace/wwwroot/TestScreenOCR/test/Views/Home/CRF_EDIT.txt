@@ -1,0 +1,52 @@
+
+@{
+    ViewBag.Title = "CRF_EDIT";
+}
+<div>
+    <div class="head_container">
+        <h3 class="head_main">CRF Edit</h3>
+    </div>
+    <div class="body_container">
+        <div class="flex_con">
+            <div class="common_row">
+                <label for="crf">Choose CRF</label>
+                <select id="returncrf" class="form-control"></select>
+            </div>
+            <div class="common_row">
+                <label for="Upload_File">Attach File</label>
+                <input type="file" class="form-control" id="Upload_file" name="Upload_file">
+                <input type="submit" hidden id="btn_file" value="Attach">
+            </div>
+        </div>
+        <div class="common_row">
+            <label>Remark</label>
+            <textarea class="form-control" id="usrremark"></textarea>
+        </div>
+        <div class="crt_btn">
+            <button type="submit" class="confirm_btn" id="btnSubmit" onclick="Save_Returncrf_dtls_validation();">Confirm</button>
+            <button id="user_return" class="return_btn" onclick="User_Return();">Reject</button>
+            <button type="reset" class="exit_btn" onclick="frmExit();">Exit</button>
+        </div>
+    </div>
+</div>
+@**------------Loading_Style-------------**@
+<div class="loading-progress" id="loading">
+    <div class="dot-spinner">
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        CRF_Edit_dtls();
+        $("#loading").hide();
+    });
+</script>
+

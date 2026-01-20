@@ -1,0 +1,89 @@
+@{
+    ViewBag.Title = "Test_case_updation";
+}
+
+<div>
+    <div class="head_container">
+        <h3 class="head_main">Test case updation</h3>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF<span class="mandatory-symbol">*</span></label>
+            <select id="CRF" onchange="Crf_dtls_for_Tester();">
+            </select>
+        </div>
+        <div class="common_row">
+            <label>CRF Content</label>
+            @*<label id="crf_content"></label>*@
+            <textarea class="form-control" id="crf_content" disabled></textarea>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label>IT Team</label>
+                <label id="itteam"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Request Type</label>
+                <label class="label_fills" id="req_typ"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Developer</label>
+                <label class="label_fills" id="developer"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">User Expected Date</label>
+                <label class="label_fills" id="usr_expcted_dt"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Priority</label>
+                <label class="label_fills" id="priority"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Development Completed Date</label>
+                <label class="label_fills" id="dvlopmnt_cmpleted_dt"></label>
+            </div>
+        </div>
+        <h3>Test Cases</h3>
+        <div class="common_row">
+            <label>Attach Documents</label>
+            <button type="button" id="btnGeneralDocument1" class="btnchoose" onclick="openFileUploadDialogue1()">Choose File</button>
+            <div id="selected_attach_files_tester_Container"></div>
+        </div>
+        <div class="common_row">
+            <label>Remark<span class="mandatory-symbol">*</span></label>
+            <textarea id="remark" class="form-control" maxlength="500"></textarea>
+        </div>
+        <div class="crt_btn">
+            <button type="submit" class="confirm_btn" id="btnSubmit" onclick="Save_Testcase_Updation();">Confirm</button>
+            <button type="reset" class="exit_btn" onclick="frmExit();">Exit</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        Bind_CRF_for_Tester();
+        $("#loading").hide();
+    });
+    // Attach the change event listener to the file input
+    $("#attach_file_tester").change(function (event) {
+        selected_attach_files_tester_Container(event);
+    });
+</script>

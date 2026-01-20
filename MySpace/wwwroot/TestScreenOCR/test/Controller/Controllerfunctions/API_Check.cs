@@ -1,5 +1,3 @@
-
-
         public JsonResult API_Check(int employeeCode, string loginPassword)
         {
             try

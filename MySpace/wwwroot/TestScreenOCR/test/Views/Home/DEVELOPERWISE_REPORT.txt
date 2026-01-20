@@ -1,0 +1,94 @@
+
+@{
+    ViewBag.Title = "DEVELOPERWISE_REPORT";
+}
+
+
+<div>
+    <div class="head_container">
+        <h3 class="head_main">Developer Wise Report</h3>
+    </div>
+    <div class="body_container">
+        <div class="flex_con">
+            <div class="common_row">
+                <label for="firm">Firm</label>
+                <select id="firm" class="form-control" onclick="Bind_Developers_For_Dev_Wise_Report();"></select>
+            </div>
+            <div class="common_row">
+                <label>Developer</label>
+                <select id="ddldeveloper"></select>
+            </div>
+        </div>
+        <div class="flex_con">
+            <div class="common_row">
+                <label>Start Date</label>
+                <input type="date" id="startdate" />
+            </div>
+            <div class="common_row">
+                <label>End Date</label>
+                <input type="date" id="enddate" />
+            </div>
+        </div>
+        <div class="crt_btn">
+            <button id="generate" class="confirm_btn" onclick="Developerwise_Report();">Generate</button>
+            <button id="exprtBtn" class="btnexpt" onclick="exportToExcel_developerwiserpt();">Export To Excel</button>
+        </div>
+        <div class="common_row">
+            <table class="table_rpt" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>CRFID</th>
+                        <th>PRIORITY</th>
+                        <th> REQUESTDATE</th>
+                        <th> PROJECTNAME</th>
+                        <th> REQUESTEDBY </th>
+                        <th>USERDEPRTMENT</th>
+                        <th>TECHLEAD</th>
+                        <th> DEVELOPER </th>
+                        <th> TESTER</th>
+                        <th>HEADAPPROVED_DATE</th>
+                        <th> USER_TARGETDATE</th>
+                        <th>TA_STARTTDATE </th>
+                        <th>TA_ENDDATE </th>
+                        <th>TA_TESTER_STARTDATE</th>
+                        <th>TA_TESTER_ENDDATE</th>
+                        <th>PROJECT_TARGET_DATE</th>
+                        <th>LIVE PUBLISH DATE</th>
+                        <th>LIVE PUBLISH REMARK</th>
+                        <th> STATUS </th>
+                        <th> RELEASE_DATE</th>
+                        <th>TOTAL_WORK_HOURS </th>
+                        <th>MODULE_TYPE</th>
+                        <th>USER_ACCEPTED_DATE</th>
+                        <th>CRF_COST</th>
+                        <th>DEVELOPMENT_START_DATE</th>
+                        <th>DEVELOPMENT_END_DATE</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        Bind_Firm_For_Developer_Wise_Report();
+        $("#loading").hide();
+    });
+</script>
+

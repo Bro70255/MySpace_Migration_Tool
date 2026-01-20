@@ -1,0 +1,83 @@
+@{
+    ViewBag.Title = "User_Acceptance";
+}
+
+<div>
+    <div class="head_container">
+        <h2 class="head_main">User Acceptance</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF<span class="mandatory-symbol">*</span></label>
+            <select id="CRF_user_acceptance" onchange="Refill_Crf_user_acceptance(); handleSelectChange();">
+            </select>
+        </div>
+        <div class="common_row">
+            <label>CRF Content</label>
+            <label id="lbl_crf_content"></label>
+            <textarea class="form-control" id="crf_content" disabled></textarea>
+        </div>
+        <div>
+            <label class="attach_label">Attached Files</label>
+            <div class="attachment_show">
+                <table class="tableflow" id="tbltable">
+                    <thead>
+                        <tr>
+                            <th>Sl.No</th>
+                            <th>File Name</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbletable">
+                        <!-- Sample data rows can be added here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="row-container">
+                <div class="common_row">
+                    <label>Link:</label>
+                    <div id="refill_link"></div>
+                </div>
+                <div class="common_row">
+                    <label>Path:</label>
+                    <div id="refill_path"></div>
+                </div>
+            </div>
+
+            <div class="common_row">
+                <label>Remark</label>
+                <textarea class="form-control" id="user_acceptance_rmk"></textarea>
+            </div>
+
+            <div class="crt_btn">
+                <button type="submit" id="User_Acceptance_btnSubmit" class="confirm_btn" onclick="Save_User_Acceptance();">Submit</button>
+                <button type="reset" id="rest" class="exit_btn">Reset</button>
+            </div>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        $(document).ready(function () {
+            Bind_Crf_Id_For_User_Acceptance();
+            $("#loading").hide();
+        });
+    function handleSelectChange() {
+        var selectElement = document.getElementById('CRF_user_acceptance');
+        var selectedValue = selectElement.value;
+        All_Attachments(selectedValue);
+    }
+</script>

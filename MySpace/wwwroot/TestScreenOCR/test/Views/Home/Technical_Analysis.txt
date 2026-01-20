@@ -1,0 +1,490 @@
+@{
+    ViewBag.Title = "Technical_Analysis";
+}
+<script src="~/Scripts/CRF_Tracker.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div>
+    <div class="head_container">
+        <h2 class="head_main">Technical Analysis</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF<span class="mandatory-symbol">*</span></label>
+            <select id="ddlCRF" onchange="Crf_dtls_for_Technical_Analysis(); handleSelectChange();">
+            </select>
+        </div>
+        <div class="common_row">
+            <textarea class="form-control" id="descrption"></textarea>
+        </div>
+
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">IT Team</label>
+                <label class="label_fills" id="itteam"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Requested Date</label>
+                <label class="label_fills" id="requested_Date"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Request Type</label>
+                <label class="label_fills" id="request_type"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Target Date</label>
+                <label class="label_fills" id="target_date"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Requested By</label>
+                <label class="label_fills" id="requested_by"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Priority</label>
+                <label class="label_fills" id="priority"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Recommended By</label>
+                <label class="label_fills" id="recommended_by"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Recommended Comments</label>
+                <label class="label_fills" id="recommended_comments"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Approved By</label>
+                <label class="label_fills" id="approved_by"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Approved Comments</label>
+                <label class="label_fills" id="approved_Comments"></label>
+            </div>
+        </div>
+        <label class="attach_label">Attached Files</label>
+        <div class="attachment_show">
+            <table class="tableflow" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>File Name</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="tbletable">
+                    <!-- Sample data rows can be added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cntr">
+            <span class="lbl">Hold CRF</span>
+            <input type="checkbox" id="holdCRF" class="hidden-xs-up" onclick="confirmHoldCRF()">
+            <label for="holdCRF" class="cbx"></label>
+        </div>
+
+        <!------- Modal structure ------->
+        <div id="crfModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3  class="crf_hold_heading">CRF HOLD REQUEST  </h3>
+                <div class="crf-form">
+
+                    <label for="crfID">CRF ID:</label>
+                    <input type="text" id="crfID" class="crf-input">
+
+                    <div class="hold_date">
+                        <div class="date-picker">
+                            <label for="holdFrom">Hold From</label>
+                            <input type="date" id="holdFrom" class="crf-input" onchange="validateDateRange()">
+                        </div>
+
+                        <div class="date-picker">
+                            <label for="holdEnd">End</label>
+                            <input type="date" id="holdEnd" class="crf-input" onchange="validateDateRange()">
+                        </div>
+                    </div>
+
+                    <label for="reason">Reason:</label>
+                    <select id="reason" class="crf-select">
+                        <option value="" disabled selected>Select a reason</option>
+                        <option value="API delay from MACOM">API delay from MACOM</option>
+                        <option value="Application Auditing">Application Auditing</option>
+                        <option value="External vendor dependency">External vendor dependency</option>
+                        <option value="Others">Others</option>
+                    </select>
+
+                    <label for="remark">Remark:</label>
+                    <textarea id="remark" class="crf-textarea"></textarea>
+
+                    <button type="button" class="crf-button" onclick="Save_Holdcrf_Details();">Submit</button>
+                </div>
+            </div>
+        </div>
+        <!-- ---------------------- -->
+
+        <div class="common_row">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>EmpCode</th>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h3 class="imp_heading">Developers</h3>
+            <div class="row_flex">
+                <div class="common_row">
+                    <label>Phase<span class="mandatory-symbol">*</span></label>
+                    <input type="text" id="phase">
+                </div>
+                <div class="common_row">
+                    <label>Number of Changes<span class="mandatory-symbol">*</span></label>
+                    <input type="number" id="changes">
+                </div>
+                <div class="common_row">
+                    <label>Developer<span class="mandatory-symbol">*</span></label>
+                    <select class="form-control" id="ddldeveloper"></select>
+                </div>
+            </div>
+            <div class="row_flex">
+                <div class="common_row">
+                    <label>Start Date<span class="mandatory-symbol">*</span></label>
+                    <input type="date" id="start_date">
+                </div>
+                <div class="common_row">
+                    <label>End Date<span class="mandatory-symbol">*</span></label>
+                    <input type="date" id="end_date" onchange="Check_Request_Date();">
+                </div>
+                <div class="common_row">
+                    <label>Changes<span class="mandatory-symbol">*</span></label>
+                    <select id="ddlchange_type" onchange="Bind_Related_Work();">
+                        <option value="" selected disabled>Choose Changes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row_flex">
+                <div class="common_row">
+                    <label>Cost Estimation<span class="mandatory-symbol">*</span></label>
+                    <input type="number" id="costestimation">
+                </div>
+                <div class="common_row">
+                    <label>Man Hours<span class="mandatory-symbol">*</span></label>
+                    <input type="number" id="hours">
+                </div>
+                <div class="common_row">
+                    <label for="ddlrelated_work">Related Work<span class="mandatory-symbol">*</span></label>
+                    <select id="ddlrelated_work">
+                        <option value="" selected disabled>Choose Related Work</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row_flex">
+                <div class="common_row">
+                    <label>CRF Complexity<span class="mandatory-symbol">*</span></label>
+                    <select id="ddlCRF_Complexity">
+                        @* <option value="" selected disabled>Choose CRF Complexity</option>*@
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button class="btn_newadd" id="dev_add_btn">
+                    <svg xmlns= width="20" viewBox="0 0 20 20" height="20" fill="none" class="svg-icon"><g stroke-width="1.5" stroke-linecap="round" stroke="#fff"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 7.5v5"></path><path d="m7.5 9.99998h5"></path></g></svg>
+                    <span class="lable1">Add</span>
+                </button>
+            </div>
+        </div>
+        <div class="common_row" id="tbl_display" style="display: none;">
+            <table class="table" id="tbltable1">
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Change</th>
+                        <th>Crf Complexity</th>
+                        <th>Work</th>
+                        <th>Number</th>
+                        <th>Manpower</th>
+                        <th>Developer</th>
+                        <th>StartDt</th>
+                        <th>EndDt</th>
+                        <th>Cost</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable1">
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h3 class="imp_heading">Man hours for</h3>
+        </div>
+        <div class="flex_div">
+            <div class="common_row1 gap1">
+                <label>Development</label>
+                <input type="text" id="development" disabled>
+            </div>
+            <div class="common_row1 gap1">
+                <label>Code Review</label>
+                <input type="text" id="codereview" disabled>
+            </div>
+            <div class="common_row1 gap1">
+                <label>Total Work Hours</label>
+                <input type="text" id="totalworkhrs" disabled>
+            </div>
+            <div class="common_row1 gap1">
+                <label>Total Cost</label>
+                <input type="text" id="totalcost" disabled>
+            </div>
+        </div>
+        <div class="common_row">
+            <label>Handover to Techlead</label>
+            <label class="switch">
+                <input type="checkbox" id="handoverCheckbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="common_row" id="chooseTechleadDiv" style="display: none;">
+            <label>Choose Techlead</label>
+            <fieldset>
+                <select id="ddltechlead">
+                </select>
+            </fieldset>
+        </div>
+        <div class="common_row">
+            <label>Remark<span class="mandatory-symbol">*</span></label>
+            <textarea id="remark" class="form-control" maxlength="500"></textarea>
+        </div>
+        <div class="btn_align">
+            <button id="btn_Confirm" class="confirm_btn" onclick="Technicalanalysis_Techlead();">Confirm</button>
+            <button id="btn_Return" class="return_btn" onclick="Return_To_User();">Return</button>
+            <button id="btn_handover" class="hndovr_btn" onclick="Handover_Techlead();">Handover</button>
+            <button id="btn_exit" class="exit_btn">Exit</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    initialization_Teach_Lead_Team();
+    Bind_Technicalanalysis_Techlead();
+    Bind_Developers();
+    Bind_Techlead();
+    Bind_Change_Type();
+    Bind_CRF_Complexity();
+    $(document).ready(function () {
+        $("#loading").hide();
+        $("#dev_add_btn").click(function () {
+
+            var Phase = $("#phase").val();
+            if (Phase == "") {
+                alert("Please enter the phase");
+                return;
+            }
+            var changes = $("#changes").val();
+            if (changes == "") {
+                alert("Please enter the no. of changes");
+                return; 0
+            }
+            var start_date = $("#start_date").val();
+            if (start_date == "") {
+                alert("Please enter the start_date");
+                return;
+            }
+            var end_date = $("#end_date").val();
+            if (end_date == "") {
+                alert("Please enter the end_date");
+                return;
+            }
+            var hours = $("#hours").val();
+            if (hours == "") {
+                alert("Please enter the hours");
+                return;
+            }
+            var costestimation = $("#costestimation").val();
+            if (costestimation == "") {
+                alert("Please enter the costestimation");
+                return;
+            }
+
+            // Extract developer ID from the selected option
+            var DeveloperDropdown = $("#ddldeveloper");
+            var DeveloperId = DeveloperDropdown.val();
+
+            if (DeveloperId == "0") {
+                alert("Please Select the developer");
+                return;
+            }
+            var Developer = DeveloperDropdown.find("option:selected").text(); // Get the text of the selected option
+
+            // Ensure that DeveloperId is not null and is a non-empty string
+            if (!DeveloperId && DeveloperDropdown.find("option:selected").length > 0) {
+                DeveloperId = DeveloperDropdown.find("option:selected").val();
+            }
+
+            var ChangetypeDropdown = $("#ddlchange_type");
+            var ChangetypeId = ChangetypeDropdown.val();
+            if (ChangetypeId == "0") {
+                alert("Please Select the changes");
+                return;
+            }
+            var Change = ChangetypeDropdown.find("option:selected").text(); // Get the text of the selected option
+
+            var crf_complexity = $("#ddlCRF_Complexity");
+            var crf_complexity_id = crf_complexity.val();
+            if (crf_complexity_id == "0") {
+                alert("Please Select the CRF Complexity");
+                return;
+            }
+            var CRF_complexity = crf_complexity.find("option:selected").text(); // Get the text of the selected option
+
+
+            if (!ChangetypeId && ChangetypeDropdown.find("option:selected").length > 0) {
+                ChangetypeId = ChangetypeDropdown.find("option:selected").val();
+            }
+
+            if (!crf_complexity_id && crf_complexity.find("option:selected").length > 0) {
+                crf_complexity_id = crf_complexity.find("option:selected").val();
+            }
+
+            var RelatedWorkDropdown = $("#ddlrelated_work");
+            var RelatedWorkId = RelatedWorkDropdown.val();
+            if (RelatedWorkId == "0") {
+                alert("Please Select the Related Work");
+                return;
+            }
+            var Work = RelatedWorkDropdown.find("option:selected").text(); // Get the text of the selected option
+
+            // Ensure that DeveloperId is not null and is a non-empty string
+            if (!RelatedWorkId && RelatedWorkDropdown.find("option:selected").length > 0) {
+                RelatedWorkId = RelatedWorkDropdown.find("option:selected").val();
+            }
+
+            var Development = parseFloat($("#development").val()) || 0; // Parse as float, default to 0 if not a number
+
+            var CodeReviewMultiplier = 0.40;
+            // Calculate CodeReview value
+            var CodeReview = Development * CodeReviewMultiplier;
+
+            var Number = $("#changes").val();
+            var Manpower = $("#hours").val();
+            var StartDt = $("#start_date").val();
+            var EndDt = $("#end_date").val();
+            var Cost = $("#costestimation").val();
+
+            if (Phase && ChangetypeId && Change && crf_complexity_id && CRF_complexity && RelatedWorkId && Work && !isNaN(Development) && Manpower && DeveloperId && Developer && StartDt && EndDt && Cost) {
+                // Add row to the table with data-developer-id attribute
+                var row = $("<tr>" +
+                    "<td>" + Phase + "</td>" +
+                    "<td style='display: none'>" + ChangetypeId + "</td>" +
+                    "<td>" + Change + "</td>" +
+                    "<td style='display: none'>" + crf_complexity_id + "</td>" +
+                    "<td>" + CRF_complexity + "</td>" +
+                    "<td style='display: none'>" + RelatedWorkId + "</td>" +
+                    "<td>" + Work + "</td>" +
+                    "<td class='number-column'>" + Number + "</td>" +
+                    "<td class='development-column'>" + Manpower + "</td>" +
+                    "<td style='display: none'>" + DeveloperId + "</td>" +
+                    "<td>" + Developer + "</td>" +
+                    "<td>" + StartDt + "</td>" +
+                    "<td>" + EndDt + "</td>" +
+                    "<td class='cost-column'>" + Cost + "</td>" +
+                    "<td><button class='btn btn-danger btn-remove'>Remove</button></td>" +
+                    "</tr>");
+
+                // Append the developer ID as a hidden input in the last column
+                /* row.find("td:last").append("<input type='hidden' name='developer-id' value='" + DeveloperId + "'>");*/
+
+                $("#tbtable1").append(row);
+
+                // Clear input fields
+                $("#phase, #ddlchange_type, #ddlCRF_Complexity, #ddlrelated_work, #development, #changes, #hours, #ddldeveloper, #start_date, #end_date, #costestimation").val("");
+
+                // Show the table and confirm button
+                $("#tbl_display").show();
+
+                // Update the sum of the "development" column
+                updateDevelopmentSum();
+
+                // Update CodeReview and totalworkhrs values
+                updateCodeReviewAndTotalWorkHrs();
+            }
+        });
+
+        // Add click event handler for remove buttons
+        $("#tbtable1").on("click", ".btn-remove", function () {
+            $(this).closest("tr").remove();
+
+            // Update the sum of the "development" column after removing a row
+            updateDevelopmentSum();
+
+            // Update CodeReview and totalworkhrs values after removing a row
+            updateCodeReviewAndTotalWorkHrs();
+        });
+        const handoverCheckbox = document.getElementById('handoverCheckbox');
+        const chooseTechleadDiv = document.getElementById('chooseTechleadDiv');
+        handoverCheckbox.addEventListener('change', function () {
+
+            chooseTechleadDiv.style.display = this.checked ? 'block' : 'none';
+        });
+    });
+    function handleSelectChange() {
+        var selectElement = document.getElementById('ddlCRF');
+         selectedValue = selectElement.value;
+        All_Attachments(selectedValue);
+    }
+
+    function confirmHoldCRF() {
+        var checkbox = document.getElementById("holdCRF");
+        if (checkbox.checked) {
+            var confirmed = confirm("Are you sure to hold this CRF?");
+            if (confirmed) {
+                openModal(); 
+            } else {
+                checkbox.checked = false; 
+            }
+        }
+    }
+
+    function openModal() {
+        document.getElementById('crfID').value = selectedValue;
+        document.getElementById("crfModal").style.display = "block"; 
+    }
+
+    function closeModal() {
+
+        document.getElementById("crfModal").style.display = "none"; 
+    }
+
+    // Close the modal when clicking outside of it
+    window.onclick = function (event) {
+        var modal = document.getElementById("crfModal");
+        if (event.target == modal) {
+            modal.style.display = "none"; 
+        }
+    }
+
+</script>

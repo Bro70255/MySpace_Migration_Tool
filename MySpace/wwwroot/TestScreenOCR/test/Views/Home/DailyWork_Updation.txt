@@ -1,0 +1,252 @@
+@{
+    ViewBag.Title = "DailyWork_Updation";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="~/Content/Tracker.css" rel="stylesheet" />
+    <script src="~/Scripts/CRF_Tracker.js"></script>
+</head>
+<body>
+    <div>
+        <div class="head_container">
+            <h3 class="head_main">Daily Work Updation</h3>
+        </div>
+        <div class="body_container">
+            <div class="flex_con">
+                <div class="common_row">
+                    <label for="assigned_work">Assigned Work</label>
+                    <select id="crf_withsub" class="form-control">
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="common_row">
+                    <label for="dwu_module">Select Module</label>
+                    <select id="dailywork_module" class="form-control"></select>
+                </div>
+            </div>
+            <div class="flex_con">
+                <div class="common_row">
+                    <label for="decp_of_work_Perfm">Description of Work Performed</label>
+                    <select id="decp_of_work_Perfm" class="form-control"></select>
+                </div>
+                <div class="common_row">
+                    <label for="pofc">Percentage of Completion</label>
+                    <input type="text" class="form-control" id="pofc">
+                </div>
+            </div>
+            <div class="flex_con">
+                <div class="common_row">
+                    <label for="DD_textarea">Detailed Description</label>
+                    <textarea class="form-control" id="DD_textarea"></textarea>
+                </div>
+                <div class="common_row">
+                    <label for="dwu_remark">Remark</label>
+                    <textarea class="form-control" id="dwu_remark"></textarea>
+                </div>
+            </div>
+            <div class="flex_con">
+                <div class="common_row">
+                    <label for="dwu_date">Date</label>
+                    <input type="date" class="form-control" id="dwu_date" disabled>
+                </div>
+                <div class="common_row">
+                    <label for="dwu_time">Time for Discussion</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select class="form-control" id="dwu_hours">
+                                <option value="00">00</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" id="dwu_minutes">
+                                <option value="00">00</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                                <option value="32">32</option>
+                                <option value="33">33</option>
+                                <option value="34">34</option>
+                                <option value="35">35</option>
+                                <option value="36">36</option>
+                                <option value="37">37</option>
+                                <option value="38">38</option>
+                                <option value="39">39</option>
+                                <option value="40">40</option>
+                                <option value="41">41</option>
+                                <option value="42">42</option>
+                                <option value="43">43</option>
+                                <option value="44">44</option>
+                                <option value="45">45</option>
+                                <option value="46">46</option>
+                                <option value="47">47</option>
+                                <option value="48">48</option>
+                                <option value="49">49</option>
+                                <option value="50">50</option>
+                                <option value="51">51</option>
+                                <option value="52">52</option>
+                                <option value="53">53</option>
+                                <option value="54">54</option>
+                                <option value="55">55</option>
+                                <option value="56">56</option>
+                                <option value="57">57</option>
+                                <option value="58">58</option>
+                                <option value="59">59</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button class="btn_newadd" id="addButton" onclick="Add(); return false;">
+                    <svg xmlns= width="20" viewBox="0 0 20 20" height="20" fill="none" class="svg-icon"><g stroke-width="1.5" stroke-linecap="round" stroke="#fff"><circle r="7.5" cy="10" cx="10"></circle><path d="m9.99998 7.5v5"></path><path d="m7.5 9.99998h5"></path></g></svg>
+                    <span class="lable1">Add</span>
+                </button>
+            </div>
+            <div id="table_CR" class="common_row" style="display: none;">
+                <table class="table3" id="tbltable" style="color:black;">
+                    <thead>
+                        <tr>
+                            <th class="col-lg-1">Assigned Works</th>
+                            <th class="col-lg-1">Module</th>
+                            <th class="col-lg-1">Description of Work Performed</th>
+                            <th class="col-lg-1">Percentage of Completion</th>
+                            <th class="col-lg-1">Detailed Description</th>
+                            <th class="col-lg-1">Remarks</th>
+                            <th class="col-lg-1">Date</th>
+                            <th class="col-lg-1">Time</th>
+                            <th class="col-lg-1">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbtable">
+                    </tbody>
+                </table>
+            </div>
+            <div class="crt_btn">
+                <button id="DW_btn_Conform" class="confirm_btn" onclick="Save_Daily_Work();" style="display: none;">Confirm</button>
+            </div>
+            @**------------Loading_Style-------------**@
+            <div class="loading-progress" id="loading">
+                <div class="dot-spinner">
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                    <div class="dot-spinner__dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    Bind_Module_fordailywork();
+    Bind_CRF_fordailywork();
+    Bind_Description_of_work();
+
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById('dwu_date').value = today;
+    document.getElementById('dwu_date').addEventListener('input', function () {
+        this.value = today;
+    });
+    $(document).ready(function () {
+        $("#loading").hide();
+        $("#addButton").click(function () {
+            if ($('#tbltable tr').length > 1) { // Check if table has more than 1 row (assuming header row exists)
+                $('#tbltable').parent().css('display', 'block');
+                $('#DW_btn_Conform').css('display', 'block');
+            } else {
+                $('#tbltable').parent().css('display', 'none'); // Hide table if no data
+                $('#DW_btn_Conform').css('display', 'none'); // Hide button if no data
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var crfDropdown = document.getElementById("crf_withsub");
+        var crfOptionExists = false;
+
+        // Check if any option has value "crf"
+        for (var i = 0; i < crfDropdown.options.length; i++) {
+            if (crfDropdown.options[i].value === "crf") {
+                crfOptionExists = true;
+                break;
+            }
+        }
+
+        // Remove any existing "Others" options
+        var othersOptions = document.querySelectorAll('#crf_withsub option[value="others"]');
+        othersOptions.forEach(function (option) {
+            option.remove();
+        });
+
+        // If "crf" option exists, remove the "Others" option
+        if (!crfOptionExists) {
+            // If "crf" option doesn't exist, add "Others" option
+            var othersOption = document.createElement("option");
+            othersOption.value = "others";
+            othersOption.text = "Others";
+            crfDropdown.appendChild(othersOption);
+        }
+
+        // Adding event listener for when the dropdown value changes
+        crfDropdown.addEventListener("change", function () {
+            if (this.value === "others") {
+                // Call the function to save "Others" in the table
+                saveOthersToTable();
+            }
+        });
+    });
+
+    function saveOthersToTable() {
+        // Assuming you want to get the value from the dropdown and save it to the table
+        var selectedText = $("#crf_withsub option:selected").text();
+        var newRow = $("<tr>");
+        newRow.append("<td>" + selectedText + "</td>");
+        $("#tbtable tbody").prepend(newRow);
+    }
+
+</script>

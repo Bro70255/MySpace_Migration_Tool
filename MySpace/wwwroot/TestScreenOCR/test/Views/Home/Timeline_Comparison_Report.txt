@@ -1,0 +1,63 @@
+
+@{
+    ViewBag.Title = "Timeline_Comparison_Report";
+}
+
+<div>
+    <div class="head_container">
+        <h3 class="head_main">TIMELINE COMPARISON REPORT</h3>
+    </div>
+    <div class="body_container">
+        <div class="flex_con">
+            <div class="common_row">
+                <label for="firm">Financial Year</label>
+                <select id="financial_year" class="form-control"></select>
+            </div>
+        </div>
+        <div class="crt_btn">
+            <button id="generate_incentive" class="confirm_btn" onclick="Timeline_Comparison_Report();">Generate</button>
+            <button id="exprtBtn" class="btnexpt" onclick="exportToExcel_timeline_Comparison_rpt();">Export To Excel</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+        <div class="common_row">
+            <table class="table_rpt" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>MONTH</th>
+                        <th>NO.OF EMPLOYEES</th>
+                        <th>TOTAL CRF</th>
+                        <th>AVERAGE CRF PER EMPLOYEE</th>
+                        <th>NO OF CRF LIVE & CLOSED</th>
+                        <th>AVERAGE CRF PER EMPLOYEE(Live & Closed)</th>
+                        <th>TOTAL ASSIGNED DAYS</th>
+                        <th>ACTUAL DAYS TAKEN</th>
+                        <th>AVERAGE DAYS TAKEN FOR CRF COMPLETION</th>
+                        <th>ADDITIONAL DAYS TAKEN</th>
+                        <th>PERCENTAGE OF ADDITIONAL DAYS TAKEN</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        Bind_Financial_year();
+    });
+</script>

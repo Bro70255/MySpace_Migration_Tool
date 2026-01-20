@@ -1,0 +1,79 @@
+
+@{
+    ViewBag.Title = "Hod_rec_pending_rpt_TL";
+}
+<div>
+    <div class="head_container">
+        <h3 class="head_main">HOD Recommendation Pending Crf Report</h3>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <table class="table_rpt" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>CRF ID</th>
+                        <th>PRIORITY</th>
+                        <th>REQUEST DATE</th>
+                        <th>PROJECT NAME</th>
+                        <th>REQUESTED BY</th>
+                        <th>USER DEPRTMENT</th>
+                        <th>TECHLEAD</th>
+                        <th>DEVELOPER</th>
+                        <th>TESTER</th>
+                        <th>HEADAPPROVED DATE</th>
+                        <th>USER TARGETDATE</th>
+                        <th>TA STARTTDATE </th>
+                        <th>TA ENDDATE </th>
+                        <th>TA TESTER STARTDATE</th>
+                        <th>TA TESTER ENDDATE</th>
+                        <th>PROJECT TARGET DATE</th>
+                        <th>STATUS</th>
+                        <th>RELEASE DATE</th>
+                        <th>TOTAL WORK HOURS </th>
+                        <th>MODULE TYPE</th>
+                        <th>USER ACCEPTED DATE</th>
+                        <th>CRF COST</th>
+                        <th>DEVELOPMENT START DATE</th>
+                        <th>DEVELOPMENT END DATE</th>
+                        <th>View Attachments</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        // Get the firm value from the URL
+       /* var firm = getUrlParameter('firm');*/
+        Hod_rec_pending_rpt_Techlead();
+
+    });
+
+    // Function to get URL parameters
+    function getUrlParameter(name) {
+        name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+</script>
+

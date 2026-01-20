@@ -1,0 +1,144 @@
+
+
+@{
+    ViewBag.Title = "CRF_Test_Result";
+}
+
+<div>
+    <div class="head_container">
+        <h2 class="head_main">CRF Test Result</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <label>CRF<span class="mandatory-symbol">*</span></label>
+            <select id="CRF" onchange="Crf_dtls_for_Tester(); handleSelectChange();">
+            </select>
+        </div>
+        <div class="common_row">
+            <label>CRF Content</label>
+            @*<label id="crf_content"></label>*@
+            <textarea class="form-control" id="crf_content" disabled></textarea>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">IT Team</label>
+                <label class="label_fills" id="itteam"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Request Type</label>
+                <label class="label_fills" id="req_typ"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Developer</label>
+                <label class="label_fills" id="developer"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">User Expected Date</label>
+                <label class="label_fills" id="usr_expcted_dt"></label>
+            </div>
+        </div>
+        <div class="row-container">
+            <div class="label-container">
+                <label class="label_heading">Priority</label>
+                <label class="label_fills" id="priority"></label>
+            </div>
+            <div class="label-container">
+                <label class="label_heading">Development Completed Date</label>
+                <label class="label_fills" id="dvlopmnt_cmpleted_dt"></label>
+            </div>
+        </div>
+        <div class="bug_f">
+            <label>Bug Found<span class="mandatory-symbol">*</span>:</label>
+            <input type="radio" id="yes" name="bugStatus" value="yes">
+            <label for="yes">Yes</label>
+            <input type="radio" id="no" name="bugStatus" value="no">
+            <label for="no">No</label>
+        </div>
+        <label class="attach_label">Attached Files</label>
+        <div class="attachment_show">
+            <table class="tableflow" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Sl.No</th>
+                        <th>File Name</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody id="tbletable">
+                    <!-- Sample data rows can be added here -->
+                </tbody>
+            </table>
+        </div>
+        <h3 class="imp_heading">Testing TA Details</h3>
+        <div class="common_row">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>TEST LEAD</th>
+                        <th>PROJECT TYPE</th>
+                        <th>PHASE</th>
+                        <th>TEST STARTDATE</th>
+                        <th>TEST ENDDATE</th>
+                        <th>WORK HOURS</th>
+                    </tr>
+
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+        <div class="row_flex">
+            <div>
+                <label>Test Stage</label>
+                <input type="radio" id="initial" name="Initial" value="initial" disabled>
+                <label for="initial">Initial</label>
+                <input type="radio" id="retesting" name="retest" value="retesting" disabled>
+                <label for="retesting">Retesting</label>
+            </div>
+            <div class="common_row gap8">
+                <label>Test Status<span class="mandatory-symbol">*</span></label>
+                <select id="ddltststs">
+                </select>
+            </div>
+        </div>
+        <div class="common_row">
+            <label>Remark<span class="mandatory-symbol">*</span></label>
+            <textarea id="remark" class="form-control" maxlength="500"></textarea>
+        </div>
+
+        <div class="btn_align">
+            <button id="btn_Confirm" class="confirm_btn" onclick="Tester_Detls_validation();">Confirm</button>
+            <button id="btn_exit" class="exit_btn">Exit</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        Bind_CRF_for_Tester();
+        Bind_Testerstatus();
+        $("#loading").hide();
+    });
+    function handleSelectChange() {
+        var selectElement = document.getElementById('CRF');
+        var selectedValue = selectElement.value;
+        All_Attachments(selectedValue);
+    }
+</script>
+
+
+

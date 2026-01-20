@@ -99,93 +99,99 @@ function renderBlueprintFromEdges(edges) {
 
     screens.forEach((screenNode, sIdx) => {
         const sNo = `${sIdx + 1}`;
-
-        const viewItem = makeTreeItem(sNo, 'VIEW', nodeLabel(screenNode), 'view', true);
+        const viewItem = makeTreeItem(
+            sNo, 'VIEW', nodeLabel(screenNode), 'view', true, screenNode
+        );
 
         const jsNodes = (adj.get(screenNode) || [])
-            .filter(n => nodeType(n) === 'JS')
-            .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+            .filter(n => nodeType(n) === 'JS');
 
-        jsNodes.forEach((jsNodeValue, jIdx) => {
+        jsNodes.forEach((jsNode, jIdx) => {
             const jNo = `${sNo}.${jIdx + 1}`;
+            const jsItem = makeTreeItem(
+                jNo, 'JS', nodeLabel(jsNode), 'js', false, jsNode
+            );
 
-            const jsItem = makeTreeItem(jNo, 'JS', nodeLabel(jsNodeValue), 'js', false);
+            const ctrlNodes = (adj.get(jsNode) || [])
+                .filter(n => nodeType(n) === 'CTRL');
 
-            const ctrlNodes = (adj.get(jsNodeValue) || [])
-                .filter(n => nodeType(n) === 'CTRL')
-                .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
-
-            ctrlNodes.forEach((ctrlNodeValue, cIdx) => {
+            ctrlNodes.forEach((ctrlNode, cIdx) => {
                 const cNo = `${jNo}.${cIdx + 1}`;
-                const route = nodeLabel(ctrlNodeValue);
+                const ctrlItem = makeTreeItem(
+                    cNo, 'CTRL', nodeLabel(ctrlNode), 'ctrl', false, ctrlNode
+                );
 
-                const type =
-                    /(^|\/)(get|fetch)\b/i.test(route) || /\/Get_/i.test(route)
-                        ? 'get'
-                        : 'post';
-
-                const ctrlItem = makeTreeItem(cNo, 'CTRL', route, `ctrl ${type}`, false);
-
-                const bllNodes = (adj.get(ctrlNodeValue) || [])
-                    .filter(n => nodeType(n) === 'BLL')
-                    .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+                const bllNodes = (adj.get(ctrlNode) || [])
+                    .filter(n => nodeType(n) === 'BLL');
 
                 bllNodes.forEach((bll, bIdx) => {
                     const bNo = `${cNo}.${bIdx + 1}`;
-                    const bllItem = makeTreeItem(bNo, 'BLL', `BLL: ${nodeLabel(bll)}`, 'bll', false);
+                    const bllItem = makeTreeItem(
+                        bNo, 'BLL', nodeLabel(bll), 'bll', false, bll
+                    );
 
                     const dalNodes = (adj.get(bll) || [])
-                        .filter(n => nodeType(n) === 'DAL')
-                        .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+                        .filter(n => nodeType(n) === 'DAL');
 
                     dalNodes.forEach((dal, dIdx) => {
                         const dNo = `${bNo}.${dIdx + 1}`;
-                        const dalItem = makeTreeItem(dNo, 'DAL', `DAL: ${nodeLabel(dal)}`, 'dal', false);
+                        const dalItem = makeTreeItem(
+                            dNo, 'DAL', nodeLabel(dal), 'dal', false, dal
+                        );
 
                         const spNodes = (adj.get(dal) || [])
-                            .filter(n => nodeType(n) === 'SP')
-                            .sort((a, b) => nodeLabel(a).localeCompare(nodeLabel(b)));
+                            .filter(n => nodeType(n) === 'SP');
 
                         spNodes.forEach((sp, spIdx) => {
                             const spNo = `${dNo}.${spIdx + 1}`;
-                            const spItem = makeTreeItem(spNo, 'SP', `SP: ${nodeLabel(sp)}`, 'sp', false);
+                            const spItem = makeTreeItem(
+                                spNo, 'SP', nodeLabel(sp), 'sp', false, sp
+                            );
                             dalItem.body.appendChild(spItem.el);
                         });
 
-                        // leaf handling
-                        if (!dalItem.body.hasChildNodes()) dalItem.el.classList.add('leaf');
+                        if (!dalItem.body.hasChildNodes())
+                            dalItem.el.classList.add('leaf');
 
                         bllItem.body.appendChild(dalItem.el);
                     });
 
-                    if (!bllItem.body.hasChildNodes()) bllItem.el.classList.add('leaf');
+                    if (!bllItem.body.hasChildNodes())
+                        bllItem.el.classList.add('leaf');
 
                     ctrlItem.body.appendChild(bllItem.el);
                 });
 
-                if (!ctrlItem.body.hasChildNodes()) ctrlItem.el.classList.add('leaf');
+                if (!ctrlItem.body.hasChildNodes())
+                    ctrlItem.el.classList.add('leaf');
 
                 jsItem.body.appendChild(ctrlItem.el);
             });
 
-            if (!jsItem.body.hasChildNodes()) jsItem.el.classList.add('leaf');
+            if (!jsItem.body.hasChildNodes())
+                jsItem.el.classList.add('leaf');
 
             viewItem.body.appendChild(jsItem.el);
         });
 
         root.appendChild(viewItem.el);
     });
-
-    // if Expand All checkbox already checked when data loads
-    if (window.__applyBlueprintExpandAll) window.__applyBlueprintExpandAll();
 }
 
-function makeTreeItem(no, tag, text, kindClass, openByDefault) {
+/* ================= TREE ITEM ================= */
+
+function makeTreeItem(no, tag, text, kindClass, openByDefault, nodeValue) {
     const el = document.createElement('div');
     el.className = `tree-item ${kindClass}`;
 
     const header = document.createElement('div');
     header.className = 'tree-header';
+
+    const left = document.createElement('div');
+    left.className = 'tree-left';
+
+    const right = document.createElement('div');
+    right.className = 'tree-right';
 
     const twisty = document.createElement('span');
     twisty.className = 'twisty';
@@ -202,67 +208,127 @@ function makeTreeItem(no, tag, text, kindClass, openByDefault) {
     label.className = 'tree-text';
     label.innerHTML = escapeHtml(text);
 
-    header.appendChild(twisty);
-    header.appendChild(num);
-    header.appendChild(pill);
-    header.appendChild(label);
+    const viewBtn = document.createElement('span');
+    viewBtn.className = 'view-code-btn';
+    viewBtn.innerHTML = '&lt;/&gt;';
+    viewBtn.title = 'View Code';
+
+    viewBtn.onclick = e => {
+        e.stopPropagation();
+        openCodeViewer(tag, nodeValue);
+    };
+
+    left.append(twisty, num, pill, label);
+    right.appendChild(viewBtn);
+
+    header.append(left, right);
 
     const body = document.createElement('div');
     body.className = 'tree-children';
 
-    el.appendChild(header);
-    el.appendChild(body);
+    el.append(header, body);
 
     if (openByDefault) el.classList.add('open');
 
-    header.addEventListener('click', () => {
-        // only toggle if it has children
+    header.onclick = () => {
         if (!body.hasChildNodes()) return;
         el.classList.toggle('open');
-    });
+    };
 
     return { el, body };
+}
+
+/* ================= CODE VIEWER ================= */
+
+function openCodeViewer(tag, nodeValue) {
+
+    let filename = '';
+    const parts = nodeValue.split('|');
+
+    switch (tag) {
+
+        case 'VIEW':
+            filename = parts[2] || parts[1];
+            break;
+
+        case 'JS':
+            filename = (parts[2] || parts[1]) + '.js';
+            break;
+
+        case 'CTRL':
+        case 'BLL':
+        case 'DAL':
+            filename = parts.slice(1).join('|') + '.cs';
+            break;
+
+        case 'SP':
+            filename = parts.slice(1).join('|');
+            break;
+
+        default:
+            filename = parts.slice(1).join('|');
+    }
+
+    // Title
+    document.getElementById('codeTitle').textContent =
+        `${tag} : ${filename}`;
+
+    const codeBox = document.getElementById('codeContent');
+    codeBox.textContent = 'Loading...';
+
+    // API Call
+    $.ajax({
+        url: "/Home/Get_File_Path_For_View_Code",
+        type: "GET",
+        dataType: "json",   // 👈 important
+        data: { filename: filename },
+
+        success: function (data) {
+
+            codeBox.textContent = data?.textContent || 'No code found';
+            codeBox.scrollTop = 0;
+
+            document.getElementById('codeViewer')
+                .classList.add('open');
+        }
+    });
+
+}
+
+/* Close viewer */
+function closeCodeViewer() {
+    document.getElementById('codeViewer')
+        .classList.remove('open');
+}
+
+
+/* ================= HELPERS ================= */
+
+function buildGraph(edges) {
+    const adj = new Map();
+    edges.forEach(e => {
+        if (!e.fromNode || !e.toNode) return;
+        if (!adj.has(e.fromNode)) adj.set(e.fromNode, []);
+        adj.get(e.fromNode).push(e.toNode);
+    });
+    for (const [k, v] of adj)
+        adj.set(k, [...new Set(v)]);
+    return adj;
+}
+
+function nodeType(n) {
+    return (n || '').split('|')[0];
+}
+
+function nodeLabel(n) {
+    return (n || '').split('|').slice(1).join('|');
 }
 
 function escapeHtml(str) {
     return String(str)
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-}
-
-
-function buildGraph(edges) {
-    const adj = new Map(); // from -> [to,to]
-
-    (edges || []).forEach(e => {
-        const from = e.fromNode;
-        const to = e.toNode;
-        if (!from || !to) return;
-
-        if (!adj.has(from)) adj.set(from, []);
-        adj.get(from).push(to);
-    });
-
-    // remove duplicates
-    for (const [k, arr] of adj.entries()) {
-        adj.set(k, [...new Set(arr)]);
-    }
-
-    return adj;
-}
-
-function nodeType(node) {
-    return (node || '').split('|')[0]; // SCREEN / JS / CTRL / BLL / DAL / SP
-}
-
-function nodeLabel(node) {
-    const parts = (node || '').split('|');
-    if (parts[0] === 'CTRL') return parts.slice(1).join('|');   // "Home/Get_Report"
-    if (parts[0] === 'SP') return parts.slice(1).join('|');     // "sp_..."
-    return parts.length >= 3 ? parts[2] : node;                 // Name part
+        .replaceAll('>', '&gt;');
 }
 
 
@@ -420,6 +486,7 @@ function saveUser() {
 }
 
 function Initialize_Registration_Report_Details() {
+
    let search = $("#txtSearch").val();
 
     $.ajax({
@@ -454,7 +521,6 @@ function Initialize_Registration_Report_Details() {
     });
 }
 
-/* ================= UPLOAD ================= */
 /* ================= UPLOAD ================= */
 function uploadFiles() {
 
@@ -671,6 +737,7 @@ function bindFileTypes(projectFlowJson) {
         );
     });
 }
+
 
 
 

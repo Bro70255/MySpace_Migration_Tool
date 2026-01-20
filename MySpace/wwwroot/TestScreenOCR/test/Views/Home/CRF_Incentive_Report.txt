@@ -1,0 +1,129 @@
+
+@{
+    ViewBag.Title = "CRF_Incentive_Report";
+}
+<div>
+    <div class="head_container">
+        <h3 class="head_main">CRF INCENTIVE REPORT</h3>
+    </div>
+    <div class="body_container">
+        <div class="flex_con">
+            <div class="common_row">
+                <label for="firm">Firm</label>
+                <select id="firm" class="form-control"></select>
+            </div>
+            <div class="common_row">
+                <label>Start Date</label>
+                <input type="date" id="startdate_incentive" />
+            </div>
+            <div class="common_row">
+                <label>End Date</label>
+                <input type="date" id="enddate_incentive" />
+            </div>
+        </div>
+        <div class="crt_btn">
+            <button id="generate_incentive" class="confirm_btn" onclick="Crf_Incentive_Report();">Generate</button>
+            <button id="exprtBtn" class="btnexpt" onclick="exportToExcel_crfincentive_report();">Export To Excel</button>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+        <div class="common_row">
+            <table class="table_rpt" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>CRF ID</th>
+                        <th>PRIORITY</th>
+                        <th>REQUEST DATE</th>
+                        <th>PROJECT NAME</th>
+                        <th>MODULE NAME</th>
+                        <th>REQUESTED BY</th>
+                        <th>USER DEPRTMENT</th>
+                        <th>TECHLEAD</th>
+                        <th>DEVELOPER</th>
+                        <th>TESTER</th>
+                        <th>HEADAPPROVED DATE</th>
+                        <th>USER TARGETDATE</th>
+                        <th>TA STARTTDATE </th>
+                        <th>TA ENDDATE </th>
+                        <th>TA TESTER STARTDATE</th>
+                        <th>TA TESTER ENDDATE</th>
+                        <th>PROJECT TARGET DATE</th>
+                        <th>STATUS</th>
+                        <th>RELEASE DATE</th>
+                        <th>TOTAL WORK HOURS </th>
+                        <th>MODULE TYPE</th>
+                        <th>USER ACCEPTED DATE</th>
+                        <th>CRF COST</th>
+                        <th>DEVELOPMENT START DATE</th>
+                        <th>DEVELOPMENT END DATE</th>
+                        <th>TESTER START DATE</th>
+                        <th>TESTER END DATE</th>
+                        <th>QA COMPLEXITY</th>
+                        <th>CRF COMPLEXITY</th>
+                        <th>MODULE COMPLEXITY</th>
+                        <th>FEEDBACK 01</th>
+                        <th>FEEDBACK 02</th>
+                        <th>FEEDBACK 03</th>
+                        <th>FEEDBACK 04</th>
+                        <th>FEEDBACK 05</th>
+                        <th>Avg Feedback</th>
+                        <th>std days(TA Tgt Date - TA start date)</th>
+                        <th>Actual days (Dev end date-Dev start date)</th>
+                        <th>Developer side delay/Savings</th>
+                        <th>Target days-(Savings)Live and close date (Project Target date-release date)</th>
+                        <th>Total Delay/ Savings (without 38 days)</th>
+                        <th>38 days delay (Request date-Release date)</th>
+                        <th>Total Delay/ Savings (with 38 days)</th>
+                        <th>Saving %</th>
+                        <th>Module Complexity_W</th>
+                        <th>Change in Critical Module -Complexity</th>
+                        <th>As per days _Complexity</th>
+                        <th>User Feedback_W</th>
+                        <th>Pull Back & Up_W</th>
+                        <th>Bug_W</th>
+                        <th>Total_W</th>
+                        <th>Incentive</th>
+                        <th>Net_ Incentive_Dev</th>
+                        <th>Savings_W for Tech</th>
+                        <th>Tech_W</th>
+                        <th>Tech_Incentive</th>
+                        <th>Net incentive_Tech</th>
+                        <th>MODULE COMPLEXITY</th>
+                        <th>QA COMPLEXITY</th>
+                        <th>STD DAYS</th>
+                        <th>TESTER START DATE</th>
+                        <th>TESTER END DATE</th>
+                        <th>ACTUAL DAYS</th>
+                        <th>QA Delay/ Savings (actual days-Stddays)</th>
+                        <th>WEIGHTAGE</th>
+                        <th>WEIGHTAGE FOR USERFEED BACK</th>
+                        <th>Total Weigthage for tester</th>
+                        <th>Tester Incentive</th>
+                        <th>Actual Incentive-Tester</th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#loading").hide();
+        Bind_Firm_For_Incentive();
+    });
+</script>
+

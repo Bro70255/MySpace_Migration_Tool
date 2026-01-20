@@ -813,3 +813,129 @@ FLOW STYLES (EXTENSION ONLY)
     min-width: 60px; /* keeps alignment nice */
     display: inline-block;
 }
+
+/* =========================================================
+   VIEW CODE BUTTON (RIGHT SIDE OF TREE NODE)
+========================================================= */
+.tree-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tree-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tree-right {
+    display: flex;
+    align-items: center;
+}
+
+/* </> icon */
+.view-code-btn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid rgba(79,140,255,0.25);
+    background: rgba(79,140,255,0.08);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+    .view-code-btn:hover {
+        background: rgba(79,140,255,0.18);
+        box-shadow: 0 0 0 2px rgba(79,140,255,0.25);
+    }
+
+/* Prevent hover clash */
+.tree-header:hover .view-code-btn {
+    opacity: 1;
+}
+
+/* =========================================================
+   RIGHT-SIDE CODE VIEWER PANEL
+========================================================= */
+.code-viewer {
+    position: fixed;
+    top: 0;
+    right: -52%;
+    width: 52%;
+    height: 100%;
+    background: #020617;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    box-shadow: -20px 0 40px rgba(0,0,0,.55);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+    .code-viewer.open {
+        right: 0;
+    }
+
+/* ================= HEADER ================= */
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, #0b1220, #020617);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 14px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+    .code-header button {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+        .code-header button:hover {
+            color: #ef4444;
+            background: rgba(239,68,68,0.15);
+        }
+
+/* ================= CODE AREA ================= */
+#codeContent {
+    flex: 1;
+    padding: 18px 20px;
+    overflow: auto;
+    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e5e7eb;
+    background: #020617;
+    white-space: pre-wrap; /* 🔥 MOST IMPORTANT FIX */
+}
+
+    /* ================= SCROLLBAR ================= */
+    #codeContent::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    #codeContent::-webkit-scrollbar-track {
+        background: #020617;
+    }
+
+    #codeContent::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.12);
+        border-radius: 6px;
+    }
+
+        #codeContent::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.22);
+        }

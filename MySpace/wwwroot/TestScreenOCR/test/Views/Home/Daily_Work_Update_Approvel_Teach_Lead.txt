@@ -1,0 +1,58 @@
+
+
+@{
+    ViewBag.Title = "Daily_Work_Update_Approvel_Teach_Lead";
+}
+<div>
+    <div class="head_container">
+        <h3 class="head_main">Daily Work Verify</h3>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <div id="table_CR">
+                <table class="table3" id="tbltable" style="color:black;">
+                    <thead>
+                        <tr>
+                            <th class="col-lg-1">Developer</th>
+                            <th class="col-lg-1">Assigned Works</th>
+                            <th class="col-lg-1">Module</th>
+                            <th class="col-lg-1">Work Performed</th>
+                            <th class="col-lg-1">Details</th>
+                            <th class="col-lg-1">Remarks</th>
+                            <th class="col-lg-1">Work Date</th>
+                            <th class="col-lg-1">Time</th>
+                            <th class="col-lg-1">Percentage</th>
+                            <th class="col-lg-1">Verify</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbtable">
+                    </tbody>
+                </table>
+                <nav>
+                    <ul id="pagination" class="pagination">
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        @**------------Loading_Style-------------**@
+        <div class="loading-progress" id="loading">
+            <div class="dot-spinner">
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+                <div class="dot-spinner__dot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        $(document).ready(function () {
+            Initialize_Daily_Work_Update_Approvel_Teach_Lead();
+            $("#loading").hide();
+        });
+    </script>
+

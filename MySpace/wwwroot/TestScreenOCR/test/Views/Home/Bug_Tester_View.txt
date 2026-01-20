@@ -1,0 +1,56 @@
+
+@{
+    ViewBag.Title = "Bug_Tester_View";
+}
+
+<div>
+    <div class="head_container">
+        <h2 class="head_main">Bug Tester View</h2>
+    </div>
+    <div class="body_container">
+        <div class="common_row">
+            <table class="table" id="tbltable">
+                <thead>
+                    <tr>
+                        <th>Bugs</th>
+                        <th>Subject</th>
+                        <th>priority</th>
+                        <th>Severity</th>
+                        <th>Bug Reported Date</th>
+                        <th>Status</th>
+                        <th>Developer Remark</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tbtable">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@**------------Loading_Style-------------**@
+<div class="loading-progress" id="loading">
+    <div class="dot-spinner">
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#loading").hide();
+        Bugs_Tester_View();
+      
+    });
+</script>
+
+
+

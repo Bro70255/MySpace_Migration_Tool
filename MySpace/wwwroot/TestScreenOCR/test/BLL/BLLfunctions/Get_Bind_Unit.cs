@@ -1,4 +1,4 @@
-        public static DataTable Get_Bind_Unit()
+        public static DataTable Get_Bind_Unit(int firm)
         {
             try
             {
@@ -10,10 +10,8 @@
                     {
                         try
                         {
-
-                            dtDetail = DAL.Get_Bind_Unit(NewTransation);
+                            dtDetail = CRF_Tracker_dal.Get_Bind_Unit(NewTransation, firm);
                             NewTransation.Commit();
-
                         }
                         catch (Exception ex)
                         {
@@ -30,8 +28,10 @@
                                 NewConnection.Close();
                                 NewConnection.Dispose();
                             }
+
                         }
                     }
+
                 }
                 return dtDetail;
             }

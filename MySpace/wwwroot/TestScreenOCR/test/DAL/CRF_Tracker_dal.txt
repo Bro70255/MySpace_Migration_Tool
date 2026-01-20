@@ -1,0 +1,3324 @@
+using CRF_TRACKER_COMMON;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CRF_TRACKER_DAL
+{
+    public class CRF_Tracker_dal
+    {
+        public static void Sign_Up(SqlTransaction newTransaction, SignUp_model Details)
+        {
+            try
+            {
+                SqlParameter par_Name = new SqlParameter("@Name", Details.Name);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Details.Employee_Code);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Details.Unit);
+                SqlParameter par_Firm = new SqlParameter("@Firm", Details.Firm);
+                SqlParameter par_UserType = new SqlParameter("@UserType", Details.UserType);
+                SqlParameter par_Email = new SqlParameter("@Email", Details.Email);
+                SqlParameter par_Phone_No = new SqlParameter("@Phone_No", Details.Phone_No);
+                SqlParameter par_Password = new SqlParameter("@Password", Details.Password);
+                SqlParameter par_Confirm_Password = new SqlParameter("@Confirm_Password", Details.Confirm_Password);
+
+                SqlParameter[] parameters =
+                {
+                par_Name,par_Employee_Code,par_Unit,par_Firm,par_UserType,par_Email,par_Phone_No,par_Password,par_Confirm_Password
+            };
+                SqlHelper.ExecuteNonQuery(newTransaction
+                           , CommandType.StoredProcedure
+                           , StoreProcedure.INSERT_SIGNUP_DETAILS
+                           , parameters
+                           );
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public static DataTable Get_Bind_UserType(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_USER_TYPE, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Firm(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_FIRM, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+
+        public static DataTable Get_Bind_Firm_for_Incetive_Report(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_FIRM_FOR_INCENTIVE_REPORT, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Unit(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_UNIT, dtDetails, 0, par_firm);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Log_In(SqlTransaction newTransaction, int employeeCode, string loginPassword)
+        {
+            try
+            {
+                SqlParameter par_employeeCode = new SqlParameter("@employeeCode", employeeCode);
+                SqlParameter par_loginPassword = new SqlParameter("@password", loginPassword);
+
+                SqlParameter[] parameters =
+                {
+                  par_employeeCode, par_loginPassword
+                };
+
+                //SqlHelper.ExecuteNonQuery(newTransaction, CommandType.StoredProcedure, StoreProcedure.CHECKING_EMPCODE_AND_PASSWORD, parameters);
+                DataTable dtDetails = new DataTable();
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.API_CHECKING_EMPCODE_AND_PASSWORD, dtDetails, 0, parameters);
+                return dtDetails;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static DataTable log_In(SqlTransaction newTransaction, int employeeCode, string loginPassword)
+        {
+            try
+            {
+                SqlParameter par_employeeCode = new SqlParameter("@employeeCode", employeeCode);
+                SqlParameter par_loginPassword = new SqlParameter("@password", loginPassword);
+
+                SqlParameter[] parameters =
+                {
+                  par_employeeCode, par_loginPassword
+                };
+
+                //SqlHelper.ExecuteNonQuery(newTransaction, CommandType.StoredProcedure, StoreProcedure.CHECKING_EMPCODE_AND_PASSWORD, parameters);
+                DataTable dtDetails = new DataTable();
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.CHECKING_EMPCODE_AND_PASSWORD, dtDetails, 0, parameters);
+                return dtDetails;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static string Crf_Detls(SqlTransaction newTransaction, Crfdtls Crf_Details, int EMP_CODE)
+        {
+            try
+            {
+                SqlParameter parSubject = new SqlParameter("@Subject", Crf_Details.subject);
+                SqlParameter parDescription = new SqlParameter("@Description", Crf_Details.Description);
+                SqlParameter parIt_team = new SqlParameter("@It_team", Crf_Details.It_team);
+                SqlParameter parRequest_type = new SqlParameter("@Request_type", Crf_Details.Request_type);
+                SqlParameter parTarget_date = new SqlParameter("@Target_date", Crf_Details.Target_date);
+                SqlParameter parPriority = new SqlParameter("@Priority", Crf_Details.Priority);
+                SqlParameter parSelect_module = new SqlParameter("@Select_module", Crf_Details.Select_module);
+                SqlParameter parChoose_impctmodule = new SqlParameter("@Choose_impactmodule", Crf_Details.Choose_impctmodule);
+                SqlParameter pardepartment = new SqlParameter("@department", Crf_Details.department);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter parCrfId = new SqlParameter("@Crf_Id", SqlDbType.VarChar, 100);
+                parCrfId.Direction = ParameterDirection.Output;
+
+                SqlParameter[] parameters = {
+            parSubject,
+            parDescription,
+            parIt_team,
+            parRequest_type,
+            parTarget_date,
+            parPriority,
+            parSelect_module,
+            parChoose_impctmodule,
+            pardepartment,
+            parEMP_CODE,
+            parCrfId // adding output parameter for CRF ID
+        };
+
+                SqlHelper.ExecuteNonQuery(newTransaction,
+                    CommandType.StoredProcedure,
+                    StoreProcedure.INSERT_CRF_DETAILS,
+                    parameters
+                );
+
+                // Retrieving CRF ID from output parameter
+                string crfId = parCrfId.Value.ToString();
+                return crfId;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public static DataTable Get_Bind_Team(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TEAM, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Impactingmodule(SqlTransaction newTransaction, int team)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parteam = new SqlParameter("@team", team);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_MODULE, dtDetails, 0, parteam);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Requesttype(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_REQUESTTYPE, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Project(SqlTransaction newTransaction, int impactmodule)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_impactmodule = new SqlParameter("@impactmodule", impactmodule);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_PROJECT, dtDetails, 0, par_impactmodule);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Technicalanalysis_Techlead(SqlTransaction newTransaction, int Techlead)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Techlead = new SqlParameter("@Techlead", Techlead);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TECHNICALANALYSIS_TECHLEAD, dtDetails, 0, par_Techlead);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Developers(SqlTransaction newTransaction, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_DEVELOPERS, dtDetails, 0, par_Team_id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Techlead(SqlTransaction newTransaction, int Firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Firm = new SqlParameter("@Firm", Firm);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TECHLEAD, dtDetails, 0, par_Firm);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Crf_dtls_for_hod_Recommendation(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DETAILS_FOR_HOD_RECOMMENDATION, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Crf_dtls_for_Technical_Analysis(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DTLS_FOR_TECHNICAL_ANALYSIS, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Uploaded_Attachment(SqlTransaction newTransation, string crf_ID)
+        {
+            try
+            {
+
+                SqlParameter par_CRF_IDd = new SqlParameter("@CRF_ID", crf_ID);
+
+                SqlParameter[] parameters = {
+                                               par_CRF_IDd
+
+            };
+
+                DataTable dtDetails = new DataTable();
+                SqlHelper.FillDatatable(newTransation, CommandType.StoredProcedure, StoreProcedure.GET_UPLOADED_ATTACHMENT, dtDetails, 0, parameters);
+                return dtDetails;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Bind_CRF_Id_With_Subject(SqlTransaction newTransaction, int firm, int unit, int Hod)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_unit = new SqlParameter("@unit", unit);
+                SqlParameter par_Hod = new SqlParameter("@Hod", Hod);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_ID_WITH_SUBJECT, dtDetails, 0, par_Hod, par_firm, par_unit);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Update_hod_recommendation(SqlTransaction newTransaction, int HOD, int EMP_CODE, string crf_ID, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_HOD = new SqlParameter("@HOD", HOD);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+                                               par_HOD,
+                                               par_EMP_CODE,
+                                               par_CRF_ID,
+                                               par_Remark
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_HOD_RECOMMENDATION, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Update_hod_reject(SqlTransaction newtransaction, int HOD_REJECT, int EMP_CODE, string crf_ID, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_HOD_REJECT = new SqlParameter("@HOD", HOD_REJECT);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+
+                                            par_HOD_REJECT,
+                                            par_EMP_CODE,
+                                            par_CRF_ID,
+                                            par_Remark
+                };
+
+                SqlHelper.FillDatatable(newtransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_HOD_RECOMMENDATION, dtDetails, 0, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Teach_Lead_Team_Details(SqlTransaction newTransaction, int EMP_CODE, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE,
+                                            par_Team_id
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TEACH_LEAD_TEAM_DETAILS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Change_Type(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CHANGE_TYPE, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Update_IT_head_recommendation(SqlTransaction newTransaction, int IT_head, int EMP_CODE, string CRF_ID, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_IT_head = new SqlParameter("@IT_head", IT_head);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+
+
+                SqlParameter[] parameters =
+                {
+                    par_IT_head,
+                    par_EMP_CODE,
+                    par_CRF_ID,
+                    par_Remark
+
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_IT_HEAD_RECOMMENDATION, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Update_IT_head_reject(SqlTransaction newtransaction, int IT_head_REJECT, int EMP_CODE, string crf_ID, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_IT_head_REJECT = new SqlParameter("@IT_head", IT_head_REJECT);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+
+                                            par_IT_head_REJECT,
+                                            par_EMP_CODE,
+                                            par_CRF_ID,
+                                            par_Remark
+                };
+
+                SqlHelper.FillDatatable(newtransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_IT_HEAD_RECOMMENDATION, dtDetails, 0, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable update_Head_Approval(SqlTransaction NewTransaction, int Head, int EMP_CODE, string CRF_ID, string remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Head = new SqlParameter("@head", Head);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", remark);
+
+                SqlParameter[] parameters =
+                {
+                    par_Head,
+                    par_EMP_CODE,
+                    par_CRF_ID,
+                    par_Remark
+
+                };
+                SqlHelper.FillDatatable(NewTransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_HEAD_APPROVAL, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Update_Head_reject(SqlTransaction newtransaction, int HEAD_REJECT, int EMP_CODE, string crf_ID, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_HEAD_REJECT = new SqlParameter("@head", HEAD_REJECT);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+
+                                            par_HEAD_REJECT,
+                                            par_EMP_CODE,
+                                            par_CRF_ID,
+                                            par_Remark
+                };
+
+                SqlHelper.FillDatatable(newtransaction, CommandType.StoredProcedure, StoreProcedure.UPLOAD_HEAD_APPROVAL, dtDetails, 0, parameters);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_CRF_Id_for_IT_head(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_ID_WITH_SUBJECT_FOR_IT_HEAD, dtDetails, 0, par_firm);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_Crf_Id_for_Head_Approval(SqlTransaction transaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlHelper.FillDatatable(transaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_ID_FOR_HEAD_APPROVAL, dtDetails, 0, par_firm);
+            }
+            catch (Exception ex) { throw ex; }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Related_Work(SqlTransaction newTransaction, int change_type)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_change_type = new SqlParameter("@change_type", change_type);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_RELATED_WORK, dtDetails, 0, par_change_type);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Technicalanalysis_Techlead_Detls(SqlTransaction newTransaction, Dictionary<string, string> Technicalanalysis_dtls, List<List<string>> Details, int EMP_CODE, int Techlead_Status)
+        {
+            try
+            {
+                string Crf_id = Technicalanalysis_dtls["Crf_id"];
+                string Remarks = Technicalanalysis_dtls["Remarks"];
+                string Man_hour = Technicalanalysis_dtls["Man_hour"];
+                string cost_estmation = Technicalanalysis_dtls["cost_estmation"];
+
+                foreach (var detail in Details)
+                {
+                    SqlParameter parCrf_id = new SqlParameter("@Crf_id", Crf_id);
+                    SqlParameter parRemarks = new SqlParameter("@Remarks", Remarks);
+                    SqlParameter parPhase = new SqlParameter("@Phase", detail[0]);
+                    SqlParameter parChanges_type = new SqlParameter("@Changes_type", detail[1]);
+                    SqlParameter parcrf_complexity = new SqlParameter("@crf_complexity", detail[3]);
+                    SqlParameter parRelated_Work = new SqlParameter("@Related_Work", detail[5]);
+                    SqlParameter parNumber_of_changes = new SqlParameter("@Number_of_changes", detail[7]);
+                    SqlParameter parMan_Hours = new SqlParameter("@Man_Hours", detail[8]);
+                    SqlParameter parDeveloper = new SqlParameter("@Developer", detail[9]);
+                    SqlParameter parStart_Date = new SqlParameter("@Start_Date", detail[11]);
+                    SqlParameter parEnd_Date = new SqlParameter("@End_Date", detail[12]);
+                    SqlParameter parCost_Estimation = new SqlParameter("@Cost_Estimation", detail[13]);
+                    SqlParameter parEMP_CODE = new SqlParameter("@Techlead", EMP_CODE);
+                    SqlParameter parTestlead_Status = new SqlParameter("@Techlead_Status", Techlead_Status);
+                    SqlParameter[] detailParameters = { parCrf_id, parRemarks, /*parMan_hour, parcost_estmation,*/parPhase, parChanges_type, parcrf_complexity, parRelated_Work, parNumber_of_changes, parMan_Hours, parDeveloper, parStart_Date, parEnd_Date, parCost_Estimation, parEMP_CODE, parTestlead_Status };
+
+                    SqlHelper.ExecuteNonQuery(newTransaction
+                        , CommandType.StoredProcedure
+                        , StoreProcedure.INSERT_TECHLEAD_TECHINCALANALYSIS_DTLS
+                        , detailParameters
+                    );
+                }
+                SqlParameter parCrf_Id = new SqlParameter("@Crf_id", Crf_id);
+                SqlParameter parMan_hour = new SqlParameter("@Man_hrs", Man_hour);
+                SqlParameter parcost_estmation = new SqlParameter("@cst_estmation", cost_estmation);
+                SqlParameter[] Parameters1 = { parCrf_Id, parMan_hour, parcost_estmation };
+
+                SqlHelper.ExecuteNonQuery(newTransaction
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.INSERT_MANPOWER_DTLS
+                    , Parameters1
+                       );
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+
+        }
+        public static void Handover_Techlead_Detls(SqlTransaction newTransaction, Dictionary<string, string> Handover_dtls, int EMP_CODE, int Techlead_Status)
+        {
+            try
+            {
+                string Crf_id = Handover_dtls["Crf_id"];
+                string Remarks = Handover_dtls["Remarks"];
+                string Techlead2 = Handover_dtls["Techlead2"];
+                {
+                    SqlParameter parCrf_id = new SqlParameter("@Crf_id", Crf_id);
+                    SqlParameter parRemarks = new SqlParameter("@Remarks", Remarks);
+                    SqlParameter parTechlead2 = new SqlParameter("@Techlead2", Techlead2);
+                    SqlParameter parEMP_CODE = new SqlParameter("@Techlead", EMP_CODE);
+                    SqlParameter parTechlead_Status = new SqlParameter("@Techlead_Status", Techlead_Status);
+                    SqlParameter[] detailParameters = { parCrf_id, parRemarks, parTechlead2, parEMP_CODE, parTechlead_Status };
+
+                    SqlHelper.ExecuteNonQuery(newTransaction
+                        , CommandType.StoredProcedure
+                        , StoreProcedure.INSERT_TECHLEAD_HANDOVER_DTLS
+                        , detailParameters
+                    );
+                }
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static void Return_To_User_Detls(SqlTransaction newTransaction, Dictionary<string, string> Returnuser_dtls, int EMP_CODE, int Techlead_Status)
+        {
+            try
+            {
+                string Crf_id = Returnuser_dtls["Crf_id"];
+                string Remarks = Returnuser_dtls["Remarks"];
+
+                {
+                    SqlParameter parCrf_id = new SqlParameter("@Crf_id", Crf_id);
+                    SqlParameter parRemarks = new SqlParameter("@Remarks", Remarks);
+                    SqlParameter parEMP_CODE = new SqlParameter("@Techlead", EMP_CODE);
+                    SqlParameter parTechlead_Status = new SqlParameter("@Techlead_Status", Techlead_Status);
+                    SqlParameter[] detailParameters = { parCrf_id, parRemarks, parEMP_CODE, parTechlead_Status };
+
+                    SqlHelper.ExecuteNonQuery(newTransaction
+                        , CommandType.StoredProcedure
+                        , StoreProcedure.INSERT_RETURN_DTLS
+                        , detailParameters
+                    );
+                }
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static DataTable Get_Bind_CRF_for_Testing_TA(SqlTransaction newTransaction, int Testlead)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Testlead = new SqlParameter("@Testlead", Testlead);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_FOR_TESTING_TA, dtDetails, 0, par_Testlead);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Crf_dtls_for_Testing_TA(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DTLS_FOR_TESTING_TA, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Testers(SqlTransaction newTransaction, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TESTERS, dtDetails, 0, par_Team_id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_ProjectType_Tester(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_PROJECTTYPE_TESTER, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Phase_Tester(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_PHASE_TESTER, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_RelatedWork_Tester(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_RELATEDWORK_TESTER, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Technicalanalysis_Testlead_Detls(SqlTransaction newTransaction, Dictionary<string, string> Technicalanalysis_Techleaddtls, List<List<string>> Detail, int EMP_CODE, int Testlead_Status)
+        {
+            try
+            {
+                string Crf_id = Technicalanalysis_Techleaddtls["Crf_id"];
+                string Remarks = Technicalanalysis_Techleaddtls["Remark"];
+                string Testing_Hrs = Technicalanalysis_Techleaddtls["Testing_Hrs"];
+                string Total_Work_Hrs = Technicalanalysis_Techleaddtls["Total_Work_Hrs"];
+                string Total_Cost = Technicalanalysis_Techleaddtls["Total_Cost"];
+                string Code_review = Technicalanalysis_Techleaddtls["Code_review"];
+                foreach (var detail in Detail)
+                {
+                    SqlParameter parCrf_id = new SqlParameter("@Crf_id", Crf_id);
+                    SqlParameter parRemarks = new SqlParameter("@Remark", Remarks);
+                    SqlParameter parTesting_Hrs = new SqlParameter("@Testing_Hrs", Testing_Hrs);
+                    SqlParameter parTotal_Work_Hrs = new SqlParameter("@Total_Work_Hrs", Total_Work_Hrs);
+                    SqlParameter parTotal_Cost = new SqlParameter("@Total_Cost", Total_Cost);
+                    SqlParameter parCode_review = new SqlParameter("@Code_review", Code_review);
+                    SqlParameter parProject_Type = new SqlParameter("@Project_Type", detail[1]);
+                    SqlParameter parTester_Phase = new SqlParameter("@Tester_Phase", detail[3]);
+                    SqlParameter parRelated_Work = new SqlParameter("@Related_Work", detail[5]);
+                    SqlParameter parTester_Startdt = new SqlParameter("@Tester_Startdt", detail[6]);
+                    SqlParameter parTester_Enddt = new SqlParameter("@Tester_Enddt", detail[7]);
+                    SqlParameter parTestcase = new SqlParameter("@Testcases", detail[8]);
+                    SqlParameter parTester = new SqlParameter("@Tester", detail[10]);
+                    SqlParameter parEMP_CODE = new SqlParameter("@Testlead", EMP_CODE);
+                    SqlParameter parTestlead_Status = new SqlParameter("@Testlead_Status", Testlead_Status);
+                    SqlParameter[] detailParameters = { parCrf_id, parRemarks, parProject_Type, parTester_Phase, parRelated_Work, parTester_Startdt, parTester_Enddt, parTestcase, parTester, parEMP_CODE, parTestlead_Status, parTesting_Hrs, parTotal_Work_Hrs, parTotal_Cost, parCode_review, };
+
+                    SqlHelper.ExecuteNonQuery(newTransaction
+                        , CommandType.StoredProcedure
+                        , StoreProcedure.INSERT_TESTLEAD_TECHINCALANALYSIS_DTLS
+                        , detailParameters
+                    );
+                }
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static DataTable Get_Manpower_Fortesting_Ta(SqlTransaction newTransaction, string crf_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_id = new SqlParameter("@crf_id", crf_id);
+
+
+                SqlParameter[] parameters = {
+
+                                            par_crf_id
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_MANPOWER_COST_TADETAILS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Crf_Dtls_for_Developer_Updation(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DTLS_FOR_DEVELOPER_UPDATION, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_Work_Status_Dvlpr_updation(SqlTransaction newTransaction, string crf_id, int Developer)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parcrf_id = new SqlParameter("@crf_id", crf_id);
+                SqlParameter parDeveloper = new SqlParameter("@Developer", Developer);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_WORK_STATUS_FOR_DEVELOPER_UPDATION, dtDetails, 0, parcrf_id, parDeveloper);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_CRF_Dev_Updation(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parEMP_CODE = new SqlParameter("@Developer", EMP_CODE);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRFID_DEVLOPER_UPDATION, dtDetails, 0, parEMP_CODE);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Insert_Developer_Updation(SqlTransaction newTransaction, string crf_ID, int status, string Remark, int Developer)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter par_status = new SqlParameter("@status", status);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+                SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+
+                SqlParameter[] parameters = {
+                                               par_crf_ID,
+                                               par_status,
+                                               par_Remark,
+                                               par_Developer
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.INSERT_DEVELOPER_UPDATION, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Insert_Developer_complete_Updation(SqlTransaction newTransaction, string crf_ID, int status, string Remark, string module_name, string Tfs_name, string Uat_link, string Uat_path, int Developer)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter par_status = new SqlParameter("@status", status);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+                SqlParameter par_module_name = new SqlParameter("@module_name", module_name);
+                SqlParameter par_Tfs_name = new SqlParameter("@Tfs_name", Tfs_name);
+                SqlParameter par_Uat_link = new SqlParameter("@Uat_link", Uat_link);
+                SqlParameter par_Uat_path = new SqlParameter("@Uat_path", Uat_path);
+                SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+
+                SqlParameter[] parameters = {
+                                               par_crf_ID,
+                                               par_status,
+                                               par_Remark,
+                                               par_module_name,
+                                               par_Tfs_name,
+                                               par_Uat_link,
+                                               par_Uat_path,
+                                               par_Developer
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.INSERT_DEVELOPER_COMPLETE_UPDATION, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_CRF_for_Tester(SqlTransaction newTransaction, int Tester)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Tester = new SqlParameter("@Tester", Tester);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_FOR_TESTER, dtDetails, 0, par_Tester);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Crf_dtls_for_Tester(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DTLS_FOR_TESTER, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Testerstatus(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TESTERSTATUS, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Insert_Tester_dtls(SqlTransaction newTransaction, string crf_ID, int status, string Remark, int Tester)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter par_status = new SqlParameter("@status", status);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+                SqlParameter par_Tester = new SqlParameter("@Tester", Tester);
+
+                SqlParameter[] parameters = {
+                                               par_crf_ID,
+                                               par_status,
+                                               par_Remark,
+                                               par_Tester
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.INSERT_TESTER_DETAILS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_CRF_for_Tester_Bug_Tracking(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_FOR_TESTER_BUG_TRACKING, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Severity(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_SEVERITY, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Priority_For_BugReport(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_PRIORITY_FOR_BUGREPORT, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Environment(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_ENVIRONMENT, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Developer_For_Bug_Report(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_DEVELOPERS_FOR_BUG_REPORT, dtDetails, 0, par_crf_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Tracker_Selection(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TRACKER, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Tester_bug_Report(SqlTransaction newTransaction, Tester_Bug_Reported_Dtls_ Tester_Bug_Reported_Dtls_, int EMP_CODE, string crf_ID)
+        {
+            try
+            {
+                SqlParameter parTracker = new SqlParameter("@Tracker", Tester_Bug_Reported_Dtls_.Tracker);
+                SqlParameter parcrf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter parsubject = new SqlParameter("@Subject", Tester_Bug_Reported_Dtls_.subject);
+                SqlParameter parDescription = new SqlParameter("@Description", Tester_Bug_Reported_Dtls_.Description);
+                SqlParameter parseverity = new SqlParameter("@severity", Tester_Bug_Reported_Dtls_.severity);
+                SqlParameter parpriority = new SqlParameter("@priority", Tester_Bug_Reported_Dtls_.priority);
+                SqlParameter parEnvironment = new SqlParameter("@Environment", Tester_Bug_Reported_Dtls_.Environment);
+                SqlParameter parDeveloper = new SqlParameter("@Developer", Tester_Bug_Reported_Dtls_.Developer);
+                SqlParameter parAttach_file = new SqlParameter("@Attach_file", Tester_Bug_Reported_Dtls_.Attach_file);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter[] parameters = {
+            parTracker,
+            parcrf_ID,
+            parsubject,
+            parDescription,
+            parseverity,
+            parpriority,
+            parEnvironment,
+            parDeveloper,
+            parAttach_file,
+            parEMP_CODE
+        };
+                SqlHelper.ExecuteNonQuery(newTransaction
+       , CommandType.StoredProcedure
+       , StoreProcedure.SAVE_TESTER_BUG_REPORT_DTLS
+       , parameters
+       );
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static DataTable Get_CRF_for_Developer_Bug_Tracking(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_FOR_DEVELOPER_BUG_TRACKING, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Crf_dtls_for_Bug_view(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DETAILS_FOR_BUG_VIEW, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bugs_View(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BUG_VIEW_DTLS, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Bug_Resolved(SqlTransaction newTransation, string Tester_Bug_Report_ID, int bugfix, string remark)
+        {
+            try
+            {
+                SqlParameter parTester_Bug_Report_ID = new SqlParameter("@Tester_Bug_Report_ID", Tester_Bug_Report_ID);
+                SqlParameter parbugfix = new SqlParameter("@bugfix", bugfix);
+                SqlParameter parRemark = new SqlParameter("@Remark", remark);
+                SqlParameter[] parameters = {
+                                  parTester_Bug_Report_ID,
+                                  parbugfix,
+                                  parRemark
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.BUG_RESOLVED_DTLS
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Bugs_Tester_View(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter[] parameters = {
+                                par_crf_ID
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BUG_VIEW_TESTER_DTLS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Re_Assign(SqlTransaction newTransation, string Tester_Bug_Report_ID, int bugfix)
+        {
+            try
+            {
+                SqlParameter parTester_Bug_Report_ID = new SqlParameter("@Tester_Bug_Report_ID", Tester_Bug_Report_ID);
+                SqlParameter parbugfix = new SqlParameter("@bugfix", bugfix);
+
+                SqlParameter[] parameters = {
+                                  parTester_Bug_Report_ID,
+                                  parbugfix
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_BUG_RE_ASSIGN
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static void Save_Bug_Verify(SqlTransaction newTransation, string Tester_Bug_Report_ID, int bugfix)
+        {
+            try
+            {
+                SqlParameter parTester_Bug_Report_ID = new SqlParameter("@Tester_Bug_Report_ID", Tester_Bug_Report_ID);
+                SqlParameter parbugfix = new SqlParameter("@bugfix", bugfix);
+
+                SqlParameter[] parameters = {
+                                  parTester_Bug_Report_ID,
+                                  parbugfix
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_BUG_VERIFY
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Crf_dtls_for_User_Acceptance(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DTLS_FOR_USER_ACCEPTANCE, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_User_Acceptance(SqlTransaction newTransation, string selectedCrfId, string Remark, int EMP_CODE, int user_acceptance)
+        {
+            try
+            {
+                SqlParameter parselectedCrfId = new SqlParameter("@selectedCrfId", selectedCrfId);
+                SqlParameter paruser_acceptance = new SqlParameter("@user_acceptance", user_acceptance);
+                SqlParameter parRemark = new SqlParameter("@Remark", Remark);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+                SqlParameter[] parameters = {
+                                  parselectedCrfId,
+                                  paruser_acceptance,
+                                  parRemark,
+                                  parEMP_CODE
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_USER_ACCEPTANCE
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Bind_Crf_Id_For_User_Acceptance(SqlTransaction newTransaction, int User)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_User = new SqlParameter("@user_emp_code", User);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_ID_FOR_USER_ACCEPTANCE, dtDetails, 0, par_User);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Crf_dtls_for_userfeedback(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DETAILS_FOR_USERFEEDBACK_DTLS, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_CRF_for_dev_usrfeedback(SqlTransaction newTransaction, int developer)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_developer = new SqlParameter("@developer", developer);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_FOR_DEV_USRFEEDBACK, dtDetails, 0, par_developer);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Save_Userfeedback_dtls(SqlTransaction newTransaction, int user_feedback, string crf_ID, string Link, string Path, int developer, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_user_feedback = new SqlParameter("@user_feedback", user_feedback);
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter par_Link = new SqlParameter("@Link", Link);
+                SqlParameter par_Path = new SqlParameter("@Path", Path);
+                SqlParameter par_developer = new SqlParameter("@developer", developer);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+                                               par_user_feedback,
+                                               par_crf_ID,
+                                               par_Link,
+                                               par_Path,
+                                               par_developer,
+                                               par_Remark
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.SAVE_DEV_USRFEEDBACK_DTLS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Usefeedback_dtls(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.CRF_DETAILS_FOR_USERFEEDBACK_DTLS, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_CRF_for_userfeedback(SqlTransaction newTransaction, int user)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_user = new SqlParameter("@user", user);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_FOR_USRFEEDBACK, dtDetails, 0, par_user);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Save_usrfeedback_rating_dtls(SqlTransaction newTransaction, int User_Liveclose, int USER, string crf_ID, int ratingValue1, int ratingValue2, int ratingValue3, int ratingValue4, int ratingValue5, string Remark)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parUser_Liveclose = new SqlParameter("@User_Liveclose", User_Liveclose);
+                SqlParameter parUSER = new SqlParameter("@USER", USER);
+                SqlParameter parcrf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter parratingValue1 = new SqlParameter("@ratingValue1", ratingValue1);
+                SqlParameter parratingValue2 = new SqlParameter("@ratingValue2", ratingValue2);
+                SqlParameter parratingValue3 = new SqlParameter("@ratingValue3", ratingValue3);
+                SqlParameter parratingValue4 = new SqlParameter("@ratingValue4", ratingValue4);
+                SqlParameter parratingValue5 = new SqlParameter("@ratingValue5", ratingValue5);
+                SqlParameter parRemark = new SqlParameter("@Remark", Remark);
+
+                SqlParameter[] parameters = {
+                                              parUser_Liveclose,
+                                              parUSER,
+                                              parcrf_ID,
+                                              parratingValue1,
+                                              parratingValue2,
+                                              parratingValue3,
+                                              parratingValue4,
+                                              parratingValue5,
+                                              parRemark
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.SAVE_USRFEEDBACK_RATING_DTLS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Crf_edit_dtls(SqlTransaction newTransaction, int emp_code)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", emp_code);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_DETAILS_FOR_USER, dtDetails, 0, parEMP_CODE);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void User_Edit_Detls(SqlTransaction newTransaction, Returnusr_dtls return_details, int EMP_CODE)
+        {
+            try
+            {
+
+                SqlParameter parcrf_ID = new SqlParameter("@crf_ID", return_details.selectedCrfId);
+                SqlParameter parremark = new SqlParameter("@remark", return_details.remark);
+                SqlParameter parAttach_file = new SqlParameter("@Attach_file", return_details.Attach_file);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter[] parameters = {
+            parcrf_ID,
+            parremark,
+            parAttach_file,
+            parEMP_CODE
+        };
+                SqlHelper.ExecuteNonQuery(newTransaction
+       , CommandType.StoredProcedure
+       , StoreProcedure.SAVE_USER_RETURN_DTLS
+       , parameters
+       );
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static void Save_Testerchange_dtls(SqlTransaction newTransation, int testerid, string crf, int new_tester)
+        {
+            try
+            {
+                SqlParameter partesterid = new SqlParameter("@testerid", testerid);
+                SqlParameter parcrf = new SqlParameter("@crf", crf);
+                SqlParameter parnew_tester = new SqlParameter("@new_tester", new_tester);
+
+                SqlParameter[] parameters = {
+                                  partesterid,
+                                  parcrf,
+                                  parnew_tester
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_TESTERCHANGE_DTLS
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Bind_Tester_Change_Dtls(SqlTransaction newTransation, int selectedtesterid)
+        {
+            SqlParameter par_selectedtesterid = new SqlParameter("@selectedtesterid", selectedtesterid);
+
+            DataTable dtDetails = new DataTable();
+            SqlHelper.FillDatatable(newTransation, CommandType.StoredProcedure, StoreProcedure.GET_BIND_TESTERCHANGE_DETAILS, dtDetails, 0, par_selectedtesterid);
+            return dtDetails;
+
+        }
+        public static DataTable Bind_CRF_Id_Dev_Change(SqlTransaction newTransaction, int Developer)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_FOR_DEVELOPER_CHANGE, dtDetails, 0, par_Developer);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Developer_Change_dtls(SqlTransaction newTransaction, int Developer, string Crf_id, int New_Developer)
+        {
+            try
+            {
+                SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+                SqlParameter par_Crf_id = new SqlParameter("@Crf_id", Crf_id);
+                SqlParameter par_New_Developer = new SqlParameter("@New_Developer", New_Developer);
+
+                SqlParameter[] parameters = {
+            par_Developer,
+            par_Crf_id,
+            par_New_Developer
+        };
+                SqlHelper.ExecuteNonQuery(newTransaction
+       , CommandType.StoredProcedure
+       , StoreProcedure.SAVE_DEVELOPER_CHANGE_DTLS
+       , parameters
+       );
+                // Continue with the rest of your code...
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                // Handle any exceptions here...
+            }
+        }
+        public static DataTable Get_User_Crf_list(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_USER_CRF_LIST, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_crf_status_Report(SqlTransaction newTransaction, DateTime Startdate, DateTime Enddate, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Startdate = new SqlParameter("@Startdate", Startdate);
+                SqlParameter par_Enddate = new SqlParameter("@Enddate", Enddate);
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_Startdate, par_Enddate, par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ALL_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_User_Feedback_Report(SqlTransaction newTransaction, DateTime Startdate, DateTime Enddate, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Startdate = new SqlParameter("@Startdate", Startdate);
+                SqlParameter par_Enddate = new SqlParameter("@Enddate", Enddate);
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_Startdate, par_Enddate, par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_USER_FEEDBACK_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Emp_Name(SqlTransaction newTransaction, int EMP_code)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_code);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_EMP_NAME, dtDetails, 0, par_EMP_CODE);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Dashboard_Count(SqlTransaction newTransaction, int EMP_CODE, int UserID, int FIRM, int UNIT, int Team_id, int UserType)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_UserID = new SqlParameter("@UserID", UserID);
+                SqlParameter par_FIRM = new SqlParameter("@FIRM", FIRM);
+                SqlParameter par_UNIT = new SqlParameter("@UNIT", UNIT);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE,
+                                            par_UserID,
+                                            par_FIRM,
+                                            par_UNIT,
+                                            par_Team_id,
+                                            par_UserType
+
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DASHBOARD_COUNT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Delete_Crf_of_User(SqlTransaction newTransation, string crfId, string remarks, int user_crf_delete)
+        {
+            try
+            {
+                SqlParameter parcrfId = new SqlParameter("@crfId", crfId);
+                SqlParameter paruser_crf_delete = new SqlParameter("@user_crf_delete", user_crf_delete);
+                SqlParameter parRemark = new SqlParameter("@Remark", remarks);
+
+                SqlParameter[] parameters = {
+                                  parcrfId,
+                                  paruser_crf_delete,
+                                  parRemark
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.DELETE_CRF_OF_USER
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_developerwise_Report(SqlTransaction newTransaction, DateTime Startdate, DateTime Enddate, int Developer, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Startdate = new SqlParameter("@Startdate", Startdate);
+                SqlParameter par_Enddate = new SqlParameter("@Enddate", Enddate);
+                SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_Startdate, par_Enddate, par_Developer, par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DEVELOPERWISE_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Notification(SqlTransaction newTransaction, int EMP_CODE, int FIRM, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_FIRM = new SqlParameter("@FIRM", FIRM);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = {
+
+                    par_EMP_CODE,
+                    par_FIRM,
+                    par_UserType,
+                    par_Team_id,
+                    par_Unit
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_NOTIFICATION_DTLS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_Developers_For_Dev_Wise_Report(SqlTransaction newTransaction, int Firm_Id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Firm_Id = new SqlParameter("@Firm_Id", Firm_Id);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_DEVELOPERS_FOR_DEV_WISE_REPORT, dtDetails, 0, par_Firm_Id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_Firm_For_Developer_Wise_Report(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@Employee_Code", EMP_CODE);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_FIRM_FOR_DEVELOPER_WISE_REPORT, dtDetails, 0, par_EMP_CODE);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_CRF_Flow_Of_User(SqlTransaction newTransaction, string CRF_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DETAILS_OF_CRF_STATUS_FLOW, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Attachment_Files(SqlTransaction newTransaction, string CRF_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+
+                SqlParameter[] parameters = {
+                 par_CRF_ID
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ATTACHMENT_FILES, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Module_fordailywork(SqlTransaction newTransaction, int Firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Firm_Id = new SqlParameter("@Firm_Id", Firm);
+                SqlParameter[] parameters = {
+                 par_Firm_Id
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_MODULE_FORDAILYWORK, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Bind_CRF_for_Dailywork(SqlTransaction newTransaction, int EMP_CODE, int FIRM, int UserType)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_FIRM = new SqlParameter("@FIRM", FIRM);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+
+                SqlParameter[] parameters = {
+
+                  parEMP_CODE,
+                     par_FIRM,
+                 par_UserType,
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_CRF_FOR_DAILYWORK_UPDATION, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Description_of_work(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_DESCRIPTION_OF_WORK, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Daily_Work_Updation(SqlTransaction newTransation, List<List<string>> Details, int EMP_CODE, int FIRM, int UserType)
+        {
+            try
+            {
+                foreach (var detail in Details)
+                {
+                    SqlParameter parempId = new SqlParameter("@empId", EMP_CODE);
+                    SqlParameter parfirmId = new SqlParameter("@firm", FIRM);
+                    SqlParameter parusertype = new SqlParameter("@usertype", UserType);
+                    SqlParameter parassignedWork = new SqlParameter("@assignedWork", detail[0]);
+                    SqlParameter par_module = new SqlParameter("@module_id", detail[2]);
+                    SqlParameter pardescription = new SqlParameter("@descrption_id", detail[4]);
+                    SqlParameter parcompletionPercentage = new SqlParameter("@completionPercentage", detail[5]);
+                    SqlParameter pardetailedDescription = new SqlParameter("@detailedDescription", detail[6]);
+                    SqlParameter parremark = new SqlParameter("@remark", detail[7]);
+                    SqlParameter pardate = new SqlParameter("@date", detail[8]);
+                    SqlParameter partime = new SqlParameter("@time", detail[9]);
+                    SqlParameter[] parameters = {
+                parempId,
+                parfirmId,
+                parusertype,
+                parassignedWork,
+                par_module,
+                pardescription,
+                parcompletionPercentage,
+                pardetailedDescription,
+                parremark,
+                pardate,
+                partime
+            };
+
+                    SqlHelper.ExecuteNonQuery(newTransation
+                        , CommandType.StoredProcedure
+                        , StoreProcedure.SAVE_DAILY_WORK
+                        , 0
+                        , parameters
+                    );
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Daily_Work_Update_Approvel_Teach_Lead(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DAILY_WORK_UPDATE_APPROVEL_TEACH_LEAD, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Assit_or_techlead_verification(SqlTransaction newTransation, int DWU_ID, int EMP_CODE, int A_TL)
+        {
+            try
+            {
+                SqlParameter parDWU_ID = new SqlParameter("@DWU_ID", DWU_ID);
+                SqlParameter parempId = new SqlParameter("@empId", EMP_CODE);
+                SqlParameter parA_TL = new SqlParameter("@A_TL", A_TL);
+                SqlParameter[] parameters = {
+
+                parDWU_ID,
+                parempId,
+                parA_TL
+            };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_ASSIT_OR_TECHLEAD_VERIFICATION
+                    , 0
+                    , parameters
+                );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Daily_Work_Update_Approvel_Head(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DAILY_WORK_UPDATE_APPROVEL_HEAD, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Head_or_Coordinator_verification(SqlTransaction newTransation, int DWU_ID, int EMP_CODE, int HC)
+        {
+            try
+            {
+                SqlParameter parDWU_ID = new SqlParameter("@DWU_ID", DWU_ID);
+                SqlParameter parempId = new SqlParameter("@empId", EMP_CODE);
+                SqlParameter parHC = new SqlParameter("@HC", HC);
+                SqlParameter[] parameters = {
+
+                parDWU_ID,
+                parempId,
+                parHC
+            };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_HEAD_OR_COORDINATOR_VERIFICATION
+                    , 0
+                    , parameters
+                );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_For_Horizontal_Flow_Data(SqlTransaction newTransaction, string CRF_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+
+                SqlParameter[] parameters = {
+         par_CRF_ID
+        };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_FOR_HORIZONTAL_FLOW_DATA, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Developers_for_Dailywork_report(SqlTransaction newTransaction, int Firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Firm_Id = new SqlParameter("@Firm_Id", Firm);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_DEVELOPERS_FOR_DAILYWORK_REPORT, dtDetails, 0, par_Firm_Id);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Developer_Daily_Report(SqlTransaction newTransaction, int value, DateTime From_date, DateTime To_date, int Developer, string Module)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter parvalue = new SqlParameter("@value", value);
+                SqlParameter parFrom_date = new SqlParameter("@From_date", From_date);
+                SqlParameter parTo_date = new SqlParameter("@To_date", To_date);
+                SqlParameter parDeveloper = new SqlParameter("@Developer", Developer);
+                SqlParameter parModule = new SqlParameter("@Module", Module);
+                SqlParameter[] parameters = { parvalue, parFrom_date, parTo_date, parDeveloper, parModule };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DEVELOPER_DAILY_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Current_Work_Assigned_Of_Developers_Report(SqlTransaction newTransaction, int Firm, int Developer, int last_dev_endate)
+        {
+            if (last_dev_endate == 0)
+            {
+                DataTable dtDetails = new DataTable();
+                try
+                {
+                    SqlParameter par_Firm = new SqlParameter("@Firm", Firm);
+                    SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+
+                    SqlParameter[] parameters = { par_Firm, par_Developer };
+                    SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CURRENT_ASSIGNED_WORKS_OF_THE_DEVELOPERS, dtDetails, 0, parameters);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                return dtDetails;
+            }
+            else
+            {
+                DataTable dtDetails = new DataTable();
+                try
+                {
+                    SqlParameter par_Firm = new SqlParameter("@Firm", Firm);
+                    SqlParameter par_Developer = new SqlParameter("@Developer", Developer);
+
+
+                    SqlParameter[] parameters = { par_Firm, par_Developer };
+                    SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_THE_LAST_WORK_END_DATE_OF_DEVELOPER, dtDetails, 0, parameters);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                return dtDetails;
+            }
+        }
+
+
+        public static DataTable Get_attached_file(SqlTransaction newTransation, String crfId)
+        {
+            try
+            {
+
+                SqlParameter Par_crfId = new SqlParameter("@crfId", crfId);
+
+                SqlParameter[] parameters = {
+                                               Par_crfId
+
+            };
+
+                DataTable dtDetails = new DataTable();
+                SqlHelper.FillDatatable(newTransation, CommandType.StoredProcedure, StoreProcedure.GET_ATTACHED_FILES_FOR_ASSIGNED_WORKS_FOR_DEVELOPER_REPORT, dtDetails, 0, parameters);
+                return dtDetails;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        public static DataTable Get_CRF_for_Testlead_Bug_Report(SqlTransaction newTransaction, int EMP_CODE)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+
+                SqlParameter[] parameters = {
+
+                                            par_EMP_CODE
+
+                };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_FOR_TESTLEAD_BUG_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+
+
+        public static DataTable Get_Bugs_Testlead_View(SqlTransaction newTransaction, string crf_ID)
+
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crf_ID = new SqlParameter("@crf_ID", crf_ID);
+                SqlParameter[] parameters = {
+                                par_crf_ID
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BUG_VIEW_TESTLEAD_DTLS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+
+
+        public static DataTable Testcase_File_Upload(SqlTransaction newtransaction, string crf_id, string Remark, List<string> uploadedFiles, int EMP_CODE, int UserType, int FIRM)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                foreach (string fileName in uploadedFiles)
+                {
+                    SqlParameter par_crf_id = new SqlParameter("@crf_id", crf_id);
+                    SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+                    SqlParameter par_uploadedFiles = new SqlParameter("@File_Name", fileName);
+                    SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                    SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                    SqlParameter par_FIRM = new SqlParameter("@FIRM", FIRM);
+                    // Use the current fileName in the loop
+
+                    SqlParameter[] parameters = {
+                par_crf_id,
+                par_Remark,
+                par_uploadedFiles,
+                par_EMP_CODE,
+                par_UserType,
+                par_FIRM
+
+            };
+
+                    SqlHelper.FillDatatable(newtransaction, CommandType.StoredProcedure, StoreProcedure.INSERT_TESTCASE_FILE_UPLOAD_DTLS, dtDetails, 0, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+
+        public static DataTable Get_TestCase_Updation_Report(SqlTransaction newTransaction, DateTime startdate, DateTime enddate, int EMP_CODE, int UserType, int FIRM)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Startdate = new SqlParameter("@Startdate", startdate);
+                SqlParameter par_Enddate = new SqlParameter("@Enddate", enddate);
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_FIRM = new SqlParameter("@FIRM", FIRM);
+
+                SqlParameter[] parameters = { par_Startdate, par_Enddate, par_EMP_CODE, par_UserType, par_FIRM };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TEST_CASE_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_crf_Report(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTALCRF_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Attachments(SqlTransaction newTransaction, string CRF_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+
+                SqlParameter[] parameters = {
+                 par_CRF_ID
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ATTACHMENTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_pendingcrf_Report(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_PENDINGCRF_REPORT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_ongoingcrf_Report(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ONGOINGCRF_REPORT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_delayedcrf_Report(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DELAYEDCRF_REPORT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_lveclose_crf_Report_head(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_LVECLOSECRF_REPORT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_headreject_crf_Report_head(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HEADREJECT_CRF_REPORT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_crf_Report_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTALCRF_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Ongoing_crf_Report_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ONGOING_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Delayed_crf_Report_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DELAYED_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_liveclose_crfReport_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_LVECLOSE_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_TApnding_crfReport_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TAPENDING_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Rejected_crfReport_techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team_id };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_REJECTED_REPORT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_crfReport_testlead(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTAL_REPORT_TESTLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Ongoing_crfReport_testlead(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ONGOING_REPORT_TESTLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Delay_crfReport_testlead(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DELAY_REPORT_TESTLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Liveclose_crfReport_testlead(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_LIVECLOSE_REPORT_TESTLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Testing_ta_pnding_crfReport_testlead(SqlTransaction newTransaction, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter[] parameters = { par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TESTING_TA_PNDINGREPORT_TESTLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_crf_Reports(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTAL_CRF_REPORTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Ongoing_crf_Reports(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ONGOING_CRF_REPORTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Delayed_crf_Reports(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DELAYED_CRF_REPORTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Live_Closed_crf_Reports(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_LIVE_CLOSED_CRF_REPORTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Rejected_crf_Reports(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_REJECTED_CRF_REPORTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Save_File_Upload(SqlTransaction newtransaction, List<string> uploadedFiles, string id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                foreach (string fileName in uploadedFiles)
+                {
+
+                    SqlParameter par_uploadedFiles = new SqlParameter("@File_Name", fileName); // Use the current fileName in the loop
+                    SqlParameter par_id = new SqlParameter("@id", id);
+                    SqlParameter[] parameters = {
+           par_uploadedFiles,
+           par_id
+            };
+
+                    SqlHelper.FillDatatable(newtransaction, CommandType.StoredProcedure, StoreProcedure.INSERT_FILE_UPLOAD_DTLS, dtDetails, 0, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_CRF_Attachments(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_crf_id = new SqlParameter("@crf_id", crf_ID);
+
+                SqlParameter[] parameters = {
+                 par_crf_id
+                };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRF_ATTACHMENTS, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_crf_Report_IThead_ITCo_Admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTAL_CRF_REPORT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_pendingcrf_Report_IThead_ITCo_admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_PENDINGCRF_REPORT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_ongoing_crfRpt_IThead_ITCo_admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_ONGOING_CRFRPT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_delayed_crfRpt_IThead_ITCo_admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_DELAYED_CRFRPT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_live_close_CrfRpt_IThead_ITCo_admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_LIVE_CLOSE_CRFRPT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_headreject_crfRpt_IThead_ITCo_admin(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HEADREJECT_CRFRPT_ITHEAD_ITCO_ADMIN, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Rec_pending_crfRpt_hod(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_REC_PENDING_CRFRPT_HOD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_head_approval_pending_crfRpt(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HEAD_APPROVAL_PENDING_CRFRPT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_crf_Incentive_Report(SqlTransaction newTransaction, DateTime Startdate, DateTime Enddate, int firm)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Startdate = new SqlParameter("@Startdate", Startdate);
+                SqlParameter par_Enddate = new SqlParameter("@Enddate", Enddate);
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+
+                SqlParameter[] parameters = { par_Startdate, par_Enddate, par_firm };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_INCENTIVE_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Crf_Complexity(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_COMPLEXITY, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_prev_month_live_closed_rpt(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_PREV_MONTH_LIVE_CLOSED_RPT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Total_live_closed_this_month(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType, int Team_id, int Unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+                SqlParameter par_Team_id = new SqlParameter("@Team_id", Team_id);
+                SqlParameter par_Unit = new SqlParameter("@Unit", Unit);
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType, par_Team_id, par_Unit };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TOTAL_LIVE_CLOSED_THIS_MONTH, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Save_Hold_CRF_Details(SqlTransaction newTransation, string CRFid, DateTime Hold_from, DateTime Hold_end, string Reason, string Remark, int Employee_Code)
+        {
+            try
+            {
+
+                SqlParameter par_CRFid = new SqlParameter("@CRFid", CRFid);
+                SqlParameter par_Hold_from = new SqlParameter("@Hold_from", Hold_from);
+                SqlParameter par_Hold_end = new SqlParameter("@Hold_end", Hold_end);
+                SqlParameter par_Reason = new SqlParameter("@Reason", Reason);
+                SqlParameter par_Remark = new SqlParameter("@Remark", Remark);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+
+                SqlParameter[] parameters = {
+
+                                      par_CRFid,
+                                      par_Hold_from,
+                                      par_Hold_end,
+                                      par_Reason,
+                                      par_Remark,
+                                      par_Employee_Code
+                    };
+                DataTable dtDetails = new DataTable();
+                SqlHelper.FillDatatable(newTransation, CommandType.StoredProcedure, StoreProcedure.SAVE_HOLD_CRF_DETAILS, dtDetails, 0, parameters);
+                return dtDetails;
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Bind_Hold_CRF_Id_With_Subject(SqlTransaction newTransaction, int EMP_code)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_EMP_code = new SqlParameter("@EMP_code", EMP_code);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.BIND_HOLD_CRF_ID_WITH_SUBJECT, dtDetails, 0, par_EMP_code);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Hold_request_dtls(SqlTransaction newTransaction, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HOLD_REQUEST_DTLS, dtDetails, 0, par_CRF_ID);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Save_hold_approval_crf(SqlTransaction newTransaction, int EMP_CODE, string crf_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlParameter par_EMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", crf_ID);
+
+
+                SqlParameter[] parameters = {
+                                               par_EMP_CODE,
+                                               par_CRF_ID
+
+            };
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.SAVE_HOLD_APPROVAL_CRF, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Auto_Unhold_CRF(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.AUTO_UNHOLD_CRF, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_User_Return(SqlTransaction newTransation, string selectedCrfId, string Remark, int EMP_CODE, int user_return)
+        {
+            try
+            {
+                SqlParameter parselectedCrfId = new SqlParameter("@selectedCrfId", selectedCrfId);
+                SqlParameter parRemark = new SqlParameter("@Remark", Remark);
+                SqlParameter paruser_return = new SqlParameter("@user_return", user_return);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+
+
+                SqlParameter[] parameters = {
+                                  parselectedCrfId,
+                                  parRemark,
+                                  paruser_return,
+                                  parEMP_CODE
+
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_USER_RETURN
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static DataTable Get_Average_live_close(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType };
+
+                // Execute the stored procedure to fill the DataTable with average day difference
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_AVERAGE_LIVE_CLOSE, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Average_Ongoing(SqlTransaction newTransaction, int firm, int Employee_Code, int UserType)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Employee_Code = new SqlParameter("@Employee_Code", Employee_Code);
+                SqlParameter par_UserType = new SqlParameter("@UserType", UserType);
+
+                SqlParameter[] parameters = { par_firm, par_Employee_Code, par_UserType };
+
+                // Execute the stored procedure to fill the DataTable with average day difference
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.AVERAGE_ONGOING, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Prev_month_live_closed_TL(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.PREV_MONTH_LIVE_CLOSED_TL, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Hod_rec_pending_rpt_Techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.HOD_REC_PENDING_RPT_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable IT_Head_Rec_Pndg_TL(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.IT_HEAD_REC_PNDG_TL, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_head_approval_pending_Techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HEAD_APPROVAL_PENDING_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Total_live_closed_this_month_Techlead(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.TOTAL_LIVE_CLOSED_THIS_MONTH_TECHLEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Rejected_Crf_Report_Techld(SqlTransaction newTransaction, int firm, int Team_id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_Team = new SqlParameter("@Team_id", Team_id);
+                SqlParameter[] parameters = { par_firm, par_Team };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.REJECTED_CRF_REPORT_TECHLD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Financial_year(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_FINANCIAL_YEAR, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Timeline_Comparison_Report(SqlTransaction newTransaction, int firm, string financial_year)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_firm = new SqlParameter("@firm", firm);
+                SqlParameter par_financial_year = new SqlParameter("@financial_year", financial_year);
+
+                SqlParameter[] parameters = { par_firm, par_financial_year };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_TIMELINE_COMPARISON_REPORT, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+
+
+        /////////////JIJITTA/////////////////////////////////////////////////////
+
+        public static DataTable Get_Email_For_CEO(SqlTransaction newTransaction, string CRF_ID, int FIRM)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", CRF_ID);
+                //SqlParameter par_CEO = new SqlParameter("@CEO", CEO);
+
+                SqlParameter par_FIRM = new SqlParameter("@Firm ", FIRM);
+
+                SqlParameter[] parameters =
+                {
+
+                    //par_EMP_CODE,
+                    par_CRF_ID,
+                    //par_CEO,
+                    par_FIRM
+                };
+
+                SqlHelper.FillDatatable(
+                    newTransaction,
+                    CommandType.StoredProcedure,
+                    StoreProcedure.GET_EMAIL_FOR_CEO, // This should resolve to "SP_Get_Email_For_CEO"
+                    dtDetails,
+                    0,
+                    parameters
+                );
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return dtDetails;
+        }
+
+
+
+        public static DataTable Get_CRFDetails_Send_mail_to_IT_Head(SqlTransaction newTransaction, string CRF_ID)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_crfId = new SqlParameter("@crfId", CRF_ID);
+              
+                SqlParameter[] parameters = { par_crfId };
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CRFDETAILS_SEND_MAIL_TO_IT_HEAD, dtDetails, 0, parameters);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_dtls_For_Email_HOD(SqlTransaction newTransaction, string id)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_CRF_ID = new SqlParameter("@CRF_ID", id);
+               
+                SqlParameter[] parameters =
+                {
+
+                    par_CRF_ID
+                   
+                };
+
+                SqlHelper.FillDatatable(
+                    newTransaction,
+                    CommandType.StoredProcedure,
+                    StoreProcedure.GET_DTLS_FOR_EMAIL_HOD, // This should resolve to "SP_Get_Email_For_CEO"
+                    dtDetails,
+                    0,
+                    parameters
+                );
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return dtDetails;
+        }
+        public static DataTable Get_HOD_Recommendation_Pending_Crf_To_Remind(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_HOD_RECOMMENDATION_PENDING_CRF_TO_REMIND, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_IT_head_Recommedation_pending_Crf_to_Remind(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_IT_HEAD_RECOMMEDATION_PENDING_CRF_TO_REMIND, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_CEO_Recommedation_pending_Crf_to_Remind(SqlTransaction newTransaction)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_CEO_RECOMMEDATION_PENDING_CRF_TO_REMIND, dtDetails, 0);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static DataTable Get_Bind_Crf_Id_For_update_publish(SqlTransaction newTransaction, int Techlead)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_Techlead = new SqlParameter("@Techlead", Techlead);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_CRF_ID_FOR_UPDATE_PUBLISH, dtDetails, 0, par_Techlead);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+        public static void Save_Live_Publish(SqlTransaction newTransation, string selectedCrfId, DateTime publish_date, string Remark, int EMP_CODE, int Live_published)
+        {
+            try
+            {
+                SqlParameter parselectedCrfId = new SqlParameter("@selectedCrfId", selectedCrfId);
+                SqlParameter parpublish_date = new SqlParameter("@publish_date", publish_date);
+                SqlParameter parRemark = new SqlParameter("@Remark", Remark);
+                SqlParameter parEMP_CODE = new SqlParameter("@EMP_CODE", EMP_CODE);
+                SqlParameter parLive_published = new SqlParameter("@Live_published", Live_published);
+              
+
+                SqlParameter[] parameters = {
+                                  parselectedCrfId,
+                                  parpublish_date,
+                                  parRemark,
+                                  parEMP_CODE,
+                                  parLive_published
+
+                };
+
+                SqlHelper.ExecuteNonQuery(newTransation
+                    , CommandType.StoredProcedure
+                    , StoreProcedure.SAVE_LIVE_PUBLISH
+                    , 0
+                    , parameters
+                    );
+
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        public static DataTable Get_Bind_Department(SqlTransaction newTransaction, int unit)
+        {
+            DataTable dtDetails = new DataTable();
+            try
+            {
+                SqlParameter par_unit = new SqlParameter("@unit", unit);
+                SqlHelper.FillDatatable(newTransaction, CommandType.StoredProcedure, StoreProcedure.GET_BIND_DEPARTMENT, dtDetails, 0, par_unit);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtDetails;
+        }
+    }
+}

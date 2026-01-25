@@ -3,39 +3,57 @@
 }
 
 <div class="content-wrapper">
-    <div class="glass-body">
 
-        <h2 class="mb-4">Create Project</h2>
+    <!-- PAGE HEADER -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">Create Project</h2>
+        <p class="text-muted mb-0">
+            Define basic project details and execution flow
+        </p>
+    </div>
+
+    <div class="glass-body">
 
         <form asp-action="Create" method="post">
 
             <!-- ===============================
                  BASIC PROJECT DETAILS
             ================================ -->
-            <div class="project-form-group">
-                <label class="project-label">Project Name</label>
-                <input type="text"
-                       name="ProjectName"
-                       class="project-input"
-                       placeholder="Enter project name"
-                       required />
-            </div>
+            <div class="module-wrapper mb-4">
+                <div class="module-header">
+                    <span class="module-icon">📁</span>
+                    <span class="module-title">Project Details</span>
+                </div>
 
-            <div class="project-form-group">
-                <label class="project-label">Project Type</label>
-                <select name="ProjectType"
-                        class="project-input"
-                        required>
-                    <option value="">Select project type</option>
-                    <option value="ASP.NET">ASP.NET</option>
-                    <option value="ASP.NET Core">ASP.NET Core</option>
-                </select>
+                <div class="module-body">
+
+                    <div class="project-form-group">
+                        <label class="project-label">Project Name</label>
+                        <input type="text"
+                               name="ProjectName"
+                               class="project-input"
+                               placeholder="Enter project name"
+                               required />
+                    </div>
+
+                    <div class="project-form-group">
+                        <label class="project-label">Project Type</label>
+                        <select name="ProjectType"
+                                class="project-input"
+                                required>
+                            <option value="">Select project type</option>
+                            <option value="ASP.NET">ASP.NET</option>
+                            <option value="ASP.NET Core">ASP.NET Core</option>
+                        </select>
+                    </div>
+
+                </div>
             </div>
 
             <!-- ===============================
                  PROJECT FLOW BINDING
             ================================ -->
-            <div class="module-wrapper mt-4">
+            <div class="module-wrapper mb-4">
                 <div class="module-header">
                     <span class="module-icon">🧩</span>
                     <span class="module-title">Project Flow Binding</span>
@@ -44,13 +62,13 @@
                 <div class="module-body">
 
                     <p class="flow-hint">
-                        Define how requests move through your project layers.
+                        Define how requests move through your application layers.
                         <span class="flow-example">
-                            Select layers in the order they execute
+                            Add layers in the order they execute
                         </span>
                     </p>
 
-                    <!-- Auto Add Dropdown -->
+                    <!-- Flow Builder -->
                     <div class="flow-builder">
                         <select id="flowStep"
                                 class="flow-select"
@@ -66,7 +84,9 @@
                     </div>
 
                     <!-- Flow Preview -->
-                    <div id="flowPipeline" class="flow-pipeline mt-3"></div>
+                    <div id="flowPipeline"
+                         class="flow-pipeline mt-3">
+                    </div>
 
                     <!-- Hidden Field -->
                     <input type="hidden"
@@ -78,18 +98,21 @@
             <!-- ===============================
                  ACTIONS
             ================================ -->
-            <div class="mt-4">
-                <button type="button" class="modern-btn" onclick="saveProject()">
+            <div class="d-flex justify-content-end">
+                <button type="button"
+                        class="modern-btn"
+                        onclick="saveProject()">
                     Create Project
                 </button>
             </div>
 
         </form>
+
     </div>
 </div>
 
 <!-- ===============================
-     FLOW SCRIPT
+     FLOW SCRIPT (UNCHANGED)
 ================================ -->
 <script>
     let flow = [];

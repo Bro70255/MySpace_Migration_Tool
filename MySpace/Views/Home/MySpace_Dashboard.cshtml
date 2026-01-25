@@ -1,3 +1,169 @@
 ﻿@{
     ViewData["Title"] = "MySpace Dashboard";
 }
+<div class="content-wrapper">
+    <div class="dashboard-container">
+
+        <!-- DASHBOARD HEADER -->
+        <div class="dashboard-header mb-4">
+
+            <div class="dashboard-header-content">
+                <h1 class="dashboard-title">MySpace Workspace</h1>
+                <p class="dashboard-subtitle">
+                    Centralized management of projects, infrastructure, and services
+                </p>
+            </div>
+
+            <!-- DASHBOARD HELPER (AI ROBOT) -->
+            <div class="dashboard-helper ai-helper"
+                 aria-hidden="true"
+                 onclick="location.href='/Home/Helpdesk'">
+
+                <div class="ai-robot">
+                    <div class="ai-bubble">Hi! I’m your AI helper 🤖</div>
+
+                    <!-- Inline SVG Robot -->
+                    <svg class="robot-svg" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Shadow -->
+                        <ellipse class="robot-shadow" cx="70" cy="112" rx="30" ry="7" />
+
+                        <!-- Antenna -->
+                        <line class="antenna" x1="70" y1="10" x2="70" y2="28" />
+                        <circle class="antenna-tip" cx="70" cy="8" r="5" />
+
+                        <!-- Head -->
+                        <rect class="robot-head" x="40" y="24" width="60" height="44" rx="14" />
+
+                        <!-- Eyes (blink) -->
+                        <g class="robot-eyes">
+                            <circle class="eye" cx="58" cy="46" r="6" />
+                            <circle class="eye" cx="82" cy="46" r="6" />
+                            <circle class="pupil" cx="58" cy="46" r="2.5" />
+                            <circle class="pupil" cx="82" cy="46" r="2.5" />
+                        </g>
+
+                        <!-- Mouth -->
+                        <rect class="robot-mouth" x="58" y="58" width="24" height="6" rx="3" />
+
+                        <!-- Body -->
+                        <rect class="robot-body" x="38" y="68" width="64" height="38" rx="16" />
+
+                        <!-- Chest light -->
+                        <circle class="chest-light" cx="70" cy="86" r="6" />
+
+                        <!-- Left arm -->
+                        <g class="arm arm-left">
+                            <rect class="arm-seg" x="26" y="74" width="14" height="10" rx="5" />
+                            <rect class="arm-seg" x="20" y="80" width="18" height="12" rx="6" />
+                            <circle class="hand" cx="20" cy="86" r="6" />
+                        </g>
+
+                        <!-- Right arm (wave) -->
+                        <g class="arm arm-right">
+                            <rect class="arm-seg" x="100" y="74" width="14" height="10" rx="5" />
+                            <rect class="arm-seg" x="102" y="80" width="18" height="12" rx="6" />
+                            <circle class="hand" cx="122" cy="86" r="6" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- DASHBOARD CARDS -->
+        <div class="row g-4">
+
+            <!-- 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-primary-soft">
+                        <i class="bi bi-diagram-3"></i>
+                    </div>
+                    <h5>Projects</h5>
+                    <p>Manage projects and their branches</p>
+                </div>
+            </div>
+
+            <!-- 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-success-soft">
+                        <i class="bi bi-database"></i>
+                    </div>
+                    <h5>Database & Backups</h5>
+                    <p>Database status, backups, and recovery</p>
+                </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-info-soft">
+                        <i class="bi bi-diagram-2"></i>
+                    </div>
+                    <h5>Project Blueprint</h5>
+                    <p>Visualize and manage project architecture</p>
+                </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-warning-soft">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                    <h5>Project Migration</h5>
+                    <p>Migrate projects between platforms</p>
+                </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-info-soft">
+                        <i class="bi bi-globe"></i>
+                    </div>
+                    <h5>Project Domains</h5>
+                    <p>Manage domain mappings and routing</p>
+                </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-warning-soft">
+                        <i class="bi bi-hdd-network"></i>
+                    </div>
+                    <h5>Server Management</h5>
+                    <p>Monitor servers and system health</p>
+                </div>
+            </div>
+
+            <!-- 7 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-danger-soft">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5>Helpdesk</h5>
+                    <p>Ask questions or contact support</p>
+                </div>
+            </div>
+
+            <!-- 8 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-secondary-soft">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+                    <h5>Billing & Account</h5>
+                    <p>Subscriptions, invoices, and usage</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+

@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Review";
+}
+
+<div class="module-wrapper">
+    <div class="module-header">
+        <span class="module-icon">📂</span>
+        <span class="module-title">Uploaded OCR Structure</span>
+    </div>
+
+    <div class="module-body">
+
+        <!-- Expand / Collapse All -->
+        <div class="tree-controls">
+            <label class="tree-toggle">
+                <input type="checkbox" id="toggleAll" />
+                <span>Expand all</span>
+            </label>
+        </div>
+
+        <!-- Tree -->
+        <div class="classic-tree" id="treeView">
+            Loading...
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        // Expand / Collapse All checkbox
+        document.addEventListener("change", function (e) {
+            if (e.target.id === "toggleAll") {
+                const expand = e.target.checked;
+
+                document.querySelectorAll(".tree-children").forEach(ul => {
+                    ul.classList.toggle("open", expand);
+                });
+
+                document.querySelectorAll(".tree-caret").forEach(caret => {
+                    caret.classList.toggle("open", expand);
+                });
+
+                document.querySelectorAll(".tree-folder-icon").forEach(icon => {
+                    icon.textContent = expand ? "📂" : "📁";
+                });
+            }
+        });
+
+        loadOCRTreeView();
+    });
+
+</script>

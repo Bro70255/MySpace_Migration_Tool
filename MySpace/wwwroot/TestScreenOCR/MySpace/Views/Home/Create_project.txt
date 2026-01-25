@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Create Project";
 }
 
@@ -79,7 +79,7 @@
                  ACTIONS
             ================================ -->
             <div class="mt-4">
-                <button type="button" class="modern-btn" onclick="saveProject()">
+                <button type="submit" class="modern-btn" onclick="saveProject();">
                     Create Project
                 </button>
             </div>

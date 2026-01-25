@@ -1,4 +1,4 @@
-﻿
+
 function registerUser() {
 
     // -------- Collect Form Data --------

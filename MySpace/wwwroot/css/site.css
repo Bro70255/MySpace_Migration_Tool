@@ -70,246 +70,6 @@ body {
     font-size: 15px;
     color: var(--text-muted);
 }
-
-/* =========================================================
-   HELPER ANIMATION (NON-INTRUSIVE)
-========================================================= */
-. /* ========= AI ROBOT HELPER (WORKING) ========= */
-.dashboard-header {
-    position: relative;
-}
-
-.dashboard-helper.ai-helper {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 8px;
-    height: 64px; /* a bit taller for robot */
-    z-index: 1; /* below text */
-    cursor: pointer;
-    pointer-events: auto;
-}
-
-/* keep header text above */
-.dashboard-header-content {
-    position: relative;
-    z-index: 3;
-}
-/* keep cards above helper */
-.row.g-4 {
-    position: relative;
-    z-index: 5;
-}
-
-/* Robot runner container moves across */
-.ai-robot {
-    position: absolute;
-    left: -180px;
-    bottom: -6px;
-    width: 170px;
-    height: 120px;
-    animation: robotMove 10s linear infinite;
-}
-
-/* bubble attached to robot */
-.ai-bubble {
-    position: absolute;
-    left: 64px;
-    top: -10px;
-    background: #fff;
-    border: 1px solid rgba(15,23,42,0.12);
-    padding: 6px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    color: #0f172a;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-    white-space: nowrap;
-    opacity: 0;
-    animation: bubbleShow 10s linear infinite;
-}
-
-/* Robot SVG floats slightly */
-.robot-svg {
-    width: 170px;
-    height: 120px;
-    overflow: visible;
-    animation: robotFloat 1.8s ease-in-out infinite;
-}
-
-/* Colors */
-.robot-head {
-    fill: #ffffff;
-    stroke: rgba(15,23,42,0.18);
-    stroke-width: 2;
-}
-
-.robot-body {
-    fill: #ffffff;
-    stroke: rgba(15,23,42,0.18);
-    stroke-width: 2;
-}
-
-.eye {
-    fill: #0f172a;
-}
-
-.pupil {
-    fill: #ffffff;
-    opacity: 0.85;
-}
-
-.robot-mouth {
-    fill: rgba(15,23,42,0.15);
-}
-
-.antenna {
-    stroke: rgba(15,23,42,0.25);
-    stroke-width: 3;
-    stroke-linecap: round;
-}
-
-.antenna-tip {
-    fill: rgba(37,99,235,0.9);
-}
-
-.chest-light {
-    fill: rgba(37,99,235,0.85);
-    filter: drop-shadow(0 0 6px rgba(37,99,235,0.35));
-}
-
-.robot-shadow {
-    fill: rgba(15,23,42,0.12);
-}
-
-/* Arms */
-.arm-seg {
-    fill: #ffffff;
-    stroke: rgba(15,23,42,0.18);
-    stroke-width: 2;
-}
-
-.hand {
-    fill: #ffffff;
-    stroke: rgba(15,23,42,0.18);
-    stroke-width: 2;
-}
-
-/* Blink animation */
-.robot-eyes {
-    transform-origin: center;
-    animation: robotBlink 6s infinite;
-}
-
-/* Wave right arm */
-.arm-right {
-    transform-origin: 104px 78px; /* pivot near shoulder */
-    animation: robotWave 3s ease-in-out infinite;
-}
-
-/* ===== Keyframes ===== */
-@keyframes robotMove {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        transform: translateX(calc(100vw + 260px));
-    }
-}
-
-@keyframes robotFloat {
-    0%,100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-6px);
-    }
-}
-
-@keyframes robotBlink {
-    0%, 92%, 100% {
-        transform: scaleY(1);
-    }
-
-    93% {
-        transform: scaleY(0.15);
-    }
-
-    94% {
-        transform: scaleY(1);
-    }
-
-    96% {
-        transform: scaleY(0.15);
-    }
-
-    97% {
-        transform: scaleY(1);
-    }
-}
-
-@keyframes robotWave {
-    0%, 55%, 100% {
-        transform: rotate(0deg);
-    }
-
-    60% {
-        transform: rotate(-18deg);
-    }
-
-    70% {
-        transform: rotate(12deg);
-    }
-
-    80% {
-        transform: rotate(-10deg);
-    }
-
-    90% {
-        transform: rotate(6deg);
-    }
-}
-
-@keyframes bubbleShow {
-    0% {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-
-    10% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    40% {
-        opacity: 1;
-    }
-
-    55% {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-/* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .dashboard-helper.ai-helper {
-        display: none;
-    }
-}
-
-/* Optional: Hide robot on small screens (keeps layout clean) */
-@media (max-width: 768px) {
-    .dashboard-helper.ai-helper {
-        display: none;
-    }
-}
-
 /* =========================================================
    DASHBOARD GRID
 ========================================================= */
@@ -450,5 +210,316 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .dashboard-helper {
         display: none;
+    }
+}
+
+/* =========================================================
+   ZOOZOO AI HELPER – FULL CSS (RIGHT SIDE PATROL)
+========================================================= */
+
+/* header layout */
+.dashboard-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* header text */
+.dashboard-header-content {
+    position: relative;
+    z-index: 3;
+    max-width: 720px;
+}
+
+/* helper container */
+.dashboard-helper.ai-helper {
+    position: relative;
+    width: 500px; /* enough space to move left */
+    height: 100px;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+/* robot wrapper */
+.ai-robot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 90px;
+    height: 90px;
+    animation: zooPatrol 14s ease-in-out infinite;
+}
+
+/* svg size */
+.robot-svg {
+    width: 90px;
+    height: 90px;
+    overflow: visible;
+}
+
+/* =========================================================
+   PATROL ANIMATION (LEFT → WAIT → RIGHT → WAIT)
+========================================================= */
+@keyframes zooPatrol {
+    /* start on right */
+    0% {
+        transform: translateX(0);
+    }
+    /* move slowly to left */
+    20% {
+        transform: translateX(-180px);
+    }
+    /* stand on left */
+    40% {
+        transform: translateX(-180px);
+    }
+    /* move back to right */
+    60% {
+        transform: translateX(0);
+    }
+    /* wait on right */
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* =========================================================
+   MICRO ANIMATIONS (LIFE-LIKE)
+========================================================= */
+
+/* idle bounce */
+@keyframes zooBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* blink */
+.robot-eyes {
+    transform-origin: center;
+    animation: robotBlink 6s infinite;
+}
+
+@keyframes robotBlink {
+    0%, 92%, 100% {
+        transform: scaleY(1);
+    }
+
+    93% {
+        transform: scaleY(0.15);
+    }
+
+    94% {
+        transform: scaleY(1);
+    }
+}
+
+/* wave right arm */
+.arm-right {
+    transform-origin: 104px 78px;
+    animation: robotWave 3s ease-in-out infinite;
+}
+
+@keyframes robotWave {
+    0%, 60%, 100% {
+        transform: rotate(0deg);
+    }
+
+    70% {
+        transform: rotate(-18deg);
+    }
+
+    85% {
+        transform: rotate(12deg);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE & ACCESSIBILITY
+========================================================= */
+
+@media (max-width: 768px) {
+    .dashboard-helper.ai-helper {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-helper.ai-helper {
+        display: none;
+    }
+}
+/* =========================
+   AI DIALOG BOX
+========================= */
+
+.ai-dialog {
+    position: absolute;
+    right: 100%;
+    top: 10px;
+    margin-right: 10px;
+    background: #ffffff;
+    color: #0f172a;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border: 1px solid rgba(15,23,42,0.12);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    opacity: 0;
+    pointer-events: auto;
+    cursor: pointer;
+    animation: dialogSync 14s ease-in-out infinite;
+}
+
+    /* speech arrow */
+    .ai-dialog::after {
+        content: "";
+        position: absolute;
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent transparent #ffffff;
+    }
+@keyframes dialogSync {
+    /* hidden at start */
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    /* fade in when robot reaches left */
+    25% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    /* stay visible */
+    45% {
+        opacity: 1;
+    }
+    /* fade out before robot moves back */
+    60% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    /* hidden rest of time */
+    100% {
+        opacity: 0;
+    }
+}
+/* =========================================================
+   ZOOZOO COLOR-CYCLING SIGNALS
+========================================================= */
+
+/* Antenna dot – faster cycle */
+.robot-antenna-dot {
+    animation: zooColorCycleFast 6s linear infinite;
+    filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Chest dot – slower, calmer cycle */
+.robot-chest-dot {
+    animation: zooColorCycleSlow 10s linear infinite;
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* =========================================================
+   COLOR CYCLES
+========================================================= */
+
+/* Fast cycle (antenna = signal activity) */
+@keyframes zooColorCycleFast {
+    0% {
+        fill: #22c55e;
+        color: #22c55e;
+    }
+    /* green */
+    16% {
+        fill: #3b82f6;
+        color: #3b82f6;
+    }
+    /* blue */
+    32% {
+        fill: #8b5cf6;
+        color: #8b5cf6;
+    }
+    /* purple */
+    48% {
+        fill: #06b6d4;
+        color: #06b6d4;
+    }
+    /* cyan */
+    64% {
+        fill: #eab308;
+        color: #eab308;
+    }
+    /* yellow */
+    80% {
+        fill: #f97316;
+        color: #f97316;
+    }
+    /* orange */
+    100% {
+        fill: #22c55e;
+        color: #22c55e;
+    }
+    /* back to green */
+}
+
+/* Slow cycle (chest = system heartbeat) */
+@keyframes zooColorCycleSlow {
+    0% {
+        fill: #3b82f6;
+        color: #3b82f6;
+    }
+    /* blue */
+    20% {
+        fill: #22c55e;
+        color: #22c55e;
+    }
+    /* green */
+    40% {
+        fill: #06b6d4;
+        color: #06b6d4;
+    }
+    /* cyan */
+    60% {
+        fill: #8b5cf6;
+        color: #8b5cf6;
+    }
+    /* purple */
+    80% {
+        fill: #f43f5e;
+        color: #f43f5e;
+    }
+    /* pink */
+    100% {
+        fill: #3b82f6;
+        color: #3b82f6;
+    }
+    /* back to blue */
+}
+.robot-antenna-dot,
+.robot-chest-dot {
+    transform-origin: center;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes pulse {
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.25);
     }
 }

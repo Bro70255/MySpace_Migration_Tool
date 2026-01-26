@@ -3,9 +3,7 @@
 }
 <div class="content-wrapper">
     <div class="dashboard-container">
-
-        <!-- DASHBOARD HEADER -->
-        <div class="dashboard-header mb-4">
+        <div class="dashboard-header">
 
             <div class="dashboard-header-content">
                 <h1 class="dashboard-title">MySpace Workspace</h1>
@@ -14,56 +12,64 @@
                 </p>
             </div>
 
-            <!-- DASHBOARD HELPER (AI ROBOT) -->
-            <div class="dashboard-helper ai-helper"
-                 aria-hidden="true"
-                 onclick="location.href='/Home/Helpdesk'">
-
+            <!-- ZOOZOO HELPER (ONLY ONE) -->
+            <div class="dashboard-helper ai-helper" onclick="location.href='/Home/Helpdesk'">
                 <div class="ai-robot">
-                    <div class="ai-bubble">Hi! I’m your AI helper 🤖</div>
 
-                    <!-- Inline SVG Robot -->
+                    <!-- Dialog -->
+                    <div class="ai-dialog">
+                        Need help? Ask me
+                    </div>
+
+                    <!-- Robot SVG -->
                     <svg class="robot-svg" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+
                         <!-- Shadow -->
-                        <ellipse class="robot-shadow" cx="70" cy="112" rx="30" ry="7" />
+                        <ellipse cx="70" cy="112" rx="26" ry="6" fill="rgba(0,0,0,0.08)" />
 
                         <!-- Antenna -->
-                        <line class="antenna" x1="70" y1="10" x2="70" y2="28" />
-                        <circle class="antenna-tip" cx="70" cy="8" r="5" />
+                        <line x1="70" y1="14" x2="70" y2="28"
+                              stroke="#c7d2fe" stroke-width="2" />
+
+                        <!-- Antenna signal dot (COLOR CYCLES) -->
+                        <circle cx="70" cy="10" r="5" class="robot-antenna-dot" />
 
                         <!-- Head -->
-                        <rect class="robot-head" x="40" y="24" width="60" height="44" rx="14" />
+                        <rect x="40" y="26" width="60" height="42" rx="18"
+                              fill="#fff" stroke="#d1d5db" stroke-width="2" />
 
-                        <!-- Eyes (blink) -->
+                        <!-- Eyes -->
                         <g class="robot-eyes">
-                            <circle class="eye" cx="58" cy="46" r="6" />
-                            <circle class="eye" cx="82" cy="46" r="6" />
-                            <circle class="pupil" cx="58" cy="46" r="2.5" />
-                            <circle class="pupil" cx="82" cy="46" r="2.5" />
+                            <circle cx="58" cy="48" r="6" fill="#111827" />
+                            <circle cx="82" cy="48" r="6" fill="#111827" />
                         </g>
 
                         <!-- Mouth -->
-                        <rect class="robot-mouth" x="58" y="58" width="24" height="6" rx="3" />
+                        <rect x="60" y="60" width="20" height="4" rx="2"
+                              fill="#9ca3af" />
 
                         <!-- Body -->
-                        <rect class="robot-body" x="38" y="68" width="64" height="38" rx="16" />
+                        <rect x="38" y="70" width="64" height="36" rx="18"
+                              fill="#fff" stroke="#d1d5db" stroke-width="2" />
 
-                        <!-- Chest light -->
-                        <circle class="chest-light" cx="70" cy="86" r="6" />
+                        <!-- Chest / stomach dot (COLOR CYCLES) -->
+                        <circle cx="70" cy="88" r="5" class="robot-chest-dot" />
 
-                        <!-- Left arm -->
-                        <g class="arm arm-left">
-                            <rect class="arm-seg" x="26" y="74" width="14" height="10" rx="5" />
-                            <rect class="arm-seg" x="20" y="80" width="18" height="12" rx="6" />
-                            <circle class="hand" cx="20" cy="86" r="6" />
+                        <!-- Arms -->
+                        <g class="arm-left">
+                            <rect x="24" y="76" width="14" height="10" rx="5"
+                                  fill="#fff" stroke="#d1d5db" stroke-width="2" />
+                            <circle cx="20" cy="82" r="6"
+                                    fill="#fff" stroke="#d1d5db" stroke-width="2" />
                         </g>
 
-                        <!-- Right arm (wave) -->
-                        <g class="arm arm-right">
-                            <rect class="arm-seg" x="100" y="74" width="14" height="10" rx="5" />
-                            <rect class="arm-seg" x="102" y="80" width="18" height="12" rx="6" />
-                            <circle class="hand" cx="122" cy="86" r="6" />
+                        <g class="arm-right">
+                            <rect x="102" y="76" width="14" height="10" rx="5"
+                                  fill="#fff" stroke="#d1d5db" stroke-width="2" />
+                            <circle cx="120" cy="82" r="6"
+                                    fill="#fff" stroke="#d1d5db" stroke-width="2" />
                         </g>
+
                     </svg>
                 </div>
             </div>
@@ -71,12 +77,15 @@
 
         </div>
 
+
         <!-- DASHBOARD CARDS -->
         <div class="row g-4">
 
-            <!-- 1 -->
+            <!-- 1 : Projects -->
             <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
+                <div class="dashboard-card"
+                     onclick="location.href='/Home/Projects'"
+                     style="cursor:pointer;">
                     <div class="dashboard-icon bg-primary-soft">
                         <i class="bi bi-diagram-3"></i>
                     </div>
@@ -84,6 +93,7 @@
                     <p>Manage projects and their branches</p>
                 </div>
             </div>
+
 
             <!-- 2 -->
             <div class="col-md-6 col-lg-3">
@@ -159,6 +169,16 @@
                     </div>
                     <h5>Billing & Account</h5>
                     <p>Subscriptions, invoices, and usage</p>
+                </div>
+            </div>
+            <!-- 9 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card">
+                    <div class="dashboard-icon bg-primary-soft">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h5>AI Settings</h5>
+                    <p>Configure AI behavior, alerts, and automation</p>
                 </div>
             </div>
 

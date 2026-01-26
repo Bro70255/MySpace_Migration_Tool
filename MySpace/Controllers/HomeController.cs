@@ -58,6 +58,11 @@ namespace MySpace.Controllers
         {
             return View();
         }
+
+        public IActionResult Projects()
+        {
+            return View();
+        }
         public IActionResult Create_project()
         {
             return View();

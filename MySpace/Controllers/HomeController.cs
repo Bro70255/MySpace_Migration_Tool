@@ -15,55 +15,29 @@ namespace MySpace.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        #region Full Production Code
+
+        #region IAction Production Code
+        public IActionResult CreateAccount()
         {
             return View();
         }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         public IActionResult MySpace_Login()
         {
             return View();
         }
 
-        public IActionResult CreateAccount()
-        {
-            return View();
-        }
         public IActionResult MySpace_Dashboard()
         {
             return View();
         }
-        public IActionResult Registration()
-        {
-            return View();
-        }
-        public IActionResult Registration_Report()
-        {
-            return View();
-        }
-        public IActionResult Upload()
-        {
-            return View();
-        }
-        public IActionResult Review()
-        {
-            return View();
-        }
-        public IActionResult Blueprint()
-        {
-            return View();
-        }
-
         public IActionResult Projects()
         {
             return View();
         }
-        public IActionResult Create_project()
+
+        [ActionName("Project-Upload")]
+        public IActionResult ProjectUpload()
         {
             return View();
         }
@@ -88,6 +62,9 @@ namespace MySpace.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
+        #endregion IAction Production Code
+
+        #region Function Production Code
 
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterVM model)
@@ -142,6 +119,68 @@ namespace MySpace.Controllers
                 username = user.Username
             });
         }
+
+
+        #endregion Function Production Code
+
+        #endregion Full Production Code
+
+
+        #region IAction Test Code
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+
+        public IActionResult Registration()
+        {
+            return View();
+        }
+        public IActionResult Registration_Report()
+        {
+            return View();
+        }
+
+
+        public IActionResult Review()
+        {
+            return View();
+        }
+        public IActionResult Blueprint()
+        {
+            return View();
+        }
+
+        public IActionResult Create_project()
+        {
+            return View();
+        }
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         [HttpPost]

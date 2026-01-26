@@ -523,3 +523,46 @@ body {
         transform: scale(1.25);
     }
 }
+
+
+/* =========================================================
+   PROJECT UPLOAD – MODULE DESIGN
+========================================================= */
+
+.upload-zone.single-action {
+    padding: 46px 32px;
+    border-style: solid;
+    background: linear-gradient( to bottom, rgba(37,99,235,0.06), transparent );
+}
+
+    .upload-zone.single-action .upload-title {
+        font-size: 20px;
+    }
+
+    .upload-zone.single-action .upload-subtitle {
+        max-width: 520px;
+        margin: 0 auto 16px;
+        line-height: 1.5;
+    }
+
+/* Primary CTA */
+.modern-btn.primary {
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+/* File list preview */
+.upload-info ul {
+    margin-top: 12px;
+    border-top: 1px dashed rgba(0,0,0,0.12);
+    padding-top: 10px;
+}
+
+/* Cleaner list */
+.upload-info li {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px;
+    color: #475569;
+}

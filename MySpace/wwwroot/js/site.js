@@ -816,8 +816,11 @@ function loadFiles(project, version, path = "") {
     currentVersion = version;
     currentPath = path;
 
-    document.getElementById("repoTitle").innerText =
+    document.getElementById("repoPathText").innerText =
         `${project} / ${version}${path ? " / " + path : ""}`;
+
+    // ✅ enable download button
+    document.getElementById("downloadBtn").disabled = false;
 
     fetch(`/Home/GetVersionFiles?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
         .then(r => r.json())
@@ -825,7 +828,6 @@ function loadFiles(project, version, path = "") {
             const list = document.getElementById("fileList");
             list.innerHTML = "";
 
-            // BACK OPTION
             if (path) {
                 const back = document.createElement("li");
                 back.textContent = "⬅ Back";
@@ -841,16 +843,22 @@ function loadFiles(project, version, path = "") {
                 li.className = f.isDirectory ? "folder" : "file";
                 li.textContent = f.name;
 
-                if (f.isDirectory) {
+                if (f.isDirectory)
                     li.onclick = () => loadFiles(project, version, f.path);
-                } else {
+                else
                     li.onclick = () => viewFile(project, version, f.path);
-                }
 
                 list.appendChild(li);
             });
         });
 }
+function downloadVersion() {
+    if (!currentProject || !currentVersion) return;
+
+    const url = `/Home/DownloadVersionZip?projectName=${encodeURIComponent(currentProject)}&version=${encodeURIComponent(currentVersion)}`;
+    window.location.href = url;
+}
+
 
 function viewFile(project, version, path) {
     fetch(`/Home/ViewFile?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)

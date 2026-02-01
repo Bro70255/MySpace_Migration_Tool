@@ -253,6 +253,57 @@ namespace MySpace.Controllers
             });
         }
 
+        [HttpGet]
+        public IActionResult DownloadVersionZip(string projectName, string version)
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Unauthorized();
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            projectName = SafeName(projectName);
+
+            string manifestPath = Path.Combine(
+                UPLOAD_ROOT, userId.ToString(), projectName,
+                "versions", version, "manifest.json"
+            );
+
+            if (!System.IO.File.Exists(manifestPath))
+                return NotFound("Version not found");
+
+            var manifest = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                System.IO.File.ReadAllText(manifestPath)
+            );
+
+            string blobRoot = Path.Combine(
+                UPLOAD_ROOT, userId.ToString(), projectName, "blobs"
+            );
+
+            using var ms = new MemoryStream();
+            using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true))
+            {
+                foreach (var file in manifest)
+                {
+                    string zipPath = file.Key.Replace("\\", "/");
+                    string hash = file.Value;
+                    string blobPath = Path.Combine(blobRoot, hash);
+
+                    if (!System.IO.File.Exists(blobPath))
+                        continue;
+
+                    var entry = zip.CreateEntry(zipPath, CompressionLevel.Fastest);
+                    using var entryStream = entry.Open();
+                    using var blobStream = System.IO.File.OpenRead(blobPath);
+                    blobStream.CopyTo(entryStream);
+                }
+            }
+
+            ms.Position = 0;
+            string zipName = $"{projectName}_{version}.zip";
+
+            return File(ms.ToArray(), "application/zip", zipName);
+        }
+
+
         /* =========================================================
            LIST PROJECTS + VERSIONS
         ========================================================= */

@@ -26,9 +26,17 @@
     <div class="repo-main">
 
         <!-- RIGHT HEADING -->
-        <div class="repo-header" id="repoTitle">
-            Files
+        <div class="repo-header" id="repoTitle" style="display:flex;justify-content:space-between;align-items:center;">
+            <span id="repoPathText">Files</span>
+
+            <button class="modern-btn secondary"
+                    id="downloadBtn"
+                    onclick="downloadVersion()"
+                    disabled>
+                ⬇ Download
+            </button>
         </div>
+
 
         <ul class="file-tree" id="fileList"></ul>
 

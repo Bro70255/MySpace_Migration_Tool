@@ -46,49 +46,7 @@ namespace MySpace.Controllers
         [ActionName("Projects-Existing")]
         public IActionResult ProjectsExisting()
         {
-            if (!Request.Cookies.ContainsKey("USER_ID"))
-                return RedirectToAction("MySpace_Login");
-
-            int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
-
-            string userRoot = Path.Combine(UPLOAD_ROOT, userId.ToString());
-            var model = new List<ProjectListVM>();
-
-            if (Directory.Exists(userRoot))
-            {
-                foreach (var projectDir in Directory.GetDirectories(userRoot))
-                {
-                    var project = new ProjectListVM
-                    {
-                        ProjectName = Path.GetFileName(projectDir)
-                    };
-
-                    foreach (var versionDir in Directory.GetDirectories(projectDir))
-                    {
-                        string versionName = Path.GetFileName(versionDir);
-
-                        // extract timestamp from v0_yyyy-MM-dd_HH-mm-ss
-                        string uploadedAt = "";
-                        var parts = versionName.Split('_');
-                        if (parts.Length > 1)
-                            uploadedAt = parts[1].Replace('-', ':');
-
-                        project.Versions.Add(new ProjectVersionVM
-                        {
-                            VersionName = versionName,
-                            UploadedAt = uploadedAt
-                        });
-                    }
-
-                    project.Versions = project.Versions
-                        .OrderByDescending(v => v.VersionName)
-                        .ToList();
-
-                    model.Add(project);
-                }
-            }
-
-            return View(model);
+            return View();
         }
 
 
@@ -1392,7 +1350,6 @@ Explain what this screen does in simple words.
         }
 
 
-
         private async Task SplitSqlTablesAndProcedures(
      string selectedModule,
      int projectId,
@@ -1810,53 +1767,88 @@ Explain what this screen does in simple words.
             });
         }
 
-
         [HttpGet]
-        public IActionResult ProjectFiles(string project, string version, string path = "")
+        public IActionResult GetExistingProjects()
         {
             if (!Request.Cookies.ContainsKey("USER_ID"))
-                return Unauthorized();
+                return Json(new { success = false });
 
-            int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            string root = Path.Combine(UPLOAD_ROOT, userId.ToString());
 
-            string basePath = Path.Combine(
-                    UPLOAD_ROOT,
-                    userId.ToString(),
-                    project,
-                    version
-                );
+            var list = new List<ProjectListVM>();
 
-            string fullPath = Path.GetFullPath(Path.Combine(basePath, path));
-
-            // 🔐 Security check
-            if (!fullPath.StartsWith(basePath))
-                return Unauthorized();
-
-            var result = new List<FileNodeVM>();
-
-            if (!Directory.Exists(fullPath))
-                return Json(result);
-
-            foreach (var dir in Directory.GetDirectories(fullPath))
+            if (Directory.Exists(root))
             {
-                result.Add(new FileNodeVM
+                foreach (var p in Directory.GetDirectories(root))
                 {
-                    Name = Path.GetFileName(dir),
-                    IsFolder = true
-                });
+                    var project = new ProjectListVM
+                    {
+                        ProjectName = Path.GetFileName(p),
+                        Versions = Directory.GetDirectories(p)
+                            .Select(v => new ProjectVersionVM
+                            {
+                                VersionName = Path.GetFileName(v)
+                            }).OrderByDescending(x => x.VersionName).ToList()
+                    };
+
+                    list.Add(project);
+                }
             }
 
-            foreach (var file in Directory.GetFiles(fullPath))
-            {
-                result.Add(new FileNodeVM
-                {
-                    Name = Path.GetFileName(file),
-                    IsFolder = false
-                });
-            }
-
-            return Json(result);
+            return Json(new { success = true, data = list });
         }
+
+        [HttpGet]
+        public IActionResult GetVersionFiles(string projectName, string version, string path = "")
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Json(new { success = false });
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+
+            string rootPath = Path.Combine(
+                UPLOAD_ROOT,
+                userId.ToString(),
+                projectName,
+                version
+            );
+
+            string currentPath = string.IsNullOrEmpty(path)
+                ? rootPath
+                : Path.Combine(rootPath, path);
+
+            if (!Directory.Exists(currentPath))
+                return Json(new { success = false });
+
+            var items = new List<object>();
+
+            // FOLDERS FIRST
+            foreach (var dir in Directory.GetDirectories(currentPath))
+            {
+                items.Add(new
+                {
+                    name = Path.GetFileName(dir),
+                    path = Path.Combine(path, Path.GetFileName(dir)).Replace("\\", "/"),
+                    isDirectory = true
+                });
+            }
+
+            // FILES
+            foreach (var file in Directory.GetFiles(currentPath))
+            {
+                items.Add(new
+                {
+                    name = Path.GetFileName(file),
+                    path = Path.Combine(path, Path.GetFileName(file)).Replace("\\", "/"),
+                    isDirectory = false
+                });
+            }
+
+            return Json(new { success = true, files = items });
+        }
+
+
 
         #endregion Test Code
     }

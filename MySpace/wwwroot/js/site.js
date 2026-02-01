@@ -781,22 +781,54 @@ async function sendZooZooMsg() {
     body.scrollTop = body.scrollHeight;
 }
 
+function loadProjects() {
+    fetch('/Home/GetExistingProjects')
+        .then(r => r.json())
+        .then(res => {
+            const box = document.getElementById("projectList");
+            box.innerHTML = "";
 
-function loadFiles(project, version, path) {
+            res.data.forEach(p => {
+                const proj = document.createElement("div");
+                proj.className = "project";
 
-    document.getElementById("fileTitle").innerText =
-        project + " / " + version + (path ? " / " + path : "");
+                proj.innerHTML = `<div class="project-title">${p.projectName}</div>`;
 
-    fetch(`/Home/ProjectFiles?project=${project}&version=${version}&path=${path}`)
-        .then(res => res.json())
-        .then(data => {
+                p.versions.forEach(v => {
+                    const row = document.createElement("div");
+                    row.className = "version";
+                    row.textContent = v.versionName;
+                    row.onclick = () => loadFiles(p.projectName, v.versionName);
+                    proj.appendChild(row);
+                });
+
+                box.appendChild(proj);
+            });
+        });
+}
+
+let currentProject = "";
+let currentVersion = "";
+let currentPath = "";
+
+function loadFiles(project, version, path = "") {
+    currentProject = project;
+    currentVersion = version;
+    currentPath = path;
+
+    document.getElementById("repoTitle").innerText =
+        `${project} / ${version}${path ? " / " + path : ""}`;
+
+    fetch(`/Home/GetVersionFiles?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
+        .then(r => r.json())
+        .then(res => {
             const list = document.getElementById("fileList");
             list.innerHTML = "";
 
+            // BACK OPTION
             if (path) {
                 const back = document.createElement("li");
-                back.className = "list-group-item";
-                back.innerHTML = "⬅️ ..";
+                back.textContent = "⬅ Back";
                 back.onclick = () => {
                     const parent = path.split("/").slice(0, -1).join("/");
                     loadFiles(project, version, parent);
@@ -804,18 +836,15 @@ function loadFiles(project, version, path) {
                 list.appendChild(back);
             }
 
-            data.forEach(item => {
+            res.files.forEach(f => {
                 const li = document.createElement("li");
-                li.className = "list-group-item";
+                li.className = f.isDirectory ? "folder" : "file";
+                li.textContent = f.name;
 
-                if (item.isFolder) {
-                    li.innerHTML = "📁 " + item.name;
-                    li.onclick = () => {
-                        const newPath = path ? path + "/" + item.name : item.name;
-                        loadFiles(project, version, newPath);
-                    };
+                if (f.isDirectory) {
+                    li.onclick = () => loadFiles(project, version, f.path);
                 } else {
-                    li.innerHTML = "📄 " + item.name;
+                    li.onclick = () => viewFile(project, version, f.path);
                 }
 
                 list.appendChild(li);
@@ -823,4 +852,13 @@ function loadFiles(project, version, path) {
         });
 }
 
+function viewFile(project, version, path) {
+    fetch(`/Home/ViewFile?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
+        .then(r => r.text())
+        .then(txt => {
+            const viewer = document.getElementById("fileViewer");
+            viewer.classList.remove("empty");
+            viewer.textContent = txt;
+        });
+}
 

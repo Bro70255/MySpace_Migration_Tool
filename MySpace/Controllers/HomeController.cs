@@ -7,6 +7,7 @@ using MySpace_Common.EntityModels;
 using MySpace_DAL;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -128,138 +129,7 @@ namespace MySpace.Controllers
             });
         }
 
-        private static readonly string UPLOAD_ROOT = @"G:\UserProjects";
-
-        [HttpPost]
-        [IgnoreAntiforgeryToken]
-        [DisableRequestSizeLimit]
-        public async Task<IActionResult> UploadProjectZip(IFormFile zipFile, string projectName)
-        {
-            try
-            {
-                if (!Request.Cookies.ContainsKey("USER_ID"))
-                    return Json(new { success = false, message = "User not logged in" });
-
-                if (zipFile == null || zipFile.Length == 0)
-                    return Json(new { success = false, message = "No zip file received" });
-
-                int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
-                projectName = SafeName(projectName);
-
-                // 🔹 Project root
-                string projectRoot = Path.Combine(
-                    UPLOAD_ROOT,
-                    userId.ToString(),
-                    projectName
-                );
-
-                Directory.CreateDirectory(projectRoot);
-
-                // 🔹 Find next version number (v0, v1, v2...)
-                int nextVersion = 0;
-
-                var existingVersions = Directory.GetDirectories(projectRoot, "v*")
-                    .Select(d => Path.GetFileName(d))
-                    .Where(v => v != null && v.StartsWith("v") &&
-                                int.TryParse(v.Substring(1).Split('_')[0], out _))
-                    .Select(v => int.Parse(v!.Substring(1).Split('_')[0]))
-                    .ToList();
-
-                if (existingVersions.Any())
-                    nextVersion = existingVersions.Max() + 1;
-
-                // 🔹 Timestamp
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-
-                string versionFolderName = $"v{nextVersion}_{timestamp}";
-                string basePath = Path.Combine(projectRoot, versionFolderName);
-
-                Directory.CreateDirectory(basePath);
-
-                // Save zip temporarily
-                string zipPath = Path.Combine(basePath, projectName + ".zip");
-
-                using (var fs = new FileStream(zipPath, FileMode.Create))
-                {
-                    await zipFile.CopyToAsync(fs);
-                }
-
-                // 🚫 Block dangerous files
-                string[] blockedExtensions =
-                {
-                    ".exe", ".dll", ".cs", ".config", ".bat",
-                    ".cmd", ".ps1", ".sh", ".msi"
-                };
-
-                // 📦 Extract ZIP safely (strip root folder)
-                using (var archive = ZipFile.OpenRead(zipPath))
-                {
-                    string rootFolder = archive.Entries
-                        .Select(e => e.FullName.Split('/')[0])
-                        .FirstOrDefault();
-
-                    foreach (var entry in archive.Entries)
-                    {
-                        if (string.IsNullOrWhiteSpace(entry.Name))
-                            continue;
-
-                        string relativePath = entry.FullName;
-
-                        if (!string.IsNullOrEmpty(rootFolder) &&
-                            relativePath.StartsWith(rootFolder + "/"))
-                        {
-                            relativePath = relativePath.Substring(rootFolder.Length + 1);
-                        }
-
-                        if (string.IsNullOrWhiteSpace(relativePath))
-                            continue;
-
-                        string destinationPath = Path.GetFullPath(
-                            Path.Combine(basePath, relativePath)
-                        );
-
-                        // 🔐 Zip-Slip protection
-                        if (!destinationPath.StartsWith(Path.GetFullPath(basePath)))
-                            return Json(new { success = false, message = "Invalid zip content" });
-
-                        // 🚫 Block executable/code files
-                        string ext = Path.GetExtension(destinationPath).ToLower();
-                        if (blockedExtensions.Contains(ext))
-                            continue;
-
-                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-                        entry.ExtractToFile(destinationPath, true);
-                    }
-                }
-
-                // Remove zip
-                System.IO.File.Delete(zipPath);
-
-                return Json(new
-                {
-                    success = true,
-                    message = "Project uploaded successfully",
-                    version = versionFolderName,
-                    uploadedAt = timestamp
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        // ✅ Safe folder naming
-        private static string SafeName(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                return "Project";
-
-            foreach (var c in Path.GetInvalidFileNameChars())
-                name = name.Replace(c, '_');
-
-            return name.Trim();
-        }
+       
 
         [HttpPost]
         public async Task<IActionResult> ZooZooAsk([FromBody] ZooZooAskDto dto)
@@ -312,6 +182,231 @@ namespace MySpace.Controllers
                 reply = "🤔 I don’t know this yet. I’ll learn when this feature is added.\n\n— ZooZoo 🤖"
             });
         }
+
+        private static readonly string UPLOAD_ROOT = @"G:\UserProjects";
+        /* =========================================================
+   UPLOAD PROJECT ZIP (GITHUB STYLE)
+========================================================= */
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadProjectZip(IFormFile zipFile, string projectName)
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Json(new { success = false, message = "User not logged in" });
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            projectName = SafeName(projectName);
+
+            string projectRoot = Path.Combine(UPLOAD_ROOT, userId.ToString(), projectName);
+            string blobRoot = Path.Combine(projectRoot, "blobs");
+            string versionRoot = Path.Combine(projectRoot, "versions");
+
+            Directory.CreateDirectory(blobRoot);
+            Directory.CreateDirectory(versionRoot);
+
+            int nextVersion = Directory.GetDirectories(versionRoot).Length;
+            string versionName = $"v{nextVersion}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
+            string versionPath = Path.Combine(versionRoot, versionName);
+            Directory.CreateDirectory(versionPath);
+
+            var manifest = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            using var zip = new ZipArchive(zipFile.OpenReadStream());
+
+            foreach (var entry in zip.Entries)
+            {
+                if (string.IsNullOrWhiteSpace(entry.Name))
+                    continue;
+
+                if (ShouldSkip(entry.FullName))
+                    continue;
+
+                using var ms = new MemoryStream();
+                using var es = entry.Open();
+                await es.CopyToAsync(ms);
+
+                byte[] data = ms.ToArray();
+                string hash = ComputeHash(data);
+
+                string blobPath = Path.Combine(blobRoot, hash);
+                if (!System.IO.File.Exists(blobPath))
+                    await System.IO.File.WriteAllBytesAsync(blobPath, data);
+
+                string cleanPath = entry.FullName;
+                if (cleanPath.Contains("/"))
+                    cleanPath = cleanPath.Substring(cleanPath.IndexOf("/") + 1);
+
+                manifest[cleanPath] = hash;
+            }
+
+            await System.IO.File.WriteAllTextAsync(
+                Path.Combine(versionPath, "manifest.json"),
+                JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true })
+            );
+
+            return Json(new
+            {
+                success = true,
+                message = $"Project uploaded successfully ({versionName})"
+            });
+        }
+
+        /* =========================================================
+           LIST PROJECTS + VERSIONS
+        ========================================================= */
+
+        [HttpGet]
+        public IActionResult GetExistingProjects()
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Json(new { success = false });
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            string root = Path.Combine(UPLOAD_ROOT, userId.ToString());
+
+            var list = new List<object>();
+
+            if (Directory.Exists(root))
+            {
+                foreach (var p in Directory.GetDirectories(root))
+                {
+                    string versionsPath = Path.Combine(p, "versions");
+                    if (!Directory.Exists(versionsPath)) continue;
+
+                    list.Add(new
+                    {
+                        projectName = Path.GetFileName(p),
+                        versions = Directory.GetDirectories(versionsPath)
+                            .Select(v => new { versionName = Path.GetFileName(v) })
+                            .OrderByDescending(v => v.versionName)
+                    });
+                }
+            }
+
+            return Json(new { success = true, data = list });
+        }
+
+        /* =========================================================
+           LIST FILES (FROM MANIFEST)
+        ========================================================= */
+
+        [HttpGet]
+        public IActionResult GetVersionFiles(string projectName, string version, string path = "")
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Json(new { success = false });
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            projectName = SafeName(projectName);
+
+            string manifestPath = Path.Combine(
+                UPLOAD_ROOT, userId.ToString(), projectName,
+                "versions", version, "manifest.json"
+            );
+
+            if (!System.IO.File.Exists(manifestPath))
+                return Json(new { success = false });
+
+            var manifest = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                System.IO.File.ReadAllText(manifestPath)
+            );
+
+            path = path?.Replace("\\", "/").Trim('/');
+            string prefix = string.IsNullOrEmpty(path) ? "" : path + "/";
+
+            var folders = new HashSet<string>();
+            var files = new HashSet<string>();
+
+            foreach (var f in manifest.Keys)
+            {
+                if (!f.StartsWith(prefix)) continue;
+
+                var rest = f.Substring(prefix.Length);
+                if (!rest.Contains("/"))
+                    files.Add(rest);
+                else
+                    folders.Add(rest.Split('/')[0]);
+            }
+
+            var result = new List<object>();
+
+            foreach (var d in folders)
+                result.Add(new { name = d, path = CombinePath(path, d), isDirectory = true });
+
+            foreach (var f in files)
+                result.Add(new { name = f, path = CombinePath(path, f), isDirectory = false });
+
+            return Json(new { success = true, files = result });
+        }
+
+        /* =========================================================
+           VIEW FILE CONTENT (FROM BLOB)
+        ========================================================= */
+
+        [HttpGet]
+        public IActionResult ViewFile(string projectName, string version, string path)
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Content("Not logged in");
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+            projectName = SafeName(projectName);
+            path = path.Replace("\\", "/");
+
+            string manifestPath = Path.Combine(
+                UPLOAD_ROOT, userId.ToString(), projectName,
+                "versions", version, "manifest.json"
+            );
+
+            var manifest = JsonSerializer.Deserialize<Dictionary<string, string>>(
+                System.IO.File.ReadAllText(manifestPath)
+            );
+
+            if (!manifest.ContainsKey(path))
+                return Content("File not found");
+
+            string hash = manifest[path];
+            string blobPath = Path.Combine(
+                UPLOAD_ROOT, userId.ToString(), projectName, "blobs", hash
+            );
+
+            return Content(System.IO.File.ReadAllText(blobPath), "text/plain");
+        }
+
+        /* =========================================================
+           HELPERS
+        ========================================================= */
+
+        private static string ComputeHash(byte[] data)
+        {
+            using var sha = SHA256.Create();
+            return Convert.ToHexString(sha.ComputeHash(data)).ToLower();
+        }
+
+        private static bool ShouldSkip(string path)
+        {
+            path = path.ToLower();
+            return path.Contains("/bin/") ||
+                   path.Contains("/obj/") ||
+                   path.Contains("/.git/") ||
+                   path.Contains("/node_modules/");
+        }
+
+        private static string SafeName(string name)
+        {
+            foreach (var c in Path.GetInvalidFileNameChars())
+                name = name.Replace(c, '_');
+            return name.Trim();
+        }
+
+        private static string CombinePath(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a)) return b;
+            return $"{a}/{b}";
+        }
+
         #endregion Function Production Code
 
         #endregion Full Production Code
@@ -1765,87 +1860,6 @@ Explain what this screen does in simple words.
                     ? await System.IO.File.ReadAllTextAsync(file.FilePath)
                     : null
             });
-        }
-
-        [HttpGet]
-        public IActionResult GetExistingProjects()
-        {
-            if (!Request.Cookies.ContainsKey("USER_ID"))
-                return Json(new { success = false });
-
-            int userId = int.Parse(Request.Cookies["USER_ID"]);
-            string root = Path.Combine(UPLOAD_ROOT, userId.ToString());
-
-            var list = new List<ProjectListVM>();
-
-            if (Directory.Exists(root))
-            {
-                foreach (var p in Directory.GetDirectories(root))
-                {
-                    var project = new ProjectListVM
-                    {
-                        ProjectName = Path.GetFileName(p),
-                        Versions = Directory.GetDirectories(p)
-                            .Select(v => new ProjectVersionVM
-                            {
-                                VersionName = Path.GetFileName(v)
-                            }).OrderByDescending(x => x.VersionName).ToList()
-                    };
-
-                    list.Add(project);
-                }
-            }
-
-            return Json(new { success = true, data = list });
-        }
-
-        [HttpGet]
-        public IActionResult GetVersionFiles(string projectName, string version, string path = "")
-        {
-            if (!Request.Cookies.ContainsKey("USER_ID"))
-                return Json(new { success = false });
-
-            int userId = int.Parse(Request.Cookies["USER_ID"]);
-
-            string rootPath = Path.Combine(
-                UPLOAD_ROOT,
-                userId.ToString(),
-                projectName,
-                version
-            );
-
-            string currentPath = string.IsNullOrEmpty(path)
-                ? rootPath
-                : Path.Combine(rootPath, path);
-
-            if (!Directory.Exists(currentPath))
-                return Json(new { success = false });
-
-            var items = new List<object>();
-
-            // FOLDERS FIRST
-            foreach (var dir in Directory.GetDirectories(currentPath))
-            {
-                items.Add(new
-                {
-                    name = Path.GetFileName(dir),
-                    path = Path.Combine(path, Path.GetFileName(dir)).Replace("\\", "/"),
-                    isDirectory = true
-                });
-            }
-
-            // FILES
-            foreach (var file in Directory.GetFiles(currentPath))
-            {
-                items.Add(new
-                {
-                    name = Path.GetFileName(file),
-                    path = Path.Combine(path, Path.GetFileName(file)).Replace("\\", "/"),
-                    isDirectory = false
-                });
-            }
-
-            return Json(new { success = true, files = items });
         }
 
 

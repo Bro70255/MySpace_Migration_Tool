@@ -1,26 +1,32 @@
 ﻿using MySpace_DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ⬅ Register EF Core DbContext
+// ✅ VERY IMPORTANT: allow large uploads (increase if needed)
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = long.MaxValue; // unlimited
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = long.MaxValue; // unlimited
+});
+
+// DB
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MAFIT"));
 });
 
-// ⬅ Register 2-Layer DI services
 builder.Services.AddScoped<Data_Layer>();
-
-// ⬅ REQUIRED for DeepSeek API
 builder.Services.AddHttpClient();
-
-// MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// PIPELINE
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -28,14 +34,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=MySpace_Login}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=MySpace_Login}/{id?}");
 
 app.Run();

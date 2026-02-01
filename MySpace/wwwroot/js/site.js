@@ -738,7 +738,89 @@ function bindFileTypes(projectFlowJson) {
     });
 }
 
+function toggleZooZooChat() {
+    const chat = document.getElementById("zoozooChat");
+    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+}
+
+async function sendZooZooMsg() {
+    const input = document.getElementById("chatInput");
+    const body = document.getElementById("chatBody");
+    const text = input.value.trim();
+    if (!text) return;
+
+    // User bubble
+    body.innerHTML += `<div class="user-msg">${text}</div>`;
+    input.value = "";
+
+    // Typing indicator
+    const typing = document.createElement("div");
+    typing.className = "bot-msg";
+    typing.innerText = "🤖 thinking...";
+    body.appendChild(typing);
+    body.scrollTop = body.scrollHeight;
+
+    try {
+        const res = await fetch('/Home/ZooZooAsk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                message: text,
+                page: window.location.pathname
+            })
+        });
+
+        const json = await res.json();
+        typing.innerText = json.reply || "🤖 I’m learning…";
+
+    } catch (e) {
+        typing.innerText = "⚠️ Something went wrong.";
+    }
+
+    body.scrollTop = body.scrollHeight;
+}
 
 
+function loadFiles(project, version, path) {
+
+    document.getElementById("fileTitle").innerText =
+        project + " / " + version + (path ? " / " + path : "");
+
+    fetch(`/Home/ProjectFiles?project=${project}&version=${version}&path=${path}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("fileList");
+            list.innerHTML = "";
+
+            if (path) {
+                const back = document.createElement("li");
+                back.className = "list-group-item";
+                back.innerHTML = "⬅️ ..";
+                back.onclick = () => {
+                    const parent = path.split("/").slice(0, -1).join("/");
+                    loadFiles(project, version, parent);
+                };
+                list.appendChild(back);
+            }
+
+            data.forEach(item => {
+                const li = document.createElement("li");
+                li.className = "list-group-item";
+
+                if (item.isFolder) {
+                    li.innerHTML = "📁 " + item.name;
+                    li.onclick = () => {
+                        const newPath = path ? path + "/" + item.name : item.name;
+                        loadFiles(project, version, newPath);
+                    };
+                } else {
+                    li.innerHTML = "📄 " + item.name;
+                }
+
+                list.appendChild(li);
+            });
+        });
+}
 
 

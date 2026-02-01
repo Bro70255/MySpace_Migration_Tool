@@ -6,6 +6,7 @@ using MySpace_Common.ControllerModels;
 using MySpace_Common.EntityModels;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Cryptography;
 
 namespace MySpace_DAL
 {
@@ -21,7 +22,12 @@ namespace MySpace_DAL
         // =========================
         // USER REGISTRATION
         // =========================
-        public async Task<bool> RegisterUserAsync(string firstName, string lastName, string email, string username, string password)
+        public async Task<bool> RegisterUserAsync(
+    string firstName,
+    string lastName,
+    string email,
+    string username,
+    string password)
         {
             try
             {
@@ -33,8 +39,11 @@ namespace MySpace_DAL
 
                 string hash = BCrypt.Net.BCrypt.HashPassword(password);
 
+                int userId = await GenerateUniqueUserIdAsync(); // 👈 8-digit ID
+
                 var user = new User
                 {
+                    UserId = userId,
                     FirstName = firstName.Trim(),
                     LastName = lastName.Trim(),
                     Email = email.Trim().ToLower(),
@@ -47,10 +56,26 @@ namespace MySpace_DAL
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                // Optional: log ex
                 return false;
             }
+        }
+
+        private async Task<int> GenerateUniqueUserIdAsync()
+        {
+            int userId;
+            bool exists;
+
+            do
+            {
+                userId = RandomNumberGenerator.GetInt32(10000000, 99999999); // 8 digits
+                exists = await _context.Users.AnyAsync(u => u.UserId == userId);
+            }
+            while (exists);
+
+            return userId;
         }
 
         // =========================
@@ -97,7 +122,7 @@ namespace MySpace_DAL
         // =========================
         // FILE DETAILS
         // =========================
-        public async Task<int> Save_File_Details(int projectId,int parentFileId, string fileName, string filePath, string fileType, string textContent)
+        public async Task<int> Save_File_Details(int projectId, int parentFileId, string fileName, string filePath, string fileType, string textContent)
         {
             var entity = new FileDetails
             {
@@ -159,7 +184,7 @@ namespace MySpace_DAL
         // =========================
         // CHILD FILE DETAILS
         // =========================
-        public async Task Save_Child_File_Details(int projectId,int parentFileId, string name, string type)
+        public async Task Save_Child_File_Details(int projectId, int parentFileId, string name, string type)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return;
@@ -221,7 +246,6 @@ namespace MySpace_DAL
             return list;
         }
 
-
         public async Task<int> Save_Create_Project(ProjectCreateDto model, int userId)
         {
             var entity = new ProjectMaster
@@ -266,7 +290,52 @@ namespace MySpace_DAL
                 .FirstOrDefault();
         }
 
+        public async Task SaveMemoryAsync(
+       int userId,
+       string memoryType,
+       string question,
+       string answer,
+       string page)
+        {
+            var conn = _context.Database.GetDbConnection();
 
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "Save_ZooZoo_Memory";
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@UserId", userId));
+            cmd.Parameters.Add(new SqlParameter("@MemoryType", memoryType));
+            cmd.Parameters.Add(new SqlParameter("@Question", question));
+            cmd.Parameters.Add(new SqlParameter("@Answer", answer));
+            cmd.Parameters.Add(new SqlParameter("@Page", page));
+
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task<string?> GetLearnedAnswerAsync(int userId, string question)
+        {
+            var conn = _context.Database.GetDbConnection();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "Get_ZooZoo_Memory";
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@UserId", userId));
+            cmd.Parameters.Add(new SqlParameter("@Question", question));
+
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+                return reader["Answer"]?.ToString();
+
+            return null;
+        }
 
     }
 }

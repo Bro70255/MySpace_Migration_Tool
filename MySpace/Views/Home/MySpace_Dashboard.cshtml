@@ -1,189 +1,127 @@
 ﻿@{
-    ViewData["Title"] = "MySpace Dashboard";
+    ViewData["Title"] = "Dashboard";
+
+    // These are READ by _Layout.cshtml
+    ViewData["PageTitle"] = "MySpace Workspace";
+    ViewData["PageSubtitle"] = "Centralized management of projects, infrastructure, and services";
+    ViewData["ShowZooZoo"] = true;
 }
-<div class="content-wrapper">
-    <div class="dashboard-container">
-        <div class="dashboard-header">
 
-            <div class="dashboard-header-content">
-                <h1 class="dashboard-title">MySpace Workspace</h1>
-                <p class="dashboard-subtitle">
-                    Centralized management of projects, infrastructure, and services
-                </p>
-            </div>
+<div class="dashboard-container">
 
-            <!-- ZOOZOO HELPER (ONLY ONE) -->
-            <div class="dashboard-helper ai-helper" onclick="location.href='/Home/Helpdesk'">
-                <div class="ai-robot">
+    <!-- DASHBOARD CARDS -->
+    <div class="row g-4">
 
-                    <!-- Dialog -->
-                    <div class="ai-dialog">
-                        Need help? Ask me
-                    </div>
-
-                    <!-- Robot SVG -->
-                    <svg class="robot-svg" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
-
-                        <!-- Shadow -->
-                        <ellipse cx="70" cy="112" rx="26" ry="6" fill="rgba(0,0,0,0.08)" />
-
-                        <!-- Antenna -->
-                        <line x1="70" y1="14" x2="70" y2="28"
-                              stroke="#c7d2fe" stroke-width="2" />
-
-                        <!-- Antenna signal dot (COLOR CYCLES) -->
-                        <circle cx="70" cy="10" r="5" class="robot-antenna-dot" />
-
-                        <!-- Head -->
-                        <rect x="40" y="26" width="60" height="42" rx="18"
-                              fill="#fff" stroke="#d1d5db" stroke-width="2" />
-
-                        <!-- Eyes -->
-                        <g class="robot-eyes">
-                            <circle cx="58" cy="48" r="6" fill="#111827" />
-                            <circle cx="82" cy="48" r="6" fill="#111827" />
-                        </g>
-
-                        <!-- Mouth -->
-                        <rect x="60" y="60" width="20" height="4" rx="2"
-                              fill="#9ca3af" />
-
-                        <!-- Body -->
-                        <rect x="38" y="70" width="64" height="36" rx="18"
-                              fill="#fff" stroke="#d1d5db" stroke-width="2" />
-
-                        <!-- Chest / stomach dot (COLOR CYCLES) -->
-                        <circle cx="70" cy="88" r="5" class="robot-chest-dot" />
-
-                        <!-- Arms -->
-                        <g class="arm-left">
-                            <rect x="24" y="76" width="14" height="10" rx="5"
-                                  fill="#fff" stroke="#d1d5db" stroke-width="2" />
-                            <circle cx="20" cy="82" r="6"
-                                    fill="#fff" stroke="#d1d5db" stroke-width="2" />
-                        </g>
-
-                        <g class="arm-right">
-                            <rect x="102" y="76" width="14" height="10" rx="5"
-                                  fill="#fff" stroke="#d1d5db" stroke-width="2" />
-                            <circle cx="120" cy="82" r="6"
-                                    fill="#fff" stroke="#d1d5db" stroke-width="2" />
-                        </g>
-
-                    </svg>
+        <!-- 1 : Projects -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 onclick="location.href='/Home/Projects'"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-primary-soft">
+                    <i class="bi bi-diagram-3"></i>
                 </div>
+                <h5>Projects</h5>
+                <p>Manage projects and their branches</p>
             </div>
-
-
         </div>
 
-
-        <!-- DASHBOARD CARDS -->
-        <div class="row g-4">
-
-            <!-- 1 : Projects -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card"
-                     onclick="location.href='/Home/Projects'"
-                     style="cursor:pointer;">
-                    <div class="dashboard-icon bg-primary-soft">
-                        <i class="bi bi-diagram-3"></i>
-                    </div>
-                    <h5>Projects</h5>
-                    <p>Manage projects and their branches</p>
+        <!-- 2 : Database -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-success-soft">
+                    <i class="bi bi-database"></i>
                 </div>
+                <h5>Database & Backups</h5>
+                <p>Database status, backups, and recovery</p>
             </div>
+        </div>
 
-
-            <!-- 2 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-success-soft">
-                        <i class="bi bi-database"></i>
-                    </div>
-                    <h5>Database & Backups</h5>
-                    <p>Database status, backups, and recovery</p>
+        <!-- 3 : Blueprint -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-info-soft">
+                    <i class="bi bi-diagram-2"></i>
                 </div>
+                <h5>Project Blueprint</h5>
+                <p>Visualize and manage project architecture</p>
             </div>
+        </div>
 
-            <!-- 3 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-info-soft">
-                        <i class="bi bi-diagram-2"></i>
-                    </div>
-                    <h5>Project Blueprint</h5>
-                    <p>Visualize and manage project architecture</p>
+        <!-- 4 : Migration -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-warning-soft">
+                    <i class="bi bi-arrow-left-right"></i>
                 </div>
+                <h5>Project Migration</h5>
+                <p>Migrate projects between platforms</p>
             </div>
+        </div>
 
-            <!-- 4 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-warning-soft">
-                        <i class="bi bi-arrow-left-right"></i>
-                    </div>
-                    <h5>Project Migration</h5>
-                    <p>Migrate projects between platforms</p>
+        <!-- 5 : Domains -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-info-soft">
+                    <i class="bi bi-globe"></i>
                 </div>
+                <h5>Project Domains</h5>
+                <p>Manage domain mappings and routing</p>
             </div>
+        </div>
 
-            <!-- 5 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-info-soft">
-                        <i class="bi bi-globe"></i>
-                    </div>
-                    <h5>Project Domains</h5>
-                    <p>Manage domain mappings and routing</p>
+        <!-- 6 : Server -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-warning-soft">
+                    <i class="bi bi-hdd-network"></i>
                 </div>
+                <h5>Server Management</h5>
+                <p>Monitor servers and system health</p>
             </div>
+        </div>
 
-            <!-- 6 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-warning-soft">
-                        <i class="bi bi-hdd-network"></i>
-                    </div>
-                    <h5>Server Management</h5>
-                    <p>Monitor servers and system health</p>
+        <!-- 7 : Helpdesk -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 onclick="toggleZooZooChat()"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-danger-soft">
+                    <i class="bi bi-headset"></i>
                 </div>
+                <h5>Helpdesk</h5>
+                <p>Ask questions or contact support</p>
             </div>
+        </div>
 
-            <!-- 7 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-danger-soft">
-                        <i class="bi bi-headset"></i>
-                    </div>
-                    <h5>Helpdesk</h5>
-                    <p>Ask questions or contact support</p>
+        <!-- 8 : Billing -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-secondary-soft">
+                    <i class="bi bi-credit-card"></i>
                 </div>
+                <h5>Billing & Account</h5>
+                <p>Subscriptions, invoices, and usage</p>
             </div>
+        </div>
 
-            <!-- 8 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-secondary-soft">
-                        <i class="bi bi-credit-card"></i>
-                    </div>
-                    <h5>Billing & Account</h5>
-                    <p>Subscriptions, invoices, and usage</p>
+        <!-- 9 : AI Settings -->
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-primary-soft">
+                    <i class="bi bi-robot"></i>
                 </div>
+                <h5>AI Settings</h5>
+                <p>Configure AI behavior, alerts, and automation</p>
             </div>
-            <!-- 9 -->
-            <div class="col-md-6 col-lg-3">
-                <div class="dashboard-card">
-                    <div class="dashboard-icon bg-primary-soft">
-                        <i class="bi bi-robot"></i>
-                    </div>
-                    <h5>AI Settings</h5>
-                    <p>Configure AI behavior, alerts, and automation</p>
-                </div>
-            </div>
-
         </div>
 
     </div>
-</div>
 
+</div>

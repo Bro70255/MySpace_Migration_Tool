@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Existing Projects";
+}
+
+<div class="container mt-4">
+    <h3>Existing Projects</h3>
+    <p class="text-muted">Browse uploaded projects and versions</p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <ul class="list-group">
+                @foreach (var project in Model)
+                {
+                    <li class="list-group-item">
+                        <strong>@project.ProjectName</strong>
+                        <ul class="mt-2">
+                            @foreach (var v in project.Versions)
+                            {
+                                <li>
+                                    <a href="javascript:void(0)"
+                                       onclick="loadFiles('@project.ProjectName','@v.VersionName','')">
+                                        @v.VersionName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-8">
+            <h5 id="fileTitle">Files</h5>
+            <ul id="fileList" class="list-group"></ul>
+        </div>
+    </div>
+</div>
+
+

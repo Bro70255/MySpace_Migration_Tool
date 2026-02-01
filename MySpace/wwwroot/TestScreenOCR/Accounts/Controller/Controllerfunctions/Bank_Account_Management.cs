@@ -1,6 +1,0 @@
-        public ActionResult Bank_Account_Management()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }

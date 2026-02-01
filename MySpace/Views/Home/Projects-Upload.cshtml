@@ -1,0 +1,173 @@
+﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+@{
+    ViewData["Title"] = "Project Upload";
+
+    ViewData["PageTitle"] = "Upload Project";
+    ViewData["PageSubtitle"] = "Upload a new project or create a new version of an existing one";
+    ViewData["ShowZooZoo"] = true;
+}
+
+
+<div class="content-wrapper">
+    <div class="dashboard-container">
+        <div class="glass-body module-wrapper project-upload-module">
+
+            <div class="module-header" style="margin-bottom:20px;">
+                <span class="module-icon">📁</span>
+                <span class="module-title" style="font-size:18px;font-weight:600;">
+                    Upload Entire Project (ZIP)
+                </span>
+            </div>
+
+            <div class="module-body">
+                <div id="uploadMessage" class="upload-message" style="display:none;"></div>
+
+                <div class="upload-zone single-action">
+                    <p class="upload-title">Upload Project Folder</p>
+                    <p class="upload-subtitle">
+                        Folder will be zipped in browser, then uploaded as 1 file.
+                    </p>
+
+                    <input type="file"
+                           id="folderInput"
+                           multiple
+                           webkitdirectory
+                           directory
+                           mozdirectory
+                           style="position:absolute; left:-9999px;" />
+
+                    <div class="upload-actions">
+                        <label for="folderInput" class="modern-btn primary" style="cursor:pointer;">
+                            Select Project Folder
+                        </label>
+                    </div>
+
+                    <div class="upload-info" id="uploadInfo"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let isUploading = false;
+
+    function showMessage(message, type) {
+        const msg = document.getElementById("uploadMessage");
+        if (!msg) return;
+        msg.className = `upload-message ${type}`;
+        msg.textContent = message;
+        msg.style.display = "block";
+        setTimeout(() => msg.style.display = "none", 6000);
+    }
+
+    function setInfo(html) {
+        const uploadInfo = document.getElementById("uploadInfo");
+        if (uploadInfo) uploadInfo.innerHTML = html || "";
+    }
+
+    // ✅ NEW: ignore folders that break upload (GitHub-style)
+    function shouldSkip(path) {
+        const p = path.toLowerCase();
+
+        return (
+            p.startsWith(".git/") || p.includes("/.git/") ||
+            p.startsWith(".vs/") || p.includes("/.vs/") ||
+            p.startsWith("packages/") || p.includes("/packages/") ||
+            p.includes("/bin/") ||
+            p.includes("/obj/") ||
+            p.includes("/node_modules/")
+        );
+    }
+
+    async function zipFolder(files) {
+        const zip = new JSZip();
+
+        // ✅ root folder name
+        const firstPath = files[0].webkitRelativePath;
+        const projectName = firstPath.split("/")[0];
+
+        let added = 0;
+        let skipped = 0;
+
+        for (const file of files) {
+            const rel = file.webkitRelativePath;
+            if (!rel) continue;
+
+            // ✅ skip heavy/unwanted folders
+            if (shouldSkip(rel)) {
+                skipped++;
+                continue;
+            }
+
+            zip.file(rel, file);
+            added++;
+        }
+
+        if (added === 0) {
+            throw new Error("No valid project files found (all files were ignored)");
+        }
+
+        const zipBlob = await zip.generateAsync(
+            { type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } },
+            meta => setInfo(`
+                <div>Zipping: ${Math.floor(meta.percent)}%</div>
+                <div>Added files: ${added}</div>
+                <div>Skipped files: ${skipped}</div>
+            `)
+        );
+
+        return { zipBlob, projectName };
+    }
+
+    async function uploadZip(zipBlob, projectName) {
+        const fd = new FormData();
+        fd.append("zipFile", zipBlob, `${projectName}.zip`);
+        fd.append("projectName", projectName);
+
+        return $.ajax({
+            url: "/Home/UploadProjectZip",
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const folderInput = document.getElementById("folderInput");
+
+        folderInput.addEventListener("change", async function (e) {
+            if (isUploading) return;
+
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            try {
+                isUploading = true;
+                showMessage("Zipping project folder…", "info");
+
+                const { zipBlob, projectName } = await zipFolder(files);
+
+                showMessage("Uploading project…", "info");
+                const res = await uploadZip(zipBlob, projectName);
+
+                if (res?.success) {
+                    showMessage(res.message || "Project uploaded successfully", "success");
+                } else {
+                    showMessage(res?.message || "Upload failed", "error");
+                }
+            } catch (err) {
+                showMessage(err.message || "Upload error", "error");
+            } finally {
+                isUploading = false;
+                folderInput.value = "";
+            }
+        });
+    });
+</script>
+
+
+

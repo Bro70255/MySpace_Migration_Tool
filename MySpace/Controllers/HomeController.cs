@@ -6,6 +6,7 @@ using MySpace_Common.ControllerModels;
 using MySpace_Common.EntityModels;
 using MySpace_DAL;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -36,11 +37,60 @@ namespace MySpace.Controllers
             return View();
         }
 
-        [ActionName("Project-Upload")]
+        [ActionName("Projects-Upload")]
         public IActionResult ProjectUpload()
         {
             return View();
         }
+
+        [ActionName("Projects-Existing")]
+        public IActionResult ProjectsExisting()
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return RedirectToAction("MySpace_Login");
+
+            int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
+
+            string userRoot = Path.Combine(UPLOAD_ROOT, userId.ToString());
+            var model = new List<ProjectListVM>();
+
+            if (Directory.Exists(userRoot))
+            {
+                foreach (var projectDir in Directory.GetDirectories(userRoot))
+                {
+                    var project = new ProjectListVM
+                    {
+                        ProjectName = Path.GetFileName(projectDir)
+                    };
+
+                    foreach (var versionDir in Directory.GetDirectories(projectDir))
+                    {
+                        string versionName = Path.GetFileName(versionDir);
+
+                        // extract timestamp from v0_yyyy-MM-dd_HH-mm-ss
+                        string uploadedAt = "";
+                        var parts = versionName.Split('_');
+                        if (parts.Length > 1)
+                            uploadedAt = parts[1].Replace('-', ':');
+
+                        project.Versions.Add(new ProjectVersionVM
+                        {
+                            VersionName = versionName,
+                            UploadedAt = uploadedAt
+                        });
+                    }
+
+                    project.Versions = project.Versions
+                        .OrderByDescending(v => v.VersionName)
+                        .ToList();
+
+                    model.Add(project);
+                }
+            }
+
+            return View(model);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -120,13 +170,196 @@ namespace MySpace.Controllers
             });
         }
 
+        private static readonly string UPLOAD_ROOT = @"G:\UserProjects";
 
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> UploadProjectZip(IFormFile zipFile, string projectName)
+        {
+            try
+            {
+                if (!Request.Cookies.ContainsKey("USER_ID"))
+                    return Json(new { success = false, message = "User not logged in" });
+
+                if (zipFile == null || zipFile.Length == 0)
+                    return Json(new { success = false, message = "No zip file received" });
+
+                int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
+                projectName = SafeName(projectName);
+
+                // 🔹 Project root
+                string projectRoot = Path.Combine(
+                    UPLOAD_ROOT,
+                    userId.ToString(),
+                    projectName
+                );
+
+                Directory.CreateDirectory(projectRoot);
+
+                // 🔹 Find next version number (v0, v1, v2...)
+                int nextVersion = 0;
+
+                var existingVersions = Directory.GetDirectories(projectRoot, "v*")
+                    .Select(d => Path.GetFileName(d))
+                    .Where(v => v != null && v.StartsWith("v") &&
+                                int.TryParse(v.Substring(1).Split('_')[0], out _))
+                    .Select(v => int.Parse(v!.Substring(1).Split('_')[0]))
+                    .ToList();
+
+                if (existingVersions.Any())
+                    nextVersion = existingVersions.Max() + 1;
+
+                // 🔹 Timestamp
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+
+                string versionFolderName = $"v{nextVersion}_{timestamp}";
+                string basePath = Path.Combine(projectRoot, versionFolderName);
+
+                Directory.CreateDirectory(basePath);
+
+                // Save zip temporarily
+                string zipPath = Path.Combine(basePath, projectName + ".zip");
+
+                using (var fs = new FileStream(zipPath, FileMode.Create))
+                {
+                    await zipFile.CopyToAsync(fs);
+                }
+
+                // 🚫 Block dangerous files
+                string[] blockedExtensions =
+                {
+                    ".exe", ".dll", ".cs", ".config", ".bat",
+                    ".cmd", ".ps1", ".sh", ".msi"
+                };
+
+                // 📦 Extract ZIP safely (strip root folder)
+                using (var archive = ZipFile.OpenRead(zipPath))
+                {
+                    string rootFolder = archive.Entries
+                        .Select(e => e.FullName.Split('/')[0])
+                        .FirstOrDefault();
+
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (string.IsNullOrWhiteSpace(entry.Name))
+                            continue;
+
+                        string relativePath = entry.FullName;
+
+                        if (!string.IsNullOrEmpty(rootFolder) &&
+                            relativePath.StartsWith(rootFolder + "/"))
+                        {
+                            relativePath = relativePath.Substring(rootFolder.Length + 1);
+                        }
+
+                        if (string.IsNullOrWhiteSpace(relativePath))
+                            continue;
+
+                        string destinationPath = Path.GetFullPath(
+                            Path.Combine(basePath, relativePath)
+                        );
+
+                        // 🔐 Zip-Slip protection
+                        if (!destinationPath.StartsWith(Path.GetFullPath(basePath)))
+                            return Json(new { success = false, message = "Invalid zip content" });
+
+                        // 🚫 Block executable/code files
+                        string ext = Path.GetExtension(destinationPath).ToLower();
+                        if (blockedExtensions.Contains(ext))
+                            continue;
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
+                        entry.ExtractToFile(destinationPath, true);
+                    }
+                }
+
+                // Remove zip
+                System.IO.File.Delete(zipPath);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Project uploaded successfully",
+                    version = versionFolderName,
+                    uploadedAt = timestamp
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // ✅ Safe folder naming
+        private static string SafeName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return "Project";
+
+            foreach (var c in Path.GetInvalidFileNameChars())
+                name = name.Replace(c, '_');
+
+            return name.Trim();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ZooZooAsk([FromBody] ZooZooAskDto dto)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Message))
+                return BadRequest();
+
+            int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
+            string message = dto.Message.Trim();
+
+            // 1️⃣ CHECK MEMORY FIRST
+            var learnedAnswer = await _dal.GetLearnedAnswerAsync(userId, message);
+            if (!string.IsNullOrEmpty(learnedAnswer))
+            {
+                return Json(new
+                {
+                    reply = learnedAnswer + "\n\n— ZooZoo 🤖 (MySpaceConnect)"
+                });
+            }
+
+            // 2️⃣ BUILT-IN KNOWLEDGE
+            string reply = null;
+
+            if (message.ToLower().Contains("upload") &&
+                message.ToLower().Contains("project"))
+            {
+                reply = "To upload a project: open **Projects → Upload Projects**.";
+            }
+
+            // 3️⃣ IF ZOOZOO KNOWS → SAVE MEMORY
+            if (!string.IsNullOrEmpty(reply))
+            {
+                await _dal.SaveMemoryAsync(
+                    userId,
+                    "auto",
+                    message,
+                    reply,
+                    dto.Page
+                );
+
+                return Json(new
+                {
+                    reply = reply + "\n\n— ZooZoo 🤖 (MySpaceConnect)"
+                });
+            }
+
+            // 4️⃣ IF ZOOZOO DOESN’T KNOW
+            return Json(new
+            {
+                reply = "🤔 I don’t know this yet. I’ll learn when this feature is added.\n\n— ZooZoo 🤖"
+            });
+        }
         #endregion Function Production Code
 
         #endregion Full Production Code
 
 
-        #region IAction Test Code
+        #region Test Code
 
         public IActionResult Index()
         {
@@ -148,7 +381,6 @@ namespace MySpace.Controllers
             return View();
         }
 
-
         public IActionResult Review()
         {
             return View();
@@ -162,25 +394,6 @@ namespace MySpace.Controllers
         {
             return View();
         }
-
-        #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         [HttpPost]
@@ -1597,6 +1810,55 @@ Explain what this screen does in simple words.
             });
         }
 
+
+        [HttpGet]
+        public IActionResult ProjectFiles(string project, string version, string path = "")
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Unauthorized();
+
+            int userId = Convert.ToInt32(Request.Cookies["USER_ID"]);
+
+            string basePath = Path.Combine(
+                    UPLOAD_ROOT,
+                    userId.ToString(),
+                    project,
+                    version
+                );
+
+            string fullPath = Path.GetFullPath(Path.Combine(basePath, path));
+
+            // 🔐 Security check
+            if (!fullPath.StartsWith(basePath))
+                return Unauthorized();
+
+            var result = new List<FileNodeVM>();
+
+            if (!Directory.Exists(fullPath))
+                return Json(result);
+
+            foreach (var dir in Directory.GetDirectories(fullPath))
+            {
+                result.Add(new FileNodeVM
+                {
+                    Name = Path.GetFileName(dir),
+                    IsFolder = true
+                });
+            }
+
+            foreach (var file in Directory.GetFiles(fullPath))
+            {
+                result.Add(new FileNodeVM
+                {
+                    Name = Path.GetFileName(file),
+                    IsFolder = false
+                });
+            }
+
+            return Json(result);
+        }
+
+        #endregion Test Code
     }
 
 }

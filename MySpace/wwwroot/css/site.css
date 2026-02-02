@@ -797,3 +797,16 @@ body {
     border-bottom: 1px solid rgba(15,23,42,0.1);
     background: #f8fafc;
 }
+.project-title.clickable {
+    cursor: pointer;
+}
+
+    .project-title.clickable:hover {
+        background: #eef2ff;
+        color: #1d4ed8;
+    }
+
+.version-list {
+    border-left: 2px solid #e5e7eb;
+    margin-left: 12px;
+}

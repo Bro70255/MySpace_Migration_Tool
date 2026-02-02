@@ -785,27 +785,61 @@ function loadProjects() {
     fetch('/Home/GetExistingProjects')
         .then(r => r.json())
         .then(res => {
+
             const box = document.getElementById("projectList");
             box.innerHTML = "";
 
-            res.data.forEach(p => {
-                const proj = document.createElement("div");
-                proj.className = "project";
+            res.data.forEach((p, index) => {
 
-                proj.innerHTML = `<div class="project-title">${p.projectName}</div>`;
+                // PROJECT CONTAINER
+                const project = document.createElement("div");
+                project.className = "project";
+
+                // PROJECT TITLE (NUMBERED)
+                const title = document.createElement("div");
+                title.className = "project-title clickable";
+                title.innerHTML = `${index + 1}. ${p.projectName}`;
+
+                // VERSION LIST (HIDDEN INITIALLY)
+                const versionList = document.createElement("div");
+                versionList.className = "version-list";
+                versionList.style.display = "none";
 
                 p.versions.forEach(v => {
                     const row = document.createElement("div");
                     row.className = "version";
                     row.textContent = v.versionName;
-                    row.onclick = () => loadFiles(p.projectName, v.versionName);
-                    proj.appendChild(row);
+
+                    row.onclick = () => {
+                        loadFiles(p.projectName, v.versionName);
+
+                        // enable download button
+                        document.getElementById("downloadBtn").disabled = false;
+                        document.getElementById("repoPathText").innerText =
+                            `${p.projectName} / ${v.versionName}`;
+                    };
+
+                    versionList.appendChild(row);
                 });
 
-                box.appendChild(proj);
+                // TOGGLE VERSIONS ON PROJECT CLICK
+                title.onclick = () => {
+                    const isOpen = versionList.style.display === "block";
+
+                    document
+                        .querySelectorAll(".version-list")
+                        .forEach(v => v.style.display = "none");
+
+                    versionList.style.display = isOpen ? "none" : "block";
+                };
+
+                project.appendChild(title);
+                project.appendChild(versionList);
+                box.appendChild(project);
             });
         });
 }
+
 
 let currentProject = "";
 let currentVersion = "";

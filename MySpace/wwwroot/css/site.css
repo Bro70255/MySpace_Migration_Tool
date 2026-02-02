@@ -810,3 +810,31 @@ body {
     border-left: 2px solid #e5e7eb;
     margin-left: 12px;
 }
+.inline-upload {
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8fafc;
+    padding: 16px;
+}
+
+.upload-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.upload-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.upload-message.success {
+    color: #16a34a;
+}
+
+.upload-message.error {
+    color: #dc2626;
+}
+
+.upload-message.info {
+    color: #2563eb;
+}

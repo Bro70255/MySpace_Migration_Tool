@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Projects - Existing";
-
     ViewData["PageTitle"] = "Existing Projects";
     ViewData["PageSubtitle"] = "Browse and manage your uploaded projects and their versions";
     ViewData["ShowZooZoo"] = true;
@@ -21,23 +20,64 @@
 
     </div>
 
-
     <!-- RIGHT CONTENT -->
     <div class="repo-main">
 
-        <!-- RIGHT HEADING -->
-        <div class="repo-header" id="repoTitle" style="display:flex;justify-content:space-between;align-items:center;">
+        <!-- HEADER -->
+        <div class="repo-header"
+             style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+
             <span id="repoPathText">Files</span>
 
-            <button class="modern-btn secondary"
-                    id="downloadBtn"
-                    onclick="downloadVersion()"
-                    disabled>
-                ⬇ Download
-            </button>
+            <div style="display:flex;gap:8px;">
+                <button class="modern-btn secondary" id="uploadToggleBtn">
+                    ⬆ Upload
+                </button>
+
+                <button class="modern-btn secondary"
+                        id="downloadBtn"
+                        onclick="downloadVersion()"
+                        disabled>
+                    ⬇ Download
+                </button>
+            </div>
         </div>
 
+        <!-- INLINE UPLOAD PANEL -->
+        <div id="inlineUploadPanel" class="inline-upload" style="display:none;">
 
+            <div class="upload-zone single-action">
+
+                <p class="upload-title">Upload Project Folder</p>
+                <p class="upload-subtitle">
+                    Folder will be zipped in browser and uploaded as a new version
+                </p>
+
+                <input type="file"
+                       id="folderInput"
+                       multiple
+                       webkitdirectory
+                       directory
+                       mozdirectory
+                       style="display:none;" />
+
+                <div class="upload-actions">
+                    <label for="folderInput"
+                           class="modern-btn primary"
+                           style="cursor:pointer;">
+                        Select Project Folder
+                    </label>
+                </div>
+
+                <div id="uploadInfo" class="upload-info"></div>
+                <div id="uploadMessage"
+                     class="upload-message"
+                     style="display:none;"></div>
+
+            </div>
+        </div>
+
+        <!-- FILE LIST -->
         <ul class="file-tree" id="fileList"></ul>
 
         <!-- CODE VIEWER -->
@@ -48,8 +88,153 @@ Select a file to preview its contents
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- ✅ JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script> 
+    $(document).ready(function () { loadProjects(); }); 
+</script>
 <script>
-    $(document).ready(function () {
-        loadProjects();
+  
+    /* =====================================
+       UPLOAD LOGIC
+    ===================================== */
+
+    let isUploading = false;
+
+    function showMessage(message, type) {
+        const box = document.getElementById("uploadMessage");
+        box.className = `upload-message ${type}`;
+        box.innerText = message;
+        box.style.display = "block";
+        setTimeout(() => box.style.display = "none", 5000);
+    }
+
+    function setInfo(html) {
+        document.getElementById("uploadInfo").innerHTML = html || "";
+    }
+
+    function shouldSkip(path) {
+        const p = path.replace(/\\/g, "/").toLowerCase();
+        return (
+            p.includes("/bin/") ||
+            p.includes("/obj/") ||
+            p.includes("/node_modules/") ||
+            p.includes("/.git/") ||
+            p.includes("/.vs/") ||
+            p.includes("/packages/") ||
+            p.endsWith(".dll") ||
+            p.endsWith(".exe") ||
+            p.endsWith(".pdb")
+        );
+    }
+
+    async function zipFolder(files) {
+        const zip = new JSZip();
+        const projectName = files[0].webkitRelativePath.split("/")[0];
+
+        let added = 0, skipped = 0;
+
+        for (const f of files) {
+            const rel = f.webkitRelativePath;
+            if (!rel || shouldSkip(rel)) {
+                skipped++;
+                continue;
+            }
+            zip.file(rel, f);
+            added++;
+        }
+
+        if (added === 0)
+            throw new Error("No valid project files found");
+
+        const zipBlob = await zip.generateAsync(
+            { type: "blob", compression: "DEFLATE" },
+            m => setInfo(`Zipping ${Math.floor(m.percent)}%`)
+        );
+
+        return { zipBlob, projectName };
+    }
+
+    async function uploadZip(zipBlob, projectName) {
+        const fd = new FormData();
+        fd.append("zipFile", zipBlob, projectName + ".zip");
+        fd.append("projectName", projectName);
+
+        return $.ajax({
+            url: "/Home/UploadProjectZip",
+            type: "POST",
+            data: fd,
+            processData: false,
+            contentType: false
+        });
+    }
+
+    /* FILE INPUT BINDING */
+    document.getElementById("folderInput").onchange = async function (e) {
+        if (isUploading) return;
+
+        const files = e.target.files;
+        if (!files || !files.length) return;
+
+        try {
+            isUploading = true;
+            showMessage("Zipping project…", "info");
+
+            const { zipBlob, projectName } = await zipFolder(files);
+
+            showMessage("Uploading project…", "info");
+            const res = await uploadZip(zipBlob, projectName);
+
+             if (res?.success) {
+                 showMessage("Upload successful", "success");
+                 loadProjects();
+
+                 // ✅ CLOSE UPLOAD PANEL
+                 closeUploadPanel();
+
+
+            } else {
+                showMessage(res?.message || "Upload failed", "error");
+            }
+        }
+        catch (err) {
+            showMessage(err.message, "error");
+        }
+        finally {
+            isUploading = false;
+            e.target.value = "";
+        }
+    };
+
+    /* TOGGLE UPLOAD PANEL */
+    document.getElementById("uploadToggleBtn").onclick = () => {
+        const panel = document.getElementById("inlineUploadPanel");
+        panel.style.display === "block"
+            ? closeUploadPanel()
+            : openUploadPanel();
+    };
+
+        function openUploadPanel() {
+        document.getElementById("inlineUploadPanel").style.display = "block";
+    }
+
+    function closeUploadPanel() {
+        document.getElementById("inlineUploadPanel").style.display = "none";
+    }
+        document.addEventListener("click", function (e) {
+        const panel = document.getElementById("inlineUploadPanel");
+        const btn = document.getElementById("uploadToggleBtn");
+
+        if (
+            panel.style.display === "block" &&
+            !panel.contains(e.target) &&
+            !btn.contains(e.target)
+        ) {
+            closeUploadPanel();
+        }
     });
+
 </script>

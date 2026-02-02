@@ -886,13 +886,13 @@ function loadFiles(project, version, path = "") {
             });
         });
 }
+
 function downloadVersion() {
     if (!currentProject || !currentVersion) return;
 
     const url = `/Home/DownloadVersionZip?projectName=${encodeURIComponent(currentProject)}&version=${encodeURIComponent(currentVersion)}`;
     window.location.href = url;
 }
-
 
 function viewFile(project, version, path) {
     fetch(`/Home/ViewFile?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)

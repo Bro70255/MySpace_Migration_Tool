@@ -4,29 +4,47 @@ using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ VERY IMPORTANT: allow large uploads (increase if needed)
+/* ===============================
+   FILE UPLOAD LIMITS (ASP.NET CORE)
+=============================== */
+
+// Allow large multipart uploads
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = long.MaxValue; // unlimited
+    options.MultipartBodyLengthLimit = 2L * 1024 * 1024 * 1024; // 2 GB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
 });
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
+// Kestrel limits
+builder.WebHost.ConfigureKestrel(options =>
 {
-    serverOptions.Limits.MaxRequestBodySize = long.MaxValue; // unlimited
+    options.Limits.MaxRequestBodySize = 2L * 1024 * 1024 * 1024; // 2 GB
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(10);
 });
 
-// DB
+/* ===============================
+   DATABASE
+=============================== */
 builder.Services.AddDbContext<MyDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MAFIT"));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("MAFIT")
+    );
 });
 
+/* ===============================
+   SERVICES
+=============================== */
 builder.Services.AddScoped<Data_Layer>();
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+/* ===============================
+   MIDDLEWARE
+=============================== */
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -35,7 +53,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
+
+// ⚠️ Keep Authorization AFTER routing
 app.UseAuthorization();
 
 app.MapControllerRoute(

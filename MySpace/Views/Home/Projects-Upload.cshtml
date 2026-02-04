@@ -1,18 +1,18 @@
-﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-@{
+﻿@{
     ViewData["Title"] = "Project Upload";
-
     ViewData["PageTitle"] = "Upload Project";
     ViewData["PageSubtitle"] = "Upload a new project or create a new version of an existing one";
     ViewData["ShowZooZoo"] = true;
 }
 
+<!-- JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <div class="content-wrapper">
     <div class="dashboard-container">
         <div class="glass-body module-wrapper project-upload-module">
 
+            <!-- HEADER -->
             <div class="module-header" style="margin-bottom:20px;">
                 <span class="module-icon">📁</span>
                 <span class="module-title" style="font-size:18px;font-weight:600;">
@@ -20,15 +20,26 @@
                 </span>
             </div>
 
+            <!-- BODY -->
             <div class="module-body">
-                <div id="uploadMessage" class="upload-message" style="display:none;"></div>
 
+                <!-- MESSAGE -->
+                <div id="uploadMessage"
+                     class="upload-message"
+                     style="display:none;margin-bottom:12px;">
+                </div>
+
+                <!-- UPLOAD ZONE -->
                 <div class="upload-zone single-action">
+
                     <p class="upload-title">Upload Project Folder</p>
                     <p class="upload-subtitle">
-                        Folder will be zipped in browser, then uploaded as 1 file.
+                        The folder will be zipped in your browser and uploaded as a single file.
+                        <br />
+                        <small>(bin / obj / node_modules are automatically ignored)</small>
                     </p>
 
+                    <!-- HIDDEN INPUT -->
                     <input type="file"
                            id="folderInput"
                            multiple
@@ -37,16 +48,20 @@
                            mozdirectory
                            style="position:absolute; left:-9999px;" />
 
+                    <!-- BUTTON -->
                     <div class="upload-actions">
-                        <label for="folderInput" class="modern-btn primary" style="cursor:pointer;">
+                        <label for="folderInput"
+                               class="modern-btn primary"
+                               style="cursor:pointer;">
                             Select Project Folder
                         </label>
                     </div>
 
+                    <!-- INFO -->
                     <div class="upload-info" id="uploadInfo"></div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </div>
@@ -54,66 +69,70 @@
 <script>
     let isUploading = false;
 
+    /* ===============================
+       UI HELPERS
+    =============================== */
     function showMessage(message, type) {
         const msg = document.getElementById("uploadMessage");
         if (!msg) return;
+
         msg.className = `upload-message ${type}`;
         msg.textContent = message;
         msg.style.display = "block";
+
         setTimeout(() => msg.style.display = "none", 6000);
     }
 
     function setInfo(html) {
-        const uploadInfo = document.getElementById("uploadInfo");
-        if (uploadInfo) uploadInfo.innerHTML = html || "";
+        const el = document.getElementById("uploadInfo");
+        if (el) el.innerHTML = html || "";
     }
 
-    // ✅ NEW: ignore folders that break upload (GitHub-style)
+    /* ===============================
+       SKIP UNWANTED FOLDERS
+       (packages & references INCLUDED)
+    =============================== */
     function shouldSkip(path) {
         const p = path.toLowerCase();
-
-        return (
-            p.startsWith(".git/") || p.includes("/.git/") ||
-            p.startsWith(".vs/") || p.includes("/.vs/") ||
-            p.startsWith("packages/") || p.includes("/packages/") ||
-            p.includes("/bin/") ||
-            p.includes("/obj/") ||
-            p.includes("/node_modules/")
-        );
+        return [
+            "/.git/",
+            "/.vs/",
+            "/bin/",
+            "/obj/",
+            "/node_modules/"
+        ].some(x => p.includes(x));
     }
 
+    /* ===============================
+       ZIP FOLDER
+    =============================== */
     async function zipFolder(files) {
         const zip = new JSZip();
+        let added = 0, skipped = 0;
 
-        // ✅ root folder name
-        const firstPath = files[0].webkitRelativePath;
-        const projectName = firstPath.split("/")[0];
-
-        let added = 0;
-        let skipped = 0;
+        const projectName = files[0].webkitRelativePath.split("/")[0];
 
         for (const file of files) {
             const rel = file.webkitRelativePath;
-            if (!rel) continue;
-
-            // ✅ skip heavy/unwanted folders
-            if (shouldSkip(rel)) {
+            if (!rel || shouldSkip(rel)) {
                 skipped++;
                 continue;
             }
-
             zip.file(rel, file);
             added++;
         }
 
-        if (added === 0) {
-            throw new Error("No valid project files found (all files were ignored)");
-        }
+        if (!added) throw new Error("No valid project files found");
 
         const zipBlob = await zip.generateAsync(
-            { type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } },
+            {
+                type: "blob",
+                compression: "DEFLATE",
+                compressionOptions: { level: 6 },
+                streamFiles: true
+            },
             meta => setInfo(`
-                <div>Zipping: ${Math.floor(meta.percent)}%</div>
+                <div><strong>Zipping:</strong> ${Math.floor(meta.percent)}%</div>
                 <div>Added files: ${added}</div>
                 <div>Skipped files: ${skipped}</div>
             `)
@@ -122,52 +141,95 @@
         return { zipBlob, projectName };
     }
 
-    async function uploadZip(zipBlob, projectName) {
-        const fd = new FormData();
-        fd.append("zipFile", zipBlob, `${projectName}.zip`);
-        fd.append("projectName", projectName);
+    /* ===============================
+       CHUNKED UPLOAD
+    =============================== */
+    async function uploadZipChunked(zipBlob, projectName) {
+        const CHUNK_SIZE = 5 * 1024 * 1024;
+        const totalChunks = Math.ceil(zipBlob.size / CHUNK_SIZE);
 
-        return $.ajax({
-            url: "/Home/UploadProjectZip",
-            type: "POST",
-            data: fd,
-            processData: false,
-            contentType: false
+        const uploadId =
+            (crypto.randomUUID && crypto.randomUUID()) ||
+            Date.now().toString(36) + Math.random().toString(36).slice(2);
+
+        for (let i = 0; i < totalChunks; i++) {
+            const chunk = zipBlob.slice(
+                i * CHUNK_SIZE,
+                Math.min((i + 1) * CHUNK_SIZE, zipBlob.size)
+            );
+
+            const fd = new FormData();
+            fd.append("uploadId", uploadId);
+            fd.append("projectName", projectName);
+            fd.append("chunkIndex", i);
+            fd.append("totalChunks", totalChunks);
+            fd.append("chunk", chunk);
+
+            const res = await fetch("/Home/UploadProjectZipChunk", {
+                method: "POST",
+                body: fd
+            });
+
+            if (!res.ok)
+                throw new Error(`Chunk ${i + 1} upload failed`);
+
+            setInfo(`
+                <div><strong>Uploading:</strong>
+                ${Math.floor(((i + 1) / totalChunks) * 100)}%</div>
+                <div>Chunk ${i + 1} of ${totalChunks}</div>
+            `);
+        }
+
+        const finalize = new FormData();
+        finalize.append("uploadId", uploadId);
+        finalize.append("projectName", projectName);
+        finalize.append("totalChunks", totalChunks);
+
+        const res = await fetch("/Home/FinalizeProjectZipUpload", {
+            method: "POST",
+            body: finalize
         });
+
+        if (!res.ok)
+            throw new Error("Finalizing upload failed");
+
+        return await res.json();
     }
 
-    document.addEventListener("DOMContentLoaded", function () {
+    /* ===============================
+       EVENT BINDING
+    =============================== */
+    document.addEventListener("DOMContentLoaded", () => {
         const folderInput = document.getElementById("folderInput");
 
-        folderInput.addEventListener("change", async function (e) {
+        folderInput.addEventListener("change", async e => {
             if (isUploading) return;
 
             const files = e.target.files;
-            if (!files || files.length === 0) return;
+            if (!files || !files.length) return;
 
             try {
                 isUploading = true;
+                setInfo("");
                 showMessage("Zipping project folder…", "info");
 
                 const { zipBlob, projectName } = await zipFolder(files);
 
                 showMessage("Uploading project…", "info");
-                const res = await uploadZip(zipBlob, projectName);
+                await uploadZipChunked(zipBlob, projectName);
 
-                if (res?.success) {
-                    showMessage(res.message || "Project uploaded successfully", "success");
-                } else {
-                    showMessage(res?.message || "Upload failed", "error");
-                }
-            } catch (err) {
-                showMessage(err.message || "Upload error", "error");
-            } finally {
+                showMessage("Project uploaded successfully!", "success");
+            }
+            catch (err) {
+                console.error(err);
+                showMessage(err.message || "Upload failed", "error");
+            }
+            finally {
                 isUploading = false;
                 folderInput.value = "";
             }
         });
     });
 </script>
-
 
 

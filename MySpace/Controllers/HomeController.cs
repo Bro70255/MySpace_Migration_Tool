@@ -60,16 +60,20 @@ namespace MySpace.Controllers
         private readonly Data_Layer _dal;
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
+        private readonly IWebHostEnvironment _env;
 
         public HomeController(
             Data_Layer dal,
             IConfiguration configuration,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IWebHostEnvironment env)
         {
             _dal = dal;
             _configuration = configuration;
             _httpClient = httpClientFactory.CreateClient();
+            _env = env;
         }
+
 
         #endregion IAction Production Code
 
@@ -191,7 +195,31 @@ namespace MySpace.Controllers
         [HttpPost]
         [IgnoreAntiforgeryToken]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> UploadProjectZip(IFormFile zipFile, string projectName)
+        public async Task<IActionResult> UploadProjectZipChunk(
+    string uploadId,
+    int chunkIndex,
+    IFormFile chunk)
+        {
+            if (chunk == null || chunk.Length == 0)
+                return BadRequest("Empty chunk");
+
+            string tempDir = Path.Combine(UPLOAD_ROOT, ".tmp", uploadId);
+            Directory.CreateDirectory(tempDir);
+
+            string chunkPath = Path.Combine(tempDir, $"{chunkIndex:D6}.part");
+
+            await using var fs = new FileStream(chunkPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            await chunk.CopyToAsync(fs);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> FinalizeProjectZipUpload(
+    string uploadId,
+    string projectName,
+    int totalChunks)
         {
             if (!Request.Cookies.ContainsKey("USER_ID"))
                 return Json(new { success = false, message = "User not logged in" });
@@ -199,6 +227,11 @@ namespace MySpace.Controllers
             int userId = int.Parse(Request.Cookies["USER_ID"]);
             projectName = SafeName(projectName);
 
+            string tempDir = Path.Combine(UPLOAD_ROOT, ".tmp", uploadId);
+            if (!Directory.Exists(tempDir))
+                return NotFound("Upload not found");
+
+            // 🔹 Project paths
             string projectRoot = Path.Combine(UPLOAD_ROOT, userId.ToString(), projectName);
             string blobRoot = Path.Combine(projectRoot, "blobs");
             string versionRoot = Path.Combine(projectRoot, "versions");
@@ -213,7 +246,23 @@ namespace MySpace.Controllers
 
             var manifest = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            using var zip = new ZipArchive(zipFile.OpenReadStream());
+            // 🔥 Rebuild ZIP INTO MEMORY
+            await using var zipStream = new MemoryStream();
+
+            for (int i = 0; i < totalChunks; i++)
+            {
+                string partPath = Path.Combine(tempDir, $"{i:D6}.part");
+                if (!System.IO.File.Exists(partPath))
+                    return BadRequest($"Missing chunk {i}");
+
+                await using var partStream = new FileStream(partPath, FileMode.Open, FileAccess.Read);
+                await partStream.CopyToAsync(zipStream);
+            }
+
+            zipStream.Position = 0;
+
+            // 🔥 Process ZIP directly → blobs + manifest
+            using var zip = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: false);
 
             foreach (var entry in zip.Entries)
             {
@@ -223,8 +272,8 @@ namespace MySpace.Controllers
                 if (ShouldSkip(entry.FullName))
                     continue;
 
+                await using var es = entry.Open();
                 using var ms = new MemoryStream();
-                using var es = entry.Open();
                 await es.CopyToAsync(ms);
 
                 byte[] data = ms.ToArray();
@@ -235,8 +284,9 @@ namespace MySpace.Controllers
                     await System.IO.File.WriteAllBytesAsync(blobPath, data);
 
                 string cleanPath = entry.FullName;
-                if (cleanPath.Contains("/"))
-                    cleanPath = cleanPath.Substring(cleanPath.IndexOf("/") + 1);
+                int idx = cleanPath.IndexOf('/');
+                if (idx >= 0)
+                    cleanPath = cleanPath[(idx + 1)..];
 
                 manifest[cleanPath] = hash;
             }
@@ -246,12 +296,16 @@ namespace MySpace.Controllers
                 JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true })
             );
 
+            // 🧹 FULL CLEANUP — NO TMP, NO ZIP
+            Directory.Delete(tempDir, true);
+
             return Json(new
             {
                 success = true,
                 message = $"Project uploaded successfully ({versionName})"
             });
         }
+
 
         [HttpGet]
         public IActionResult DownloadVersionZip(string projectName, string version)

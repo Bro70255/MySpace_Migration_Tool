@@ -50,6 +50,15 @@ namespace MySpace.Controllers
             return View();
         }
 
+        [ActionName("Database-InternalBackUp")]
+        public IActionResult DatabaseInternalBackUp()
+        {
+            return View();
+        }
+        public IActionResult Database()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -133,7 +142,7 @@ namespace MySpace.Controllers
             });
         }
 
-       
+
 
         [HttpPost]
         public async Task<IActionResult> ZooZooAsk([FromBody] ZooZooAskDto dto)
@@ -187,7 +196,13 @@ namespace MySpace.Controllers
             });
         }
 
-        private static readonly string UPLOAD_ROOT = @"G:\UserProjects";
+        //     private static readonly string UPLOAD_ROOT =
+        //Path.Combine(@"G:\", "UserProjects");
+
+        private static readonly string UPLOAD_ROOT =
+            Path.Combine(@"C:\inetpub\wwwroot", "UserProjects");
+
+
         /* =========================================================
    UPLOAD PROJECT ZIP (GITHUB STYLE)
 ========================================================= */
@@ -512,11 +527,76 @@ namespace MySpace.Controllers
             return $"{a}/{b}";
         }
 
+
+        [HttpGet]
+        public IActionResult GetProjectsDataBase()
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Json(new { success = false });
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+
+
+            string root =
+            Path.Combine(@"C:\inetpub\wwwroot", "UserProjects", userId.ToString());
+
+            var list = new List<object>();
+
+            if (Directory.Exists(root))
+            {
+                foreach (var projectPath in Directory.GetDirectories(root))
+                {
+                    string dbPath = Path.Combine(projectPath, "db");
+
+                    if (!Directory.Exists(dbPath))
+                        continue;
+
+                    var dbFiles = Directory.GetFiles(dbPath)
+                                           .Select(f => Path.GetFileName(f))
+                                           .ToList();
+
+                    list.Add(new
+                    {
+                        projectName = Path.GetFileName(projectPath),
+                        dbFiles = dbFiles
+                    });
+                }
+            }
+
+            return Json(new { success = true, data = list });
+        }
+
+        [HttpGet]
+        public IActionResult DownloadDatabase(string projectName, string fileName)
+        {
+            if (!Request.Cookies.ContainsKey("USER_ID"))
+                return Unauthorized();
+
+            int userId = int.Parse(Request.Cookies["USER_ID"]);
+
+            string filePath = Path.Combine(
+                @"G:\UserProjects",
+                userId.ToString(),
+                projectName,
+                "db",
+                fileName
+            );
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var bytes = System.IO.File.ReadAllBytes(filePath);
+            return File(bytes, "application/octet-stream", fileName);
+        }
+
         #endregion Function Production Code
 
         #endregion Full Production Code
 
-
+        /// <summary>
+        /// ////////////////////////////////////////////////////////Test//////////////////////////////////////////////////////////////
+        /// </summary>
+        /// <returns></returns>
         #region Test Code
 
         public IActionResult Index()
@@ -528,7 +608,6 @@ namespace MySpace.Controllers
         {
             return View();
         }
-
 
         public IActionResult Registration()
         {
@@ -1945,29 +2024,6 @@ Explain what this screen does in simple words.
             }
 
         }
-
-        public async Task<IActionResult> Get_File_Path_For_View_Code(string filename)
-        {
-            int userId = Convert.ToInt32(HttpContext.Request.Cookies["USER_ID"]);
-
-            var file = await _dal.Get_File_Path_For_View_Code(userId, filename);
-
-            if (file == null)
-                return Json(null);
-
-            return Json(new
-            {
-                fileId = file.FileId,
-                fileName = file.FileName,
-                filePath = file.FilePath,
-                fileType = file.FileType,
-                textContent = System.IO.File.Exists(file.FilePath)
-                    ? await System.IO.File.ReadAllTextAsync(file.FilePath)
-                    : null
-            });
-        }
-
-
 
         #endregion Test Code
     }

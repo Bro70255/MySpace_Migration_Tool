@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Database Backups";
+
+    // Read by _Layout.cshtml
+    ViewData["PageTitle"] = "Database Backups";
+    ViewData["PageSubtitle"] = "Manage internal backups, third-party backups, and backup settings";
+    ViewData["ShowZooZoo"] = true;
+}
+
+<div class="dashboard-container">
+
+    <div class="row g-4 justify-content-start">
+
+        <!-- Internal Database Backups -->
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card"
+                 onclick="location.href='/Home/Database-InternalBackUp'"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-primary-soft">
+                    <i class="bi bi-hdd"></i>
+                </div>
+                <h5>Internal Database Backups</h5>
+                <p>Manage backups stored within the application server</p>
+            </div>
+        </div>
+
+        <!-- Third-Party Database Backups -->
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card"
+                 onclick="location.href='/Home/DatabaseBackups-ThirdParty'"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-warning-soft">
+                    <i class="bi bi-cloud-arrow-down"></i>
+                </div>
+                <h5>Third-Party Database Backups</h5>
+                <p>Access backups stored in external storage systems</p>
+            </div>
+        </div>
+
+        <!-- Backup Settings -->
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card"
+                 onclick="location.href='/Home/DatabaseBackups-Settings'"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-success-soft">
+                    <i class="bi bi-gear"></i>
+                </div>
+                <h5>Backup Settings</h5>
+                <p>Configure backup schedules, storage locations, and retention policies</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>

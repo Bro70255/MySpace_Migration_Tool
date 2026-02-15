@@ -1,4 +1,512 @@
-﻿
+﻿function btnLogin() {
+
+    let username = $("#username").val().trim();
+    let password = $("#password").val().trim();
+
+    if (!username || !password) {
+        showError("Please enter username and password.");
+        return;
+    }
+
+    $.ajax({
+        url: "/Home/Sign_In",
+        type: "POST",
+        data: {
+            username: username,
+            password: password
+        },
+        success: function (res) {
+            if (res.success) {
+                window.location.href = "/Home/MySpace_Dashboard";
+            } else {
+                showError(res.message);
+            }
+        },
+        error: function () {
+            showError("Server error. Try again.");
+        }
+    });
+}
+
+function togglePassword() {
+    const input = $("#password");
+    input.attr("type", input.attr("type") === "password" ? "text" : "password");
+}
+
+function showError(msg) {
+    $("#errorBox").text(msg).fadeIn();
+}
+
+function toggleZooZooChat() {
+    const chat = document.getElementById("zoozooChat");
+    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+}
+
+async function sendZooZooMsg() {
+    const input = document.getElementById("chatInput");
+    const body = document.getElementById("chatBody");
+    const text = input.value.trim();
+    if (!text) return;
+
+    // User bubble
+    body.innerHTML += `<div class="user-msg">${text}</div>`;
+    input.value = "";
+
+    // Typing indicator
+    const typing = document.createElement("div");
+    typing.className = "bot-msg";
+    typing.innerText = "🤖 thinking...";
+    body.appendChild(typing);
+    body.scrollTop = body.scrollHeight;
+
+    try {
+        const res = await fetch('/Home/ZooZooAsk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                message: text,
+                page: window.location.pathname
+            })
+        });
+
+        const json = await res.json();
+        typing.innerText = json.reply || "🤖 I’m learning…";
+
+    } catch (e) {
+        typing.innerText = "⚠️ Something went wrong.";
+    }
+
+    body.scrollTop = body.scrollHeight;
+}
+
+function loadProjects() {
+    fetch('/Home/GetExistingProjects')
+        .then(r => r.json())
+        .then(res => {
+
+            const box = document.getElementById("projectList");
+            box.innerHTML = "";
+
+            res.data.forEach((p, index) => {
+
+                // PROJECT CONTAINER
+                const project = document.createElement("div");
+                project.className = "project";
+
+                // PROJECT TITLE (NUMBERED)
+                const title = document.createElement("div");
+                title.className = "project-title clickable";
+                title.innerHTML = `${index + 1}. ${p.projectName}`;
+
+                // VERSION LIST (HIDDEN INITIALLY)
+                const versionList = document.createElement("div");
+                versionList.className = "version-list";
+                versionList.style.display = "none";
+
+                p.versions.forEach(v => {
+                    const row = document.createElement("div");
+                    row.className = "version";
+                    row.textContent = v.versionName;
+
+                    row.onclick = () => {
+                        loadFiles(p.projectName, v.versionName);
+
+                        // enable download button
+                        document.getElementById("downloadBtn").disabled = false;
+                        document.getElementById("repoPathText").innerText =
+                            `${p.projectName} / ${v.versionName}`;
+                    };
+
+                    versionList.appendChild(row);
+                });
+
+                // TOGGLE VERSIONS ON PROJECT CLICK
+                title.onclick = () => {
+                    const isOpen = versionList.style.display === "block";
+
+                    document
+                        .querySelectorAll(".version-list")
+                        .forEach(v => v.style.display = "none");
+
+                    versionList.style.display = isOpen ? "none" : "block";
+                };
+
+                project.appendChild(title);
+                project.appendChild(versionList);
+                box.appendChild(project);
+            });
+        });
+}
+
+let currentProject = "";
+let currentVersion = "";
+let currentPath = "";
+
+function loadFiles(project, version, path = "") {
+    currentProject = project;
+    currentVersion = version;
+    currentPath = path;
+
+    document.getElementById("repoPathText").innerText =
+        `${project} / ${version}${path ? " / " + path : ""}`;
+
+    // ✅ enable download button
+    document.getElementById("downloadBtn").disabled = false;
+
+    fetch(`/Home/GetVersionFiles?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
+        .then(r => r.json())
+        .then(res => {
+            const list = document.getElementById("fileList");
+            list.innerHTML = "";
+
+            if (path) {
+                const back = document.createElement("li");
+                back.textContent = "⬅ Back";
+                back.onclick = () => {
+                    const parent = path.split("/").slice(0, -1).join("/");
+                    loadFiles(project, version, parent);
+                };
+                list.appendChild(back);
+            }
+
+            res.files.forEach(f => {
+                const li = document.createElement("li");
+                li.className = f.isDirectory ? "folder" : "file";
+                li.textContent = f.name;
+
+                if (f.isDirectory)
+                    li.onclick = () => loadFiles(project, version, f.path);
+                else
+                    li.onclick = () => viewFile(project, version, f.path);
+
+                list.appendChild(li);
+            });
+        });
+}
+
+function downloadVersion() {
+    if (!currentProject || !currentVersion) return;
+
+    const url = `/Home/DownloadVersionZip?projectName=${encodeURIComponent(currentProject)}&version=${encodeURIComponent(currentVersion)}`;
+    window.location.href = url;
+}
+
+function viewFile(project, version, path) {
+    fetch(`/Home/ViewFile?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
+        .then(r => r.text())
+        .then(txt => {
+            const viewer = document.getElementById("fileViewer");
+            viewer.classList.remove("empty");
+            viewer.textContent = txt;
+        });
+}
+
+function load_DataBase() {
+
+    fetch('/Home/GetProjectsDataBase')
+        .then(response => response.json())
+        .then(res => {
+
+            const box = document.getElementById("projectList");
+            box.innerHTML = "";
+
+            if (!res.data || res.data.length === 0) {
+                box.innerHTML = "<div class='db-empty'>No database backups found.</div>";
+                return;
+            }
+
+            res.data.forEach((project, index) => {
+
+                const projectCard = document.createElement("div");
+                projectCard.className = "db-project";
+
+                const header = document.createElement("div");
+                header.className = "db-project-header";
+
+                header.innerHTML = `
+                        <span>${index + 1}. ${project.projectName}</span>
+                        <span class="db-toggle">▶</span>
+                    `;
+
+                const fileContainer = document.createElement("div");
+                fileContainer.className = "db-files";
+
+                if (!project.dbFiles || project.dbFiles.length === 0) {
+                    fileContainer.innerHTML =
+                        "<div class='db-empty'>No DB backup files available</div>";
+                } else {
+
+                    project.dbFiles.forEach(file => {
+
+                        const fileItem = document.createElement("div");
+                        fileItem.className = "db-file-item";
+
+                        const nameSpan = document.createElement("span");
+                        nameSpan.innerText = file;
+
+                        const downloadBtn = document.createElement("button");
+                        downloadBtn.className = "db-download-btn";
+                        downloadBtn.innerHTML = "⬇ Download";
+
+                        downloadBtn.onclick = function () {
+                            const url =
+                                `/Home/DownloadDatabase?projectName=${encodeURIComponent(project.projectName)}&fileName=${encodeURIComponent(file)}`;
+                            window.location.href = url;
+                        };
+
+                        fileItem.appendChild(nameSpan);
+                        fileItem.appendChild(downloadBtn);
+
+                        fileContainer.appendChild(fileItem);
+                    });
+                }
+
+                // Toggle open/close
+                header.addEventListener("click", function (e) {
+
+                    // Prevent toggle when clicking download button
+                    if (e.target.classList.contains("db-download-btn"))
+                        return;
+
+                    const isOpen = fileContainer.style.display === "block";
+
+                    fileContainer.style.display = isOpen ? "none" : "block";
+                    header.querySelector(".db-toggle").innerText = isOpen ? "▶" : "▼";
+                });
+
+                projectCard.appendChild(header);
+                projectCard.appendChild(fileContainer);
+                box.appendChild(projectCard);
+            });
+
+        })
+        .catch(error => {
+            console.error("Error loading database backups:", error);
+        });
+}
+
+
+
+
+/////////////////////////////////////Test//////////////////////////////////////////////////////
+
+/* ================= UPLOAD ================= */
+function uploadFiles() {
+
+    const project = getSelectedProject();
+
+    if (!project.projectId) {
+        showMessage("Please select a project", "error");
+        return;
+    }
+
+    if (!selectedFiles || selectedFiles.length === 0) {
+        showMessage("No files selected", "error");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("projectId", project.projectId);
+    formData.append("projectName", project.projectName);
+
+    Array.from(selectedFiles).forEach(file => {
+        formData.append("files", file);
+    });
+
+    $.ajax({
+        url: "/Home/UploadScreenFolder",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+
+            if (res.success) {
+                showMessage(res.message || "Upload completed successfully", "success");
+                selectedFiles = [];
+                $("#uploadInfo").html("");
+            } else {
+                showMessage(res.message || "Upload failed", "error");
+            }
+        },
+        error: function () {
+            showMessage("Server error during upload", "error");
+        }
+    });
+}
+
+function Sent_Data_To_AI() {
+
+    const screenName = document.getElementById("ScreenName").value;
+    const screenCode = document.getElementById("ScreenCode").value.replace(/\s/g, '');
+
+
+    if (!screenName.trim()) {
+        alert("Please enter Screen Name");
+        return;
+    }
+
+    if (!screenCode.trim()) {
+        alert("Please enter screen code");
+        return;
+    }
+
+    document.getElementById("AIResponse").value = "Processing...";
+
+    const requestData = {
+        ScreenName: screenName,
+        ScreenCode: screenCode
+    };
+
+    fetch('/Home/Call_AI', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "Success") {
+                document.getElementById("AIResponse").value = data.response;
+            } else {
+                document.getElementById("AIResponse").value =
+                    data.message || "AI processing failed";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("AIResponse").value = "Error calling AI";
+        });
+}
+
+function saveProject() {
+
+    const projectName = document.querySelector('input[name="ProjectName"]').value.trim();
+    const projectType = document.querySelector('select[name="ProjectType"]').value;
+
+    // Validation
+    if (!projectName) {
+        alert("Please enter Project Name");
+        return;
+    }
+
+    if (!projectType) {
+        alert("Please select Project Type");
+        return;
+    }
+
+    if (flow.length === 0) {
+        alert("Please define Project Flow");
+        return;
+    }
+
+    // JSON payload
+    const data = {
+        ProjectName: projectName,
+        ProjectType: projectType,
+        ProjectFlow: flow   // array
+    };
+
+    fetch('/Home/Create_Project', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',   // ✅ IMPORTANT (send cookies)
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to save project");
+            }
+
+            alert("Project created successfully");
+
+            // ✅ Redirect ALWAYS works
+            window.location.href = '/Home/Upload';
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Error while saving project");
+        });
+
+}
+
+/* ================= LOAD PROJECTS ================= */
+//function loadProjects() {
+
+//    $.ajax({
+//        url: "/Home/Get_Project_Details",
+//        type: "GET",
+//        success: function (data) {
+
+//            console.log("AJAX RESPONSE:", data);
+
+//            // 🔴 HARD CHECK
+//            if (!Array.isArray(data)) {
+//                alert("ERROR: Backend is NOT returning JSON array.\nCheck Home/Get_Project_Details");
+//                return;
+//            }
+
+//            // ---------- PROJECT DROPDOWN ----------
+//            $("#projectSelect")
+//                .empty()
+//                .append('<option value="">-- Select Project --</option>');
+
+//            data.forEach(p => {
+//                $("#projectSelect").append(
+//                    `<option value="${p.projectId}">${p.projectName}</option>`
+//                );
+//            });
+
+//            // Auto-load file types for first project
+//            if (data.length > 0) {
+//                bindFileTypes(data[0].projectFlow);
+//            }
+
+//            // On project change → update file types
+//            $("#projectSelect").off("change").on("change", function () {
+//                let selectedId = $(this).val();
+//                let proj = data.find(x => x.projectId == selectedId);
+//                if (proj) {
+//                    bindFileTypes(proj.projectFlow);
+//                }
+//            });
+//        },
+//        error: function (err) {
+//            console.error("AJAX ERROR:", err);
+//            alert("AJAX call failed. Check console.");
+//        }
+//    });
+//}
+
+/* ================= BIND FILE TYPES ================= */
+function bindFileTypes(projectFlowJson) {
+
+    $("#fileTypeSelect")
+        .empty()
+        .append('<option value="">-- Select File Type --</option>');
+
+    if (!projectFlowJson) return;
+
+    let flowArray;
+
+    try {
+        flowArray = JSON.parse(projectFlowJson);
+    } catch (e) {
+        console.error("ProjectFlow parse error:", projectFlowJson);
+        alert("Invalid ProjectFlow JSON");
+        return;
+    }
+
+    flowArray.forEach(flow => {
+        $("#fileTypeSelect").append(
+            `<option value="${flow}">${flow}</option>`
+        );
+    });
+}
 function registerUser() {
 
     // -------- Collect Form Data --------
@@ -46,36 +554,6 @@ function registerUser() {
         },
         error: function () {
             alert("Server error. Please try again.");
-        }
-    });
-}
-
-function btnLogin() {
-
-    let username = $("#username").val().trim();
-    let password = $("#password").val().trim();
-
-    if (!username || !password) {
-        showError("Please enter username and password.");
-        return;
-    }
-
-    $.ajax({
-        url: "/Home/Sign_In",
-        type: "POST",
-        data: {
-            username: username,
-            password: password
-        },
-        success: function (res) {
-            if (res.success) {
-                window.location.href = "/Home/MySpace_Dashboard";
-            } else {
-                showError(res.message);
-            }
-        },
-        error: function () {
-            showError("Server error. Try again.");
         }
     });
 }
@@ -403,15 +881,6 @@ function renderNode(node, parentUl) {
     parentUl.appendChild(li);
 }
 
-function togglePassword() {
-    const input = $("#password");
-    input.attr("type", input.attr("type") === "password" ? "text" : "password");
-}
-
-function showError(msg) {
-    $("#errorBox").text(msg).fadeIn();
-}
-
 function validateForm() {
     let fullName = document.getElementById("FullName").value.trim();
     let phone = document.getElementById("Phone").value.trim();
@@ -521,386 +990,5 @@ function Initialize_Registration_Report_Details() {
     });
 }
 
-/* ================= UPLOAD ================= */
-function uploadFiles() {
 
-    const project = getSelectedProject();
-
-    if (!project.projectId) {
-        showMessage("Please select a project", "error");
-        return;
-    }
-
-    if (!selectedFiles || selectedFiles.length === 0) {
-        showMessage("No files selected", "error");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("projectId", project.projectId);
-    formData.append("projectName", project.projectName);
-
-    Array.from(selectedFiles).forEach(file => {
-        formData.append("files", file);
-    });
-
-    $.ajax({
-        url: "/Home/UploadScreenFolder",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (res) {
-
-            if (res.success) {
-                showMessage(res.message || "Upload completed successfully", "success");
-                selectedFiles = [];
-                $("#uploadInfo").html("");
-            } else {
-                showMessage(res.message || "Upload failed", "error");
-            }
-        },
-        error: function () {
-            showMessage("Server error during upload", "error");
-        }
-    });
-}
-
-function Sent_Data_To_AI() {
-
-    const screenName = document.getElementById("ScreenName").value;
-    const screenCode = document.getElementById("ScreenCode").value.replace(/\s/g, '');
-
-
-    if (!screenName.trim()) {
-        alert("Please enter Screen Name");
-        return;
-    }
-
-    if (!screenCode.trim()) {
-        alert("Please enter screen code");
-        return;
-    }
-
-    document.getElementById("AIResponse").value = "Processing...";
-
-    const requestData = {
-        ScreenName: screenName,
-        ScreenCode: screenCode
-    };
-
-    fetch('/Home/Call_AI', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "Success") {
-                document.getElementById("AIResponse").value = data.response;
-            } else {
-                document.getElementById("AIResponse").value =
-                    data.message || "AI processing failed";
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            document.getElementById("AIResponse").value = "Error calling AI";
-        });
-}
-
-function saveProject() {
-
-    const projectName = document.querySelector('input[name="ProjectName"]').value.trim();
-    const projectType = document.querySelector('select[name="ProjectType"]').value;
-
-    // Validation
-    if (!projectName) {
-        alert("Please enter Project Name");
-        return;
-    }
-
-    if (!projectType) {
-        alert("Please select Project Type");
-        return;
-    }
-
-    if (flow.length === 0) {
-        alert("Please define Project Flow");
-        return;
-    }
-
-    // JSON payload
-    const data = {
-        ProjectName: projectName,
-        ProjectType: projectType,
-        ProjectFlow: flow   // array
-    };
-
-    fetch('/Home/Create_Project', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include',   // ✅ IMPORTANT (send cookies)
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to save project");
-            }
-
-            alert("Project created successfully");
-
-            // ✅ Redirect ALWAYS works
-            window.location.href = '/Home/Upload';
-        })
-        .catch(error => {
-            console.error(error);
-            alert("Error while saving project");
-        });
-
-}
-
-/* ================= LOAD PROJECTS ================= */
-function loadProjects() {
-
-    $.ajax({
-        url: "/Home/Get_Project_Details",
-        type: "GET",
-        success: function (data) {
-
-            console.log("AJAX RESPONSE:", data);
-
-            // 🔴 HARD CHECK
-            if (!Array.isArray(data)) {
-                alert("ERROR: Backend is NOT returning JSON array.\nCheck Home/Get_Project_Details");
-                return;
-            }
-
-            // ---------- PROJECT DROPDOWN ----------
-            $("#projectSelect")
-                .empty()
-                .append('<option value="">-- Select Project --</option>');
-
-            data.forEach(p => {
-                $("#projectSelect").append(
-                    `<option value="${p.projectId}">${p.projectName}</option>`
-                );
-            });
-
-            // Auto-load file types for first project
-            if (data.length > 0) {
-                bindFileTypes(data[0].projectFlow);
-            }
-
-            // On project change → update file types
-            $("#projectSelect").off("change").on("change", function () {
-                let selectedId = $(this).val();
-                let proj = data.find(x => x.projectId == selectedId);
-                if (proj) {
-                    bindFileTypes(proj.projectFlow);
-                }
-            });
-        },
-        error: function (err) {
-            console.error("AJAX ERROR:", err);
-            alert("AJAX call failed. Check console.");
-        }
-    });
-}
-
-/* ================= BIND FILE TYPES ================= */
-function bindFileTypes(projectFlowJson) {
-
-    $("#fileTypeSelect")
-        .empty()
-        .append('<option value="">-- Select File Type --</option>');
-
-    if (!projectFlowJson) return;
-
-    let flowArray;
-
-    try {
-        flowArray = JSON.parse(projectFlowJson);
-    } catch (e) {
-        console.error("ProjectFlow parse error:", projectFlowJson);
-        alert("Invalid ProjectFlow JSON");
-        return;
-    }
-
-    flowArray.forEach(flow => {
-        $("#fileTypeSelect").append(
-            `<option value="${flow}">${flow}</option>`
-        );
-    });
-}
-
-function toggleZooZooChat() {
-    const chat = document.getElementById("zoozooChat");
-    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
-}
-
-async function sendZooZooMsg() {
-    const input = document.getElementById("chatInput");
-    const body = document.getElementById("chatBody");
-    const text = input.value.trim();
-    if (!text) return;
-
-    // User bubble
-    body.innerHTML += `<div class="user-msg">${text}</div>`;
-    input.value = "";
-
-    // Typing indicator
-    const typing = document.createElement("div");
-    typing.className = "bot-msg";
-    typing.innerText = "🤖 thinking...";
-    body.appendChild(typing);
-    body.scrollTop = body.scrollHeight;
-
-    try {
-        const res = await fetch('/Home/ZooZooAsk', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-                message: text,
-                page: window.location.pathname
-            })
-        });
-
-        const json = await res.json();
-        typing.innerText = json.reply || "🤖 I’m learning…";
-
-    } catch (e) {
-        typing.innerText = "⚠️ Something went wrong.";
-    }
-
-    body.scrollTop = body.scrollHeight;
-}
-
-function loadProjects() {
-    fetch('/Home/GetExistingProjects')
-        .then(r => r.json())
-        .then(res => {
-
-            const box = document.getElementById("projectList");
-            box.innerHTML = "";
-
-            res.data.forEach((p, index) => {
-
-                // PROJECT CONTAINER
-                const project = document.createElement("div");
-                project.className = "project";
-
-                // PROJECT TITLE (NUMBERED)
-                const title = document.createElement("div");
-                title.className = "project-title clickable";
-                title.innerHTML = `${index + 1}. ${p.projectName}`;
-
-                // VERSION LIST (HIDDEN INITIALLY)
-                const versionList = document.createElement("div");
-                versionList.className = "version-list";
-                versionList.style.display = "none";
-
-                p.versions.forEach(v => {
-                    const row = document.createElement("div");
-                    row.className = "version";
-                    row.textContent = v.versionName;
-
-                    row.onclick = () => {
-                        loadFiles(p.projectName, v.versionName);
-
-                        // enable download button
-                        document.getElementById("downloadBtn").disabled = false;
-                        document.getElementById("repoPathText").innerText =
-                            `${p.projectName} / ${v.versionName}`;
-                    };
-
-                    versionList.appendChild(row);
-                });
-
-                // TOGGLE VERSIONS ON PROJECT CLICK
-                title.onclick = () => {
-                    const isOpen = versionList.style.display === "block";
-
-                    document
-                        .querySelectorAll(".version-list")
-                        .forEach(v => v.style.display = "none");
-
-                    versionList.style.display = isOpen ? "none" : "block";
-                };
-
-                project.appendChild(title);
-                project.appendChild(versionList);
-                box.appendChild(project);
-            });
-        });
-}
-
-
-let currentProject = "";
-let currentVersion = "";
-let currentPath = "";
-
-function loadFiles(project, version, path = "") {
-    currentProject = project;
-    currentVersion = version;
-    currentPath = path;
-
-    document.getElementById("repoPathText").innerText =
-        `${project} / ${version}${path ? " / " + path : ""}`;
-
-    // ✅ enable download button
-    document.getElementById("downloadBtn").disabled = false;
-
-    fetch(`/Home/GetVersionFiles?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
-        .then(r => r.json())
-        .then(res => {
-            const list = document.getElementById("fileList");
-            list.innerHTML = "";
-
-            if (path) {
-                const back = document.createElement("li");
-                back.textContent = "⬅ Back";
-                back.onclick = () => {
-                    const parent = path.split("/").slice(0, -1).join("/");
-                    loadFiles(project, version, parent);
-                };
-                list.appendChild(back);
-            }
-
-            res.files.forEach(f => {
-                const li = document.createElement("li");
-                li.className = f.isDirectory ? "folder" : "file";
-                li.textContent = f.name;
-
-                if (f.isDirectory)
-                    li.onclick = () => loadFiles(project, version, f.path);
-                else
-                    li.onclick = () => viewFile(project, version, f.path);
-
-                list.appendChild(li);
-            });
-        });
-}
-
-function downloadVersion() {
-    if (!currentProject || !currentVersion) return;
-
-    const url = `/Home/DownloadVersionZip?projectName=${encodeURIComponent(currentProject)}&version=${encodeURIComponent(currentVersion)}`;
-    window.location.href = url;
-}
-
-function viewFile(project, version, path) {
-    fetch(`/Home/ViewFile?projectName=${project}&version=${version}&path=${encodeURIComponent(path)}`)
-        .then(r => r.text())
-        .then(txt => {
-            const viewer = document.getElementById("fileViewer");
-            viewer.classList.remove("empty");
-            viewer.textContent = txt;
-        });
-}
 

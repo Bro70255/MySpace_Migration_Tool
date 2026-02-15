@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Projects";
+    ViewData["Title"] = "Projects & Backups";
 
     // Read by _Layout.cshtml
-    ViewData["PageTitle"] = "Projects";
-    ViewData["PageSubtitle"] = "Upload new projects or manage existing ones";
+    ViewData["PageTitle"] = "Projects & Backups";
+    ViewData["PageSubtitle"] = "Upload projects, manage existing ones, and access backups";
     ViewData["ShowZooZoo"] = true;
 }
 
@@ -34,6 +34,19 @@
                 </div>
                 <h5>Existing Projects</h5>
                 <p>View and manage existing projects</p>
+            </div>
+        </div>
+
+        <!-- Project Backups -->
+        <div class="col-md-6 col-lg-4">
+            <div class="dashboard-card"
+                 onclick="location.href='/Home/Projects-Backups'"
+                 style="cursor:pointer;">
+                <div class="dashboard-icon bg-warning-soft">
+                    <i class="bi bi-hdd-stack"></i>
+                </div>
+                <h5>Project Backups</h5>
+                <p>Access and manage third-party stored project backups</p>
             </div>
         </div>
 

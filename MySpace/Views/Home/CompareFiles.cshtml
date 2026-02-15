@@ -1,0 +1,35 @@
+﻿@using MySpace_Common.ControllerModels
+@model FileDiffViewModel
+
+<h2>🔍 Version Comparison</h2>
+
+<p>
+    <strong>Old:</strong> @Model.OldVersion <br />
+    <strong>New:</strong> @Model.NewVersion
+</p>
+
+<hr />
+
+<h3 style="color:green;">🟢 Added Files</h3>
+<ul>
+    @foreach (var f in Model.AddedFiles)
+    {
+        <li>@f</li>
+    }
+</ul>
+
+<h3 style="color:red;">🔴 Deleted Files</h3>
+<ul>
+    @foreach (var f in Model.DeletedFiles)
+    {
+        <li>@f</li>
+    }
+</ul>
+
+<h3 style="color:orange;">🟡 Modified Files</h3>
+<ul>
+    @foreach (var f in Model.ModifiedFiles)
+    {
+        <li>@f</li>
+    }
+</ul>

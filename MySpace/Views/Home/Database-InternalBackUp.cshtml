@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Internal Database Backups";
+    ViewData["PageTitle"] = "Internal Database Backups";
+    ViewData["PageSubtitle"] = "List of database backup files under each project";
+    ViewData["ShowZooZoo"] = true;
+}
+
+<div class="content-wrapper">
+    <div class="dashboard-container">
+
+        <div class="dashboard-card">
+
+            <div class="repo-section-title">
+                Database Backup Repository
+            </div>
+
+            <div id="projectList" class="db-container">
+                Loading database backups...
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        load_DataBase();
+    });
+</script>
